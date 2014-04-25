@@ -1,0 +1,103 @@
+Version history for glulxa
+
+
+
+v0.1 - Apr 29 1999
+==================
+
+Original Release
+
+v0.2 - May 7 1999
+=================
+
+Major bugfix release.  Also incorporates new functionality.  This release totally supercedes v.01.
+
+Changes detailed below
+
+Added this file.
+Fixed bug in ds.l operand.
+Fixed label address calculation bug.
+Fixed bug in calculation of string lengths which could cause memory overflows if strings were longer than 256 characters.
+Added support for embedded newlines in strings ('C' style)
+Changed method of adding operands - table is now dynamic.
+changed method of adding labels - table is now dynamic and no restrictions on number of labels (previously no more than 1024)
+removed the op_ from the operands
+Renamed Hello.glx to Hello.ula
+Added glkops.ula and shell file 'gass' for those using unix with a valid cpp. this should make glk calls easier.  
+Added functionality to report filename and linenumber for those using cpp.
+Changed README to reflect above changes.
+
+v0.3 - May 20 1999
+==================
+
+Minor feature / compatibility release
+
+Changes detailed below
+
+Hello.ula changed.
+Changed to handle / be compatible with the new glulx VM header format.  glulxa now compiles code for glulxe v010 available from http://www.eblong.com/glulx
+Changed to make the executable file size smaller.  Previously, all memory blocks were 256 bytes long, resulting in a minimum size of 1280 bytes.  Minimum filesize now 256 bytes, as per the spec.  Note - the actual start of rom is 5 longwords away from the end of the header.  This is so that zarf's glulxdump app will work with the output of this assembler.
+
+v0.31 - May 21 1999
+===================
+
+Patch release
+
+Added new opcodes I'd missed with to sync up with glulxe.
+Fixed bug in checksum code (thanks Iain)
+changed definition of errno to be ansi compliant, chopping out a warning. (also, thanks Iain)
+minor changes to README.
+
+v0.32 - June 1 1999
+===================
+
+Patch release
+Now nulls all memory blocks on allocation.  Makes debugging DOS port easier
+Linefeeds are explicitly 0x0a now, as DOS (and probably win) compiles do that cr/lf thang
+Output file mode changed to 'wb' as non-sensible machines (read that as DOS) have a tendency to convert newlines to CR/LF pairs without being told to.  Nasty.
+
+V0.4 - June 7 1999
+==================
+
+Major patch release
+Now calculates offsets for relative jump opcodes, if the offset operand is given as in absolute addressing mode.  All other addressing modes are treated as precomputed offsets.
+You can now give a 'discard' addressing mode, by coding '~' as the operand.
+
+V0.45 - June 8 1999
+===================
+
+Minor Patch / enhancement release
+Patched RAM addressing to work correctly - i.e. give ram addresses relative to RAMSTART
+Integrated patches from David Given.  
+  label addresses can now have an offset - i.e. :label:6 gives the address 6 bytes on from :label
+  If no type modifier added to absolute operands, the assembler will try to optimise for the best size.
+
+v 0.46 - November 5 2005
+========================
+Glulxa re-released as GPL . Some minor changes made by Julio Sangrador to make ulx files run under Zag
+Java interpreter. Source and license repacked by Carlos Sanchez.
+
+v 0.5 - April 2009
+==================
+mcopy, mzero, malloc, mfree, accelfunc and accelparam opcodes added by Carlos Sanchez to match compatibility 
+with Glulx 3.1.1 implementation
+
+v 0.51 - April 2009
+===================
+
+* Improved automatic addressing modes. Labels are now always assembled
+as long operands; before, they could be incorrectly assembled based on
+the last character of the label name. Automatic addressing modes are
+now supported for RAM, call frame local, and memory operands too, not
+only constant operands.
+
+* Added the opcodes jltu, jgeu, jgtu, jleu, streamunichar, jumpabs,
+mzero, mcopy, malloc, and mfree. Also corrected the opcodes catch,
+throw, and gestalt.
+
+* Changed the minimum Glulx version from 2.0 to 3.1.1.
+
+* Allowed the string decoding table to be set in the header, by
+defining the label ":string_decoding_table".
+
+* Warning messages are shown when labels are used but lacking a previous definition

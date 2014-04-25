@@ -1,0 +1,165 @@
+; glk event types and the like
+
+#define	evtype_Arrange 							5.l  
+#define	evtype_CharInput 						2.l 
+#define	evtype_LineInput 						3.l
+#define	evtype_MouseInput 					4.l 
+#define	evtype_None 								0.l
+#define	evtype_Timer 								1.l 
+#define	filemode_Read 							0x02.l
+#define	filemode_ReadWrite 					0x03.l
+#define	filemode_Write 							0x01.l
+#define	filemode_WriteAppend 				0x05.l
+#define	fileusage_BinaryMode 				0x000.l
+#define	fileusage_Data 							0x00.l
+#define	fileusage_InputRecord 			0x03.l
+#define	fileusage_SavedGame 				0x01.l
+#define	fileusage_TextMode 					0x100.l
+#define	fileusage_Transcript 				0x02.l 
+#define	fileusage_TypeMask 					0x0f.l
+#define	gestalt_CharInput 					1.l
+#define	gestalt_CharOutput 					3.l 
+#define	gestalt_CharOutput_ApproxPrint 	1.l
+#define	gestalt_CharOutput_CannotPrint 	0.l
+#define	gestalt_CharOutput_ExactPrint 	2.l
+#define	gestalt_LineInput 					2.l
+#define	gestalt_MouseInput 					4.l 
+#define	gestalt_Timer 							5.l
+#define	gestalt_Version 						0.l 
+#define	keycode_Delete 							0xfffffff9.l
+#define	keycode_Down 								0xfffffffb.l
+#define	keycode_End 								0xfffffff3.l
+#define	keycode_Escape 							0xfffffff8.l
+#define	keycode_Func1 							0xffffffef.l
+#define	keycode_Func10 							0xffffffe6.l 
+#define	keycode_Func11 							0xffffffe5.l
+#define	keycode_Func12 							0xffffffe4.l
+#define	keycode_Func2 							0xffffffee.l
+#define	keycode_Func3 							0xffffffed.l
+#define	keycode_Func4 							0xffffffec.l
+#define	keycode_Func5 							0xffffffeb.l
+#define	keycode_Func6 							0xffffffea.l
+#define	keycode_Func7 							0xffffffe9.l
+#define	keycode_Func8 							0xffffffe8.l
+#define	keycode_Func9 							0xffffffe7.l
+#define	keycode_Home 								0xfffffff4.l
+#define	keycode_Left 								0xfffffffe.l
+#define	keycode_MAXVAL 							28.l
+#define	keycode_PageDown 						0xfffffff5.l
+#define	keycode_PageUp 							0xfffffff6.l
+#define	keycode_Return 							0xfffffffa.l
+#define	keycode_Right 							0xfffffffd.l
+#define	keycode_Tab 								0xfffffff7.l
+#define	keycode_Unknown 						0xffffffff.l
+#define	keycode_Up 									0xfffffffc.l
+#define	seekmode_Current 						1.l
+#define	seekmode_End 								2.l
+#define	seekmode_Start 							0.l
+#define	style_Alert 								5.l
+#define	style_BlockQuote 						7.l
+#define	style_Emphasized 						1.l
+#define	style_Header 								3
+#define	style_Input 								8.l 
+#define	style_NUMSTYLES 						11.l 
+#define	style_Normal 								0.l 
+#define	style_Note 									6.l 
+#define	style_Preformatted 					2.l 
+#define	style_Subheader 						4.l 
+#define	style_User1 								9.l 
+#define	style_User2 								10.l 
+#define	stylehint_BackColor 				8.l 
+#define	stylehint_Indentation 			0.l 
+#define	stylehint_Justification 		2.l  
+#define	stylehint_NUMHINTS 					9.l 
+#define	stylehint_Oblique 					5.l 
+#define	stylehint_ParaIndentation 	1.l 
+#define	stylehint_Proportional 			6.l 
+#define	stylehint_Size 							3.l 
+#define	stylehint_TextColor 				7.l 
+#define	stylehint_Weight 						4.l 
+#define	stylehint_just_Centered 		2.l 
+#define	stylehint_just_LeftFlush 		0.l 
+#define	stylehint_just_LeftRight 		1.l 
+#define	stylehint_just_RightFlush 	3.l 
+#define	winmethod_Above 						0x02.l  
+#define	winmethod_Below 						0x03.l  
+#define	winmethod_DirMask 					0x0f.l 
+#define	winmethod_DivisionMask 			0xf0.l 
+#define	winmethod_Fixed 						0x10.l 
+#define	winmethod_Left 							0x00.l  
+#define	winmethod_Proportional 			0x20.l 
+#define	winmethod_Right 						0x01.l  
+#define	wintype_AllTypes 						0.l  
+#define	wintype_Blank 							2.l  
+#define	wintype_Pair 								1.l  
+#define	wintype_TextBuffer 					3.l 
+#define	wintype_TextGrid 						4.l 
+
+
+; glk operations
+
+#define glk_exit 										glk 0x01.l
+#define glk_set_interrupt_handler 	glk 0x02.l
+#define glk_tick 										glk 0x03.l
+#define glk_gestalt 								glk 0x04.l
+#define glk_gestalt_ext 						glk 0x05.l
+#define glk_window_iterate 					glk 0x20.l
+#define glk_window_get_rock 				glk 0x21.l
+#define glk_window_get_root 				glk 0x22.l
+#define glk_window_open 						glk 0x23.l
+#define glk_window_close 						glk 0x24.l
+#define glk_window_get_size 				glk 0x25.l
+#define glk_window_set_arrangement 	glk 0x26.l
+#define glk_window_get_arrangement 	glk 0x27.l
+#define glk_window_get_type 				glk 0x28.l
+#define glk_window_get_parent 			glk 0x29.l
+#define glk_window_clear 						glk 0x2A.l
+#define glk_window_move_cursor 			glk 0x2B.l
+#define glk_window_get_stream 			glk 0x2C.l
+#define glk_window_set_echo_stream 	glk 0x2D.l
+#define glk_window_get_echo_stream 	glk 0x2E.l
+#define glk_set_window 							glk 0x2F.l
+#define glk_window_get_sibling 			glk 0x30.l
+#define glk_stream_iterate 					glk 0x40.l
+#define glk_stream_get_rock 				glk 0x41.l
+#define glk_stream_open_file 				glk 0x42.l
+#define glk_stream_open_memory 			glk 0x43.l
+#define glk_stream_close 						glk 0x44.l
+#define glk_stream_set_position 		glk 0x45.l
+#define glk_stream_get_position 		glk 0x46.l
+#define glk_stream_set_current 			glk 0x47.l
+#define glk_stream_get_current 			glk 0x48.l
+#define glk_fileref_create_temp 		glk 0x60.l
+#define glk_fileref_create_by_name 	glk 0x61.l
+#define glk_fileref_create_by_prompt glk 0x62.l
+#define glk_fileref_destroy 				glk 0x63.l
+#define glk_fileref_iterate 				glk 0x64.l
+#define glk_fileref_get_rock 				glk 0x65.l
+#define glk_fileref_delete_file 		glk 0x66.l
+#define glk_fileref_does_file_exist glk 0x67.l
+#define glk_put_char 								glk 0x80.l
+#define glk_put_char_stream 				glk 0x81.l
+#define glk_put_string 							glk 0x82.l
+#define glk_put_string_stream 			glk 0x83.l
+#define glk_put_buffer 							glk 0x84.l
+#define glk_put_buffer_stream 			glk 0x85.l
+#define glk_set_style 							glk 0x86.l
+#define glk_set_style_stream 				glk 0x87.l
+#define glk_get_char_stream 				glk 0x90.l
+#define glk_get_line_stream 				glk 0x91.l
+#define glk_get_buffer_stream 			glk 0x92.l
+#define glk_char_to_lower 					glk 0xA0.l
+#define glk_char_to_upper 					glk 0xA1.l
+#define glk_stylehint_set 					glk 0xB0.l
+#define glk_stylehint_clear 				glk 0xB1.l
+#define glk_style_distinguish 			glk 0xB2.l
+#define glk_style_measure 					glk 0xB3.l
+#define glk_select 									glk 0xC0.l
+#define glk_select_poll 						glk 0xC1.l
+#define glk_request_line_event 			glk 0xD0.l
+#define glk_cancel_line_event 			glk 0xD1.l
+#define glk_request_char_event 			glk 0xD2.l
+#define glk_cancel_char_event 			glk 0xD3.l
+#define glk_request_mouse_event 		glk 0xD4.l
+#define glk_cancel_mouse_event 			glk 0xD5.l
+#define glk_request_timer_events 		glk 0xD6.l

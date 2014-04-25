@@ -1,0 +1,223 @@
+<html><head><title>TSynAnySyn</title>
+<style>
+h1 {font-family:arial;
+    font-size:16pt;
+    color:navy;}
+    
+h2 {font-family:arial;
+    font-size:14pt;
+    color:navy;}
+    
+h3 {font-family:arial;
+    font-size:11pt;
+    color:navy;}
+
+h4 {font-family:arial;
+    font-size:10pt;
+    font-weight:bold;
+    border-width:1;
+    border-style:solid;
+    border-color:blue;
+    padding-left:5px;
+    color:#6699CC;}
+
+p {font-family:arial;
+    font-size:10pt;
+    color:black;}
+    
+b  {color:#6699CC;}
+
+ul {font-family:arial;
+    font-size:8pt;
+    list-style-type:square;}
+    
+pre {background-color:#e0e0e0;}
+
+</style>
+</head>
+<body>
+<h1>TSynAnySyn highlighter for any language</h1>
+<p><i>Jan Verhoeven - Januari 2001</i>, <a href="http://jansfreeware.com/jfdelphi.htm">website</a> <a href="mailto:jan1.verhoeven@wxs.nl?subject=TSynAnySyn%20user%20response">email</a></p>
+
+<p><a href="#syntax">syntax</a></p>
+<h2>Introduction</h2>
+<p><a href="http://synedit.sourceforge.net/">TSynEdit</a> comes with many highlighters, including a general highlighter where you can define your own keywords. TSynAnySyn is a descendant of <b>TSynCustomHighlighter</b> that allows the end user of a program to define his or her own highlighter properties in a .ini file and load it into TSynAnySyn.</p>
+<p>Besides a list of keywords you can also define a list of <b>constants</b> and <b>objects</b> that can have their own highlighting attributes.</p>
+<p>The component comes with some ready to use highlighter files for most commonly used programming languages.</p>
+
+<h2>Installation</h2>
+<p>Copy <b>SynHighlighterAny.pas</b> to your SynEdit source directory. Add TSynAnySyn to the SynEdit package and include registration in the <b>SynEditReg.pas</b> file. Also add the <b>TSYNANYSYN</b> bitmap to <b>SynEditReg.dcr</b></p>
+<h2>Component Reference</h2>
+<p>Only additional methods and properties are shown.</p>
+<p>TSynAnySyn is based on TSynCustomHighlighter.</p>
+<h3>Methods</h3>
+<h4>LoadHighlighter</h4>
+<p>procedure LoadHighlighter(AFile:string);</p>
+<p>Loads the highlighter from a <b>.ini</b> file. See <a href="#syntax">syntax</a> for details on creating a highlighter file.</p>
+
+
+<h3>Properties</h3>
+<h4>ActiveDot:boolean</h4>
+<p>When ActiveDot is <b>true</b> properties and methods of objects after the dot are highlighted, e.g. myobject<b>.method</b> </p>
+
+<h4>ConstantAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>constant</b> words defined in the <b>Constants</b> property.</p>
+
+<h4>Constants:TStrings</h4>
+<p>Holds the words defined as constants.</p>
+
+<h4>DollarVariables:boolean</h4>
+<p>When DollarVariables is <b>true</b> symbols preceeded by the <b$</b> sign will be highlighted using the <b>VariableAttri</b> settings. You can use this for variable highlighting in languages like <b>php</b> and <b>perl</b></p>
+
+<h4>DotAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for objects properties and methods after a <b>dot</b> character, in case <b>Activedot</b> is true.</p>
+
+<h4>Entity:boolean</h4>
+<p>When Entity is <b>true</b> entity symbols like <b>&amp;amp;</b> will be highlighted. You can use this for e.g. <b>HTML</b> and <b>XML</b> highlighting.</p>
+
+<h4>EntityAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for Entities when the <b>Entity</b> property is true.</p>
+
+<h4>IdentifierAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for identifiers, symbols that begin with a letter and are followed by more letters or figures.</p>
+
+<h4>KeyAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>keyword</b> words defined in the <b>Keywords</b> property.</p>
+
+<h4>Keywords:TStrings</h4>
+<p>Holds the words defined as keywords.</p>
+
+<h4>Markup:boolean</h4>
+<p>When markup is true, words between <b>&lt;</b> and <b>&gt;</b> will be highlighted. You can use this for markup languages liken <b>HTML</b>, <b>XML</b> and <b>XSLT</b></p>
+
+<h4>NumberAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>numbers</b></p>
+
+<h4>ObjectAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>object</b> words defined in the <b>Objects</b> property.</p>
+
+<h4>Objects:TStrings</h4>
+<p>Holds the words defined as objects.</p>
+
+<h4>SpaceAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>spaces</b></p>
+
+<h4>StringAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>strings</b>, double or single quoted depending on the <b>StringDelim</b> property.</p>
+
+<h4>StringDelim:[sdSingleQuote,sdDoubleQuote</h4>
+<p>Defines whether strings are single or double quoted.</p>
+
+<h4>SymbolAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>symbols</b> like <b>+</b> and <b>*</b>.</p>
+
+<h4>VariableAttri:TSynHighlighterAttributes</h4>
+<p>Holds the attributes for <b>vatiables</b>, words preceeded by a <b>$</b>, in case <b>DollarVariables</b> is true.</p>
+
+
+<br>
+<a name="syntax"></a>
+<h2>Syntax of highlighter files</h2>
+<p>Highlighter files are <b>.ini</b> style files that the end user of your program can create in any text editor. In your program you can provide the option of loading such a file into TSynAnySyn using the <b>LoadHighlighter</b> method.</p>
+<p>For colors you can use the Delphi color constants or a $BBGGRR (blue, green, red) color triplet.
+<p>For font style you can use <b>normal</b> or a (comma seperated) combination of <b>bold</b>, <b>italic</b> or <b>underline</b>. For example:</p>
+<pre>
+Style=bold,italic
+</pre>
+
+<p>For booleans you use <b>true</b> or <b>false</b></p>
+
+<p>Use the code below as the template for new highlighter files. It contains all available options.</p>
+<pre>
+[CommentStyle]
+ansi=false
+asm=false
+bas=false
+c=false
+pas=false
+vb=false
+
+[String Delimiter]
+Double Quotes=true
+
+[Switches]
+markup=false
+entity=false
+dollarvariables=false
+ActiveDot=false
+
+[Comment]
+Foreground=clblue
+Background=clwhite
+Style=italic
+
+[Constant]
+Foreground=clblack
+Background=clwhite
+Style=bold
+
+[Entity]
+Foreground=clblack
+Background=clwhite
+Style=normal
+
+[Identifier]
+Foreground=clblack
+Background=clwhite
+Style=normal
+
+[Dot]
+Foreground=clblack
+Background=clwhite
+Style=normal
+
+[Keywords]
+Foreground=$FF0080
+Background=clwhite
+Style=bold
+
+[Number]
+Foreground=clblack
+Background=clwhite
+Style=normal
+
+[Space]
+Foreground=clblack
+Background=clwhite
+Style=normal
+
+[String]
+Foreground=$FF8000
+Background=clwhite
+Style=normal
+
+[Symbol]
+Foreground=clblack
+Background=clwhite
+Style=normal
+
+[Object]
+Foreground=clblack
+Background=clwhite
+Style=normal
+
+[Variables]
+Foreground=clpurple
+Background=clwhite
+Style=bold
+
+
+[Objects]
+object1
+object2
+
+[Constants]
+constant1
+constant2
+
+[Keys]
+key1
+key2
+
+</pre>
+</body></html>

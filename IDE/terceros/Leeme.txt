@@ -1,0 +1,3 @@
+Leer el html que hay en el SynAnySyn para saber como instalar ANTES de instalar el paquete completo.
+
+Una vez hecho lo que dice ahí, hay que instalar el paquete _R7, y luego el _D7 (en ningun caso el _D7_CLX o _D7_PE directamente)

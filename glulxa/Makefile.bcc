@@ -1,0 +1,22 @@
+
+BCCDIR = c:\bcc55
+INCDIR = $(BCCDIR)\include
+LIBDIR = $(BCCDIR)\lib
+INSTDIR = c:\windows\command
+
+CC = bcc32.exe
+CFLAGS = -fp -WC -I$(INCDIR) -L$(LIBDIR)
+
+RMBIN = del
+RMOPTS =
+
+all: glulxa.exe
+
+glulxa.exe: *.c *.h
+	$(CC) $(CFLAGS) -I..;. -eglulxa.exe *.c
+
+clean:
+	for %i in (*.obj *.tds glulxa.exe) do $(RMBIN) $(RMOPTS) %i
+
+install:
+	copy glulxa.exe $(INSTDIR)

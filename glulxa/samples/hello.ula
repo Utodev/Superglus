@@ -1,0 +1,44 @@
+stack 256
+ext 1024
+
+section code
+
+:main
+				; Start of the function
+				; Must define this or the call to :main will fail
+				dc.b 0xc0 0x00 0x00
+				
+				setiosys 2 0 ; use glk
+
+				; push the glk operands onto the stack in reverse order
+				copy 0x01.l (sp) 
+				copy 0x03.l (sp) ; Textbuffer
+				copy 0x00.l (sp) 
+				copy 0x00.l (sp) 
+				copy 0x00.l (sp) 
+				; Open up a glk window
+				; hex 23 is the code for glk_window_open
+				glk 0x23.b 0x05.b (:glk_winnum).l
+				jz (:glk_winnum).l :error
+
+				; glk_setwindow
+				copy (:glk_winnum).l (sp)
+				glk 0x2f.b 0x01.b (:glk_result).l
+
+				; Now output to the current stream
+				streamstr :helloworld.l
+				; And wait for keypress (or any other event actually, as it's not checked, for instance arrange window)
+			  copy (:glk_winnum).l (sp)
+			  glk 0xd2.l 0x01.b ~ ; glk_request_char_event(winnum)
+			  copy :event_type.l (sp)
+		    glk 0xC0.l 0x01.b (:glk_result).l ; glk_select()
+			 :error
+				quit
+
+section data
+
+section vdata
+:helloworld	dc.b "hello world!\n\nGlulx Talking\n\nPress a key..." 0
+:glk_winnum ds.l 1
+:glk_result ds.l 1
+:event_type ds.l 1

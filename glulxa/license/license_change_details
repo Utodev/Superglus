@@ -1,0 +1,81 @@
+November 10 2005
+
+On November 2005 Glulxa's license has changed to GPL, as Glulxa
+had previously no specific license. This has been done under the 
+consentiment of the original copyright holder: Simon Stapleton.
+
+No information has been changed in documentation, so if you find some
+disagreement between readme file contents and the license agreement
+included at COPYING file please forget about what readme file says, 
+just take care of COPYING file.
+
+These are e-mails regarding the license change (Simon also gave 
+premission to make them public), I'm not including Carlos' e-mails 
+as Simon quoted properly them in his answers:
+
+email 1
+=======
+
+On 21 Oct 2005, at 21:53, Carlos Sánchez wrote:
+
+> Hello Simon,
+>
+>   This mail is regarding glulxa license, if you don't know what
+> Glulxa is surely you're not the Simon Stapleton I'm looking for, in
+> that case sorry to bother you me, otherwise...
+
+Yep, you got the right guy
+
+> For some time I have been using glulxa for a spanish IF engine that
+> generates glulx assembler code, later assembled by glulxa, but we
+> (there are more than one person involved) have detected some bugs
+> in the glulxa's source code and corrected it, and as there is not
+> license file in glulxa's package, we don't know if we can
+> release that. Also, we've seen you have not typed code for glulxa
+> for a long time, and that glulxa's page has dissapeared from
+> geocities. Also, glulxa is not in the if-archive... so we wonder if
+> you would like to change glulxa's license to GPL, so we can take
+> rid of it. Please, let us know about your decision and, if you
+> don't care, we ourselves will include the GPL license into the new
+> released glulxa.
+
+As I recall, I released it either public domain or BSD licensed.  The
+actual licensing terms migt be found by searching the raif archives,
+but in case they are gone forever : Feel free to do what the hell you
+like with it, including GPLing it or whatever you like.  I'm glad to
+see that something I wrote as a laugh is actually of some marginal
+use to somebody.  It also gives me a warm fuzzy feeling that people
+do actually care about doing the right things WRT licensing.  You get
+a big smile for that.
+
+> If you give us permission we would need also permission to publish
+> the mail where you give us permission :)
+
+Sure, that too.
+
+>
+> Thanks in advance & best regards,
+> Carlos.
+
+Have fun
+
+Simon (ex simon@tufty.co.uk, occasionally tufty on ifMud)
+
+email 2
+=======
+> Ummm... I've tried to find it using Google Groups but I couldn't  find
+> anything but announces of releases, whose links don't work. If  you
+> can let me know about other places to find I will be glad of  knowing
+> about them. If I cannot find that license I will release it  under GPL
+> license, including this mail I am answering as your  permission to do
+> that.
+
+
+ Yeah, go for it.  I suspect pretty much every link to it is dead  these
+ days.  Take the code, treat it as your own, license it how you  like.
+
+
+
+
+
+
