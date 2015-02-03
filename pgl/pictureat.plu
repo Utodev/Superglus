@@ -1,0 +1,66 @@
+;CND PICTUREAT A 2 2 2 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+; PICTUREAT X Y <recurso>
+
+:ancho_grafico_peque ds.l 1
+:alto_grafico_peque ds.l 1
+:x_grafico_peque ds.l 1
+:y_grafico_peque ds.l 1
+
+
+:acc_pictureat
+dc.b 0xc1 0x04 0x03 0x00 0x00
+copy {0}.l (:x_grafico_peque).l 
+copy {4}.l (:y_grafico_peque).l 
+ jz (:hay_graficos).l :no_graficos_poner_grafico_peque.l
+ jz (:programa_quiere_graficos).l :no_graficos_poner_grafico_peque.l
+ copy :alto_grafico_peque.l (sp)
+ copy :ancho_grafico_peque.l (sp)
+ copy {8}.l (sp)
+ glk 0x00e0.l 0x03.b (sp) ; glk_image_get_info
+ jnz (sp) :si_poner_grafico_peque.l
+ jump :no_graficos_poner_grafico_peque.l
+:si_poner_grafico_peque
+ jnz (:stretch_graphics) :pinta_stretch_peque.l
+ jge (:ratio_x).l (:ratio_y).l :ratio_y_menor_peque.l     ; Los ratios los tengo calculados de cuando se puso el picture principal
+ ;ratio x menor
+ mul (:ancho_grafico_peque).l (:ratio_x).l (:ancho_grafico_peque).l
+ ushiftr (:ancho_grafico_peque).l 0x08.l (:ancho_grafico_peque).l
+ mul (:alto_grafico_peque).l (:ratio_x).l (:alto_grafico_peque).l
+ ushiftr (:alto_grafico_peque).l 0x08.l (:alto_grafico_peque).l
+ mul (:x_grafico_peque).l (:ratio_x).l (:x_grafico_peque).l
+ ushiftr (:x_grafico_peque).l 0x08.l (:x_grafico_peque).l
+ mul (:y_grafico_peque).l (:ratio_x).l (:y_grafico_peque).l
+ ushiftr (:y_grafico_peque).l 0x08.l (:y_grafico_peque).l
+ jump :realmente_poner_peque.l
+:pinta_stretch_peque
+ mul (:ancho_grafico).l (:ratio_x).l (:ancho_grafico).l
+ ushiftr (:ancho_grafico).l 0x08.l (:ancho_grafico).l
+ mul (:alto_grafico).l (:ratio_y).l (:alto_grafico).l
+ ushiftr (:alto_grafico).l 0x08.l (:alto_grafico).l
+ jump :realmente_poner_peque.l
+:ratio_y_menor_peque
+ mul (:ancho_grafico_peque).l (:ratio_y).l (:ancho_grafico_peque).l
+ ushiftr (:ancho_grafico_peque).l 0x08.l (:ancho_grafico_peque).l
+ mul (:alto_grafico_peque).l (:ratio_y).l (:alto_grafico_peque).l
+ ushiftr (:alto_grafico_peque).l 0x08.l (:alto_grafico_peque).l
+ mul (:x_grafico_peque).l (:ratio_y).l (:x_grafico_peque).l
+ ushiftr (:x_grafico_peque).l 0x08.l (:x_grafico_peque).l
+ mul (:y_grafico_peque).l (:ratio_y).l (:y_grafico_peque).l
+ ushiftr (:y_grafico_peque).l 0x08.l (:y_grafico_peque).l
+:realmente_poner_peque   ; el x e y del grafico principal también los tengo calculados de antes
+ add (:x_grafico).l (:x_grafico_peque).l (:x_grafico_peque).l
+ add (:y_grafico).l (:y_grafico_peque).l (:y_grafico_peque).l
+ ; Meter imagen
+ copy (:alto_grafico_peque).l (sp)
+ copy (:ancho_grafico_peque).l (sp)
+ copy (:y_grafico_peque).l (sp)
+ copy (:x_grafico_peque).l (sp)
+ copy {8}.l (sp) ; numero recurso
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x00e2.l 0x06.b ~ ; glk_image_draw_scaled(glk_winnum_graficos, img, posx, posy, sizex, sizey)
+:no_graficos_poner_grafico_peque
+ return 0

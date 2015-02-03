@@ -1,0 +1,4 @@
+; Este archivo es (C) Julio Sangrador y Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+;(byte)nombre+(byte)adjetivo+(byte)lugar+(byte)peso+(byte)lo_flags+(byte)hi_flags
+

@@ -1,0 +1,59 @@
+;CND GETKEY A 1 0 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+; ^------------------------------------------- Es un condacto
+;     ^--------------------------------------- Nombre
+;        ^------------------------------------ A= Accion, C= Condicion
+;          ^---------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;            ^-------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;	       ^------------------------------ 0 = aNada, 1 = aDescribir, 2=aEnd, 3=aFinDeTabla, 4=aCondicional
+
+:acc_getkey
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy (:flag049).l (:valor_flag).l
+ bitand (:valor_flag).l 4.l (:valor_flag).l
+ copy 0x00.l (:bandera_tiempo_agotado).l
+ mul (:flag048).l 25.l (:contador_timeout).l
+ copy 40.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(40)
+:getk_sin_temporizador
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xd2.l 0x01.b ~ ; glk_request_char_event(winnum)
+:getk_esperar_caracter
+ copy :evento_type.l (sp)
+ glk 0xC0.l 0x01.b ~ ; glk_select()
+ jeq (:evento_type).l 0x02.l :getk_se_pulso.l
+ jeq (:evento_type).l 0x01.l :getk_paso_el_tiempo_getkey.l
+ jeq (:evento_type).l 0x05.l :getk_esperar_hubo_evento_arrange.l
+ jeq (:evento_type).l 0x07.l :getk_esperar_hubo_evento_soundnotify.l 
+ jne (:evento_type).l 0x06.l :getk_esperar_caracter.l ; No es redraw
+:getk_esperar_hubo_evento_arrange
+ call :poner_grafico 0x00.b ~
+ jump :getk_esperar_caracter.l
+:getk_esperar_hubo_evento_soundnotify
+ jeq (:evento_val2).l (:canal_efectos).l :getk_esperar_hubo_evento_soundnotify_efectos.l
+ jeq (:evento_val2).l (:canal_musica).l :getk_esperar_hubo_evento_soundnotify_musica.l
+ jump :getk_esperar_caracter.l
+:getk_esperar_hubo_evento_soundnotify_efectos
+ copy 0.l (:efecto_sonando).l
+ jump :getk_esperar_caracter.l
+:getk_esperar_hubo_evento_soundnotify_musica 
+ copy 0.l (:musica_sonando).l
+ jump :getk_esperar_caracter.l
+:getk_paso_el_tiempo_getkey
+ jz (:hay_interrupt).l :getk_no_interrupt_proc_getkey .l
+ call :interrupt_proc.l 0x00.b ~
+:getk_no_interrupt_proc_getkey 
+ jz (:valor_flag).l :getk_esperar_caracter.l	; no hay timeout en los getkey
+ sub (:contador_timeout).l 1.l (:contador_timeout).l
+ jnz (:contador_timeout).l :getk_esperar_caracter.l
+ ; y aqui es donde se trata el timeout
+ copy 0x01.l (:bandera_tiempo_agotado).l
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xd3 0x01.b ~
+:getk_se_pulso
+ astore :flags.l {0}.l (:evento_val1).l
+ copy 0x00.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(0)
+ return 0

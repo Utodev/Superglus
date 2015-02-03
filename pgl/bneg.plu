@@ -1,0 +1,19 @@
+;CND BNEG A 1 2 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+; BNEG flagno bitno
+; Cambia el valor de un bit de un flag, lo invierte
+
+:acc_bneg
+dc.b 0xc1 0x04 0x03 0x00 0x00
+; Viene en {0} el flagno, y en {4} el bitno. {8} y {12} son variables globales
+jgt {4}.l 32.l 0			; si el bit es > 32 es absurdo, vuelve sin hacer nada 
+aload :flags.l {0}.l {8}.l
+copy {8}.l (sp)
+copy {4}.l (sp)
+call :bitneg 0x02.b (sp)
+copy (sp) {8}.l
+astore :flags.l {0}.l {8}.l
+return 0

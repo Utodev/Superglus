@@ -1,0 +1,8 @@
+;CND DIV A 1 2 0 0
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+:acc_div
+dc.b 0xc1 0x04 0x03 0x00 0x00
+aload :flags.l {0}.l {8}.l
+div {8}.l {4}.l {8}.l
+astore :flags.l {0}.l {8}.l
+return 1

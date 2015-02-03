@@ -1,0 +1,10 @@
+;CND GE C 1 2 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+:cnd_ge
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ jge {8}.l {4}.l 1
+ return 0

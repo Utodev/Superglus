@@ -1,0 +1,20 @@
+;CND GETEXIT A 2 2 0 0
+; getexit value flagno	; el primer value es la direccion y el flag donde se almacena la direccion de destino
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+:acc_getexit
+dc.b 0xc1 0x04 0x4 0x00 0x00
+jgt {0}.l 15 1			; Si el verbo de direccion es mayor que 15, es decir, no es verbo de direccion, salgo sin hacer nada
+jlt {0}.l 0  1			; Idem si es menor que cero
+copy (:flag038).l {8}.l
+mul {8}.l 16.l {8}.l		; Guarda en {8} la direccion base de las conexiones de la localidad
+add {8}.l {0}.l {8}.l		; Incrementa en el valor del verbo de direccion que da el primer parametro para apuntar al la salida en concreto
+aload :conexiones.l {8}.l {12}.l
+jlt {12}.l 0.l :getextit_no_exit; Si el valor es <0 no hay salida
+astore :flags.l {4}.l {12}.l
+return 1
+:getextit_no_exit
+astore :flags.l {4}.l 255.l
+return 1

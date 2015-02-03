@@ -1,0 +1,15 @@
+;CND SILENCE A 2 0 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+:acc_silence
+dc.b 0xc1 0x04 0x03 0x00 0x00
+ jgt {0}.l 16.l 1  ; Si estamos fuera de canal adecuado (1-16), fin
+ jlt {0}.l 1.l 1
+ sub {0}.l 1.l {4}.l  ; resto 1 al canal para que en lugar de ed 1 a 16 vaya de 0 a 15, el {16} me hace de puntero mientras que el {4} mantiene el numero de canal
+ mul {4}.l 4.l {4}.l
+ aload :canal_efectos.l {4}.l (sp) ;schanid
+ glk 0xFA.l 0x01.b ~ ; glk_schannel_stop(channel)
+ astore :efecto_sonando.l {4}.l  0.l
+ return 0

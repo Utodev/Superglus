@@ -1,0 +1,2798 @@
+; Este archivo es (C) Julio Sangrador y Carlos Sánchez, y está sujeto a licencia LGPL
+
+;;;;;;
+; AT ;
+;;;;;;
+:cnd_at
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jeq (:flag038).l {0}.l 1
+ return 0
+
+;;;;;;;;;
+; NOTAT ;
+;;;;;;;;;
+:cnd_notat
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jne (:flag038).l {0}.l 1
+ return 0
+
+;;;;;;;;
+; ATGT ;
+;;;;;;;;
+:cnd_atgt
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jgt (:flag038).l {0}.l 1
+ return 0
+
+;;;;;;;;
+; ATLT ;
+;;;;;;;;
+:cnd_atlt
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jlt (:flag038).l {0}.l 1
+ return 0
+
+;;;;;;;;;;;
+; PRESENT ;
+;;;;;;;;;;;
+:cnd_present
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos.l {0}.l {4}.l
+ jeq {4}.l (:flag038).l 1
+ jeq {4}.l 253.l 1
+ jeq {4}.l 254.l 1
+ return 0
+
+;;;;;;;;;;
+; ABSENT ;
+;;;;;;;;;;
+:cnd_absent
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos.l {0}.l {4}.l
+ jeq {4}.l (:flag038).l 0
+ jeq {4}.l 253.l 0
+ jeq {4}.l 254.l 0
+ return 1
+
+;;;;;;;;
+; WORN ;
+;;;;;;;;
+:cnd_worn
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos {0}.l {4}.l
+ jeq {4}.l 253.l 1
+ return 0
+
+;;;;;;;;;;;
+; NOTWORN ;
+;;;;;;;;;;;
+:cnd_notworn
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos {0}.l {4}.l
+ jeq {4}.l 253.l 0
+ return 1
+
+;;;;;;;;;;;
+; CARRIED ;
+;;;;;;;;;;;
+:cnd_carried
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos {0}.l {4}.l
+ jeq {4}.l 254.l 1
+ return 0
+
+;;;;;;;;;;;
+; NOTCARR ;
+;;;;;;;;;;;
+:cnd_notcarr
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos {0}.l {4}.l
+ jne {4}.l 254.l 1
+ return 0
+
+;;;;;;;;;;
+; CHANCE ;
+;;;;;;;;;;
+:cnd_chance
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ random 100.l (:numero_aleatorio).l
+ jle (:numero_aleatorio).l {0}.l 1
+ return 0
+
+;;;;;;;;
+; ZERO ;
+;;;;;;;;
+:cnd_zero
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ aload :flags.l {0}.l {4}.l
+ jz {4}.l 1
+ return 0
+
+;;;;;;;;;;;
+; NOTZERO ;
+;;;;;;;;;;;
+:cnd_notzero
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ aload :flags.l {0}.l {4}.l
+ jnz {4}.l 1
+ return 0
+
+;;;;;;
+; EQ ;
+;;;;;;
+:cnd_eq
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ jeq {8}.l {4}.l 1
+ return 0
+
+;;;;;;
+; GT ;
+;;;;;;
+:cnd_gt
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ jgt {8}.l {4}.l 1
+ return 0
+
+;;;;;;
+; LT ;
+;;;;;;
+:cnd_lt
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ jlt {8}.l {4}.l 1
+ return 0
+
+;;;;;;;;;;;
+; ADJECT1 ;
+;;;;;;;;;;;
+:cnd_adject1
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jeq (:flag035).l {0}.l 1
+ return 0
+
+;;;;;;;;;;
+; ADVERB ;
+;;;;;;;;;;;;;;;;;
+:cnd_adverb
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jeq (:flag036).l {0}.l 1
+ return 0
+
+;;;;;;;;;;;
+; TIMEOUT ;
+;;;;;;;;;;;;;;;;;;
+:cnd_timeout
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ bitand 128.l (:flag049).l {0}.l
+ jnz {0}.l 1
+ return 0
+
+;;;;;;;;
+; ISAT ;
+;;;;;;;;;;;;;;;
+:cnd_isat
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ jne {4}.l 255 :isat_not_255.l
+ copy (:flag038).l {4}.l
+:isat_not_255 
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos {0}.l {8}.l
+ jeq {8}.l {4}.l 1
+ return 0
+
+;;;;;;;;
+; PREP ;
+;;;;;;;;;;;;;;;
+:cnd_prep
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jeq (:flag043).l {0}.l 1
+ return 0
+
+;;;;;;;;;
+; NOUN2 ;
+;;;;;;;;;;;;;;;;
+:cnd_noun2
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jeq (:flag044).l {0}.l 1
+ return 0
+
+;;;;;;;;;;;
+; ADJECT2 ;
+;;;;;;;;;;;;;;;;;;
+:cnd_adject2
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jeq (:flag045).l {0}.l 1
+ return 0
+
+;;;;;;;;
+; SAME ;
+;;;;;;;;;;;;;;;
+:cnd_same
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ aload :flags.l {4}.l {12}.l
+ jeq {8}.l {12}.l 1
+ return 0
+
+;;;;;;;;;
+; NOTEQ ;
+;;;;;;;;;;;;;;;;
+:cnd_noteq
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ jne {8}.l {4}.l 1
+ return 0
+
+;;;;;;;;;;;
+; NOTSAME ;
+;;;;;;;;;;;;;;;;;;
+:cnd_notsame
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ aload :flags.l {4}.l {12}.l
+ jne {8}.l {12}.l 1
+ return 0
+
+;;;;;;;;;;;
+; ISNOTAT ;
+;;;;;;;;;;;;;;;;;;
+:cnd_isnotat
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ jne {4}.l 255 :isnotat_not_255.l
+ copy (:flag038).l {4}.l
+:isnotat_not_255 
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l
+ aload :objetos {0}.l {8}.l
+ jne {8}.l {4}.l 1
+ return 0
+
+;;;;;;;;;
+; INVEN ;
+;;;;;;;;;;;;;;;;
+:acc_inven
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy 9.l (sp); "Llevas: "
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ streamchar 10
+ copy :objetos.l (:dir_objeto_actual).l
+ copy 0 (:auxiliar).l
+:recorrer_objetos
+ jeq (:dir_objeto_actual).l :fin_de_objetos.l :inven_no_mas_objetos.l
+ aload (:dir_objeto_actual).l 2.l (:lugar_objeto_actual).l
+ jne (:lugar_objeto_actual).l 254.l :inven_no_llevado.l
+ bitand (:flag012).l 8.l {4}.l  ; Si el bit 3 del flag 12 esta 0 cuento PSIs
+ jz {4}.l :cuenta_psi_inven
+ aload (:dir_objeto_actual).l 4.l {4}.l
+ bitand {4}.l 8.l {4}.l 
+ jnz {4}.l :inven_no_llevado.l ; Si es un psi me lo salto
+:cuenta_psi_inven
+ ;llevado
+ aload (:dir_objeto_actual).l 6.l (:descripcion_objeto_actual).l
+ streamstr (:descripcion_objeto_actual).l
+ streamchar 10
+ add (:auxiliar).l 1.l (:auxiliar).l
+ add (:dir_objeto_actual).l 28.l (:dir_objeto_actual).l
+ jump :recorrer_objetos.l
+:inven_no_llevado
+ jne (:lugar_objeto_actual).l 253.l :inven_ni_llevado_ni_puesto.l
+ ;puesto
+ aload (:dir_objeto_actual).l 6.l (:descripcion_objeto_actual).l
+ streamstr (:descripcion_objeto_actual).l
+ copy 10.l (sp) ; " (puesto)"
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ streamchar 10
+ add (:auxiliar).l 1.l (:auxiliar).l
+:inven_ni_llevado_ni_puesto
+ add (:dir_objeto_actual).l 28.l (:dir_objeto_actual).l
+ jump :recorrer_objetos.l
+:inven_no_mas_objetos
+ jnz (:auxiliar).l :fin_cnd_inven
+ copy 11.l (sp) ; "nada de nada"
+ call :escribir_mensaje_sistema.l 0x01.b ~
+:fin_cnd_inven
+ ; Listado de NPCs
+ copy 254.l (sp);
+ call :contar_psi_en.l 0x01.b {8}.l
+ jz {8}.l :inven_fin.l
+ copy 254.l (sp)
+ call :acc_listnpc.l 0x01.b ~
+:inven_fin
+ copy 1 (:bandera_hecho).l
+ return 0
+
+;;;;;;;;
+; DESC ;
+;;;;;;;;;;;;;;;
+:acc_desc
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy 1 (:bandera_describir_localidad).l
+ return 0
+
+;;;;;;;;
+; QUIT ;
+;;;;;;;;;;;;;;;
+:cnd_quit
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy 12 (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 33.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 0.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(0)
+ copy 0.l (:posicion_en_buffer).l
+ copy 0.l (sp)
+ copy 0xff.l (sp)
+ copy :buffer.l (sp)
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xD0.l 0x04.b ~ ; glk_request_line_event(glk_winnum_texto, &buffer, 255, 0)
+:esperar_caracter_en_quit
+ copy :evento_type.l (sp)
+ glk 0xC0.l 0x01.b ~ ; glk_select()
+ jeq (:evento_type).l 0x03.l :se_pulso_en_quit.l
+ jeq (:evento_type).l 0x05.l :quit_hubo_evento_arrange.l
+ jne (:evento_type).l 0x06.l :esperar_caracter_en_quit.l ; No es redraw
+:quit_hubo_evento_arrange
+ bitor (:flag012).l 16.l (:flag012).l ;  Pongo a uno el bit del flag 12 que nos dice si hubo un evento arrange 
+ call :poner_grafico 0x00.b ~
+ jump :esperar_caracter_en_quit.l
+:se_pulso_en_quit
+ aloadb :buffer.l 0.l (sp)
+ call :caracter_a_mayusculas.l 0x01.b {0}.l
+ copy 0.l (:bandera_esta_seguro).l
+ copy 0.l (:bandera_salir).l
+ aloadb :ms0000000030.l 1.l (:auxiliar_b).l
+ jne {0}.l (:auxiliar_b).l :no_esta_seguro.l
+ copy 1.l (:bandera_hecho).l
+ copy 1.l (:bandera_esta_seguro).l
+ copy 1.l (:bandera_salir).l
+ jump :fin_cnd_quit.l
+:no_esta_seguro
+ copy 1.l (:bandera_buffer_vacio).l
+ copy 1.l (:bandera_hecho).l
+:fin_cnd_quit
+ return (:bandera_esta_seguro).l
+
+;;;;;;;
+; END ;
+;;;;;;;;;;;;;;
+:acc_end
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy 13 (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 33.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 1.l (:bandera_salir).l
+ copy 1.l (:bandera_hecho).l
+ copy 1.l (:bandera_esta_seguro).l
+ copy 0.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(0)
+ copy 0.l (:posicion_en_buffer).l
+ copy 0.l (sp)
+ copy 0xff.l (sp)
+ copy :buffer.l (sp)
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xD0.l 0x04.b ~ ; glk_request_line_event(glk_winnum_texto, &buffer, 255, 0)
+:esperar_caracter_en_end
+ copy :evento_type.l (sp)
+ glk 0xC0.l 0x01.b ~ ; glk_select()
+ jeq (:evento_type).l 0x03.l :se_pulso_en_end.l
+ jeq (:evento_type).l 0x05.l :end_hubo_evento_arrange.l
+ jne (:evento_type).l 0x06.l :esperar_caracter_en_end.l ; No es redraw
+:end_hubo_evento_arrange
+ bitor (:flag012).l 16.l (:flag012).l ;  Pongo a uno el bit del flag 12 que nos dice si hubo un evento arrange 
+ call :poner_grafico 0x00.b ~
+ jump :esperar_caracter_en_end.l
+:se_pulso_en_end
+ aloadb :buffer.l 0.l (sp)
+ call :caracter_a_mayusculas.l 0x01.b {0}.l
+ aloadb :ms0000000031.l 1.l (:auxiliar_b).l
+ jeq {0}.l (:auxiliar_b).l :no_quiere_seguir.l
+ copy 1.l (:bandera_jugar_otra_vez).l
+ return 0
+:no_quiere_seguir
+ copy 0.l (:bandera_jugar_otra_vez).l
+ return 0
+
+;;;;;;;;
+; DONE ;
+;;;;;;;;;;;;;;;
+:acc_done
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy 1.l (:bandera_hecho).l
+ return 0
+
+;;;;;;
+; OK ;
+;;;;;;
+
+:acc_ok
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy 15.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 1.l (:bandera_hecho).l
+ return 0
+
+;;;;;;;;;;
+; ANYKEY ;
+;;;;;;;;;;;;;;;;;
+:acc_anykey
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy 16.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy (:flag049).l (:valor_flag).l
+ bitand (:valor_flag).l 4.l (:valor_flag).l
+ copy 0x00.l (:bandera_tiempo_agotado).l
+ mul (:flag048).l 25.l (:contador_timeout).l
+ copy 40.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(40)
+:sin_temporizador
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xd2.l 0x01.b ~ ; glk_request_char_event(winnum)
+:esperar_caracter
+ copy :evento_type.l (sp)
+ glk 0xC0.l 0x01.b ~ ; glk_select()
+ jeq (:evento_type).l 0x02.l :se_pulso.l
+ jeq (:evento_type).l 0x01.l :paso_el_tiempo_anykey.l
+ jeq (:evento_type).l 0x05.l :esperar_hubo_evento_arrange.l
+ jeq (:evento_type).l 0x07.l :esperar_hubo_evento_soundnotify.l 
+ jne (:evento_type).l 0x06.l :esperar_caracter.l ; No es redraw
+:esperar_hubo_evento_arrange
+ bitor (:flag012).l 16.l (:flag012).l ;  Pongo a uno el bit del flag 12 que nos dice si hubo un evento arrange 
+ call :poner_grafico 0x00.b ~
+ jump :esperar_caracter.l
+:esperar_hubo_evento_soundnotify
+ jeq (:evento_val2).l (:canal_efectos).l :esperar_hubo_evento_soundnotify_efectos.l
+ jeq (:evento_val2).l (:canal_musica).l :esperar_hubo_evento_soundnotify_musica.l
+ jump :esperar_caracter.l
+:esperar_hubo_evento_soundnotify_efectos
+  sub (:evento_val2).l 1.l (:evento_val2).l
+  mul (:evento_val2).l 4.l (:evento_val2).l
+  astore :efecto_sonando.l (:evento_val2).l 0.l
+  jump :esperar_caracter.l
+:esperar_hubo_evento_soundnotify_musica 
+ copy 0.l (:musica_sonando).l
+ jump :esperar_caracter.l
+:paso_el_tiempo_anykey
+ jz (:hay_interrupt).l :no_interrupt_proc_anykey .l
+ call :interrupt_proc.l 0x00.b ~
+:no_interrupt_proc_anykey 
+ jz (:valor_flag).l :esperar_caracter.l	; no hay timeout en los anykey
+ sub (:contador_timeout).l 1.l (:contador_timeout).l
+ jnz (:contador_timeout).l :esperar_caracter.l
+ ; y aqui es donde se trata el timeout
+ copy 0x01.l (:bandera_tiempo_agotado).l
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xd3 0x01.b ~
+:se_pulso
+ copy 0x00.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(0)
+ return 0
+
+
+
+;;;;;;;;;;;
+; RAMSAVE ;
+;;;;;;;;;;;;;;;;;;
+:acc_ramsave
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy 0.l (sp) ; rock = 0
+ copy :ramsave_file.l (sp); name
+ copy 1.l (sp) ; fileusage_SavedGame | fileusage_BinaryMode
+ glk 0x61.l 0x03.b (:glk_result).l ; glk_fileref_create_by_name
+ jz (:glk_result).l :ramsave_error.
+ copy 1.l (:ramsave_done).l ;-> Si se creo el fichero hacemos el ramsave
+ jump :save_creado.l ; --> Salto al condacto SAVE, pero salvando en fichero temporal
+:ramsave_error
+ call :acc_desc.l 0x00.b ~
+ return 0
+
+
+;;;;;;;;;;;
+; RAMLOAD ;
+;;;;;;;;;;;;;;;;;;
+:acc_ramload
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ jz (:ramsave_done).l :ramload_without_ramsave.l
+ copy 0.l (sp) ; rock = 0
+ copy :ramsave_file.l (sp); name
+ copy 1.l (sp) ; fileusage_SavedGame | fileusage_BinaryMode
+ glk 0x61.l 0x03.b (:glk_result).l ; glk_fileref_create_by_name
+ jz (:glk_result).l :ramload_error.
+ jump :load_creado.l ; --> Salto al condacto SAVE, pero salvando en fichero temporal
+:ramload_error 
+ call :acc_desc.l 0x00.b ~
+ return 0
+:ramload_without_ramsave
+ streamstr :ramload_error_msg.l
+ streamchar 10
+ return 0 
+
+;;;;;;;;
+; SAVE ;
+;;;;;;;;;;;;;;;
+:acc_save
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy 0.l (sp) ; rock = 0
+ copy 1.l (sp) ; fmode = filemode_write
+ copy 1.l (sp) ; fileusage_SavedGame | fileusage_BinaryMode
+ glk 0x62.l 0x03.b (:glk_result).l ; glk_fileref_create_by_prompt
+ jnz (:glk_result).l :save_creado.l
+:save_error_es
+ copy 56.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_anykey.l 0x00.b ~
+ call :acc_desc.l 0x00.b
+ return 0
+:save_creado
+ copy 0.l (sp) ; rock = 0
+ copy 1.l (sp) ; fmode = filemode_Write
+ copy (:glk_result).l (sp) ; frefid = la anterior
+ glk 0x42.l 0x03.b (:glk_result).l ; glk_stream_open_file
+ jz (:glk_result).l :save_error_es.l
+ ; Llamada a la interrupcion de SAVE [INT 0]
+ copy 0.l (sp)
+ call :call_int.l 0x01.b ~
+ ; guardar los objetos
+ copy (:numero_ultimo_objeto).l {0}.l
+ add {0}.l 1.l {0}.l
+ mul {0}.l 28.l {0}.l
+ copy {0}.l (sp) ; len = tam_objetos
+ copy :objetos.l (sp) ; buf = flags
+ copy (:glk_result).l (sp) ; str = el anterior
+ glk 0x85.l 0x03.l ~ ; glk_put_buffer_stream
+ ; guardar los flags
+ copy 1024.l (sp) ; len = 256 * 4
+ copy :flags.l (sp) ; buf = flags
+ copy (:glk_result).l (sp) ; str = el anterior
+ glk 0x85.l 0x03.l ~ ; glk_put_buffer_stream
+ ;guardar las conexiones
+ copy (:total_mensajes_localidades).l {0}.l
+ mul {0}.l 16.l {0}.l
+ mul {0}.l 4.l (sp)
+ copy :conexiones.l (sp)
+ copy (:glk_result).l (sp) ; str = el anterior
+ glk 0x85.l 0x03.l ~ ; glk_put_buffer_stream
+ copy 0.l (sp)
+ call :call_int.l 0x01.b ~	; Llama a la INT 0 (SAVE)
+ copy :resultado_stream.l (sp) ; 
+ copy (:glk_result).l (sp)
+ glk 0x44.l 0x02.b ~ ; glk_stream_close
+ call :acc_desc.l 0x00.b ~
+ return 0
+
+;;;;;;;;
+; LOAD ;
+;;;;;;;;
+:acc_load
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy 0.l (sp) ; rock = 0
+ copy 2.l (sp) ; fmode = filemode_Read
+ copy 1.l (sp) ; fileusage_SavedGame | fileusage_BinaryMode
+ glk 0x62.l 0x03.b (:glk_result).l ; glk_fileref_create_by_prompt
+ jnz (:glk_result).l :load_creado.l
+:load_error_es
+ copy 56.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_anykey.l 0x00.b ~
+ call :acc_desc.l 0x00.b
+ return 0
+:load_creado
+ copy 0.l (sp) ; rock = 0
+ copy 2.l (sp) ; fmode = filemode_Read
+ copy (:glk_result).l (sp) ; frefid = la anterior
+ glk 0x42.l 0x03.b (:glk_result).l ; glk_stream_open_file
+ jz (:glk_result).l :load_error_es.l
+ ; Llamada a la interrupcion de LOAD [INT 1]
+ copy 1.l (sp)
+ call :call_int.l 0x01.b ~
+ ; cargar los objetos
+ copy (:numero_ultimo_objeto).l {0}.l
+ add {0}.l 1.l {0}.l
+ mul {0}.l 28.l {0}.l
+ copy {0}.l (sp) ; len = tam_objetos
+ copy :objetos.l (sp) ; buf = flags
+ copy (:glk_result).l (sp) ; str = el anterior
+ glk 0x92.l 0x03.l ~ ; glk_get_buffer_stream
+ ; cargar los flags
+ copy 1024.l (sp) ; len = 256 * 4
+ copy :flags.l (sp) ; buf = flags
+ copy (:glk_result).l (sp) ; str = el anterior
+ glk 0x92.l 0x03.l ~ ; glk_get_buffer_stream
+ ;cargar las conexiones
+ copy (:total_mensajes_localidades).l {0}.l
+ mul {0}.l 16.l {0}.l
+ mul {0}.l 4.l (sp)
+ copy :conexiones.l (sp)
+ copy (:glk_result).l (sp) ; str = el anterior
+ glk 0x92.l 0x03.l ~ ; glk_get_buffer_stream
+ copy 1.l (sp)
+ call :call_int.l 0x01.b ~	; Llama a la INT 1 (LOAD)
+ copy :resultado_stream.l (sp) ; 
+ copy (:glk_result).l (sp)
+ glk 0x44.l 0x02.b ~ ; glk_stream_close
+ ; desactivar musica y sonidos
+ copy 0.l (:musica_sonando).l   ; con la musica me limito a marcar la variable de musica sonando, porque el DESC la va a parar
+ jz (:hay_sonido).l :load_acabar.l
+ call :restablece_tablaefectos.l 0x00.b ~
+ copy 0.l {0}.l
+:bucle_load_stop_sound   ; Y paro todos los canales (si no hay nada sonando no tiene efecto)
+ aload :canal_efectos.l {0}.l (sp)
+ glk 0xFA.l 0x01.b ~ ; glk_schannel_stop 
+ add {0}.l 4.l {0}.l
+ jlt {0}.l 64.l :bucle_load_stop_sound.l ; 64 = 16  x 4
+:load_acabar 
+ call :acc_desc.l 0x00.b ~
+ return 0
+
+
+;;;;;;;;;
+; TURNS ;
+;;;;;;;;;;;;;;;;
+:acc_turns
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy (:flag032).l (:turnos_jugados).l
+ mul (:turnos_jugados).l 256.l (:turnos_jugados).l
+ add (:turnos_jugados).l (:flag031).l (:turnos_jugados).l
+ copy 17.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ streamnum (:turnos_jugados).l
+ copy 18.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jeq (:turnos_jugados).l 0x01.l :un_solo_turno.l
+ copy 19.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+:un_solo_turno
+ copy 20.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+
+;;;;;;;;;
+; SCORE ;
+;;;;;;;;;;;;;;;;
+:acc_score
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy 21.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ streamnum (:flag030).l
+ copy 22.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+
+;;;;;;;
+; CLS ;
+;;;;;;;;;;;;;;
+:acc_cls
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ call :limpiar_pantalla.l 0x00.b ~
+ return 0
+
+;;;;;;;;;;;
+; DROPALL ;
+;;;;;;;;;;;;;;;;;;
+:acc_dropall
+ dc.b 0xc1 0x04 0x05 0x00 0x00
+ copy 0.l {4}.l
+:dropall_bucle_objetos_llevados
+ jgt {4}.l (:numero_ultimo_objeto).l :dropall_fin_llevados.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l 254.l :dropall_siguiente_objeto_llevados.l
+ astore :objetos.l {8}.l (:flag038).l
+:dropall_siguiente_objeto_llevados
+ add {4}.l 1.l {4}.l
+ jump :dropall_bucle_objetos_llevados.l
+:dropall_fin_llevados
+ copy 0.l {4}.l
+:dropall_bucle_objetos_puestos
+ jgt {4}.l (:numero_ultimo_objeto).l :dropall_fin_puestos.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l 253.l :dropall_siguiente_objeto_puestos.l
+ astore :objetos.l {8}.l (:flag038).l
+:dropall_siguiente_objeto_puestos
+ add {4}.l 1.l {4}.l
+ jump :dropall_bucle_objetos_puestos.l
+:dropall_fin_puestos
+ copy 0.l (:flag001).l
+ return 0
+
+;;;;;;;;;
+; AUTOG ;
+;;;;;;;;;;;;;;;;
+:acc_autog
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ copy 0.l (:exito).l
+ jeq (:flag034).l 255.l :autog_sin_nombre.l	; Sin nombre, mal asunto
+ copy -1.l {0}.l
+ copy 0.l {20}.l
+ 
+ copy 0.l {4}.l			; Recorro los objetos que estan 'aqui'
+:autog_bucle_objetos_aqui
+       jgt {4}.l (:numero_ultimo_objeto).l :autog_fin_aqui.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autog_siguiente_objeto_aqui.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autog_no_adjetivo_aqui.l
+       jeq (:flag035).l 255.l :autog_no_adjetivo_aqui.l
+       jne {12}.l (:flag035).l :autog_siguiente_objeto_aqui.l
+      :autog_no_adjetivo_aqui
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag038).l :autog_siguiente_objeto_aqui.l
+       copy {4}.l {0}.l
+      :autog_siguiente_objeto_aqui
+       add {4}.l 1.l {4}.l
+ jump :autog_bucle_objetos_aqui.l
+ :autog_fin_aqui
+ 
+ jne {0}.l -1.l :autog_fin_busqueda.l     ;Si encontré alguno salto al final
+ 
+ 
+ copy 0.l {4}.l
+:autog_bucle_objetos_llevados
+       jgt {4}.l (:numero_ultimo_objeto).l :autog_fin_llevados.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autog_siguiente_objeto_llevados.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autog_no_adjetivo_llevados.l
+       jeq (:flag035).l 255.l :autog_no_adjetivo_llevados.l
+       jne {12}.l (:flag035).l :autog_siguiente_objeto_llevados.l
+      :autog_no_adjetivo_llevados
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 254.l :autog_siguiente_objeto_llevados.l
+       copy {4}.l {0}.l
+      :autog_siguiente_objeto_llevados
+       add {4}.l 1.l {4}.l
+       jump :autog_bucle_objetos_llevados.l
+:autog_fin_llevados
+ jne {0}.l -1.l :autog_fin_busqueda.l
+ 
+ 
+ copy 0.l {4}.l
+:autog_bucle_objetos_puestos
+       jgt {4}.l (:numero_ultimo_objeto).l :autog_fin_puestos.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autog_siguiente_objeto_puestos.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq (:flag035).l 255.l :autog_no_adjetivo_puestos.l
+       jeq {12}.l 255.l :autog_no_adjetivo_puestos.l
+       jne {12}.l (:flag035).l :autog_siguiente_objeto_puestos.l
+      :autog_no_adjetivo_puestos
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 253.l :autog_siguiente_objeto_puestos.l
+       copy {4}.l {0}.l
+      :autog_siguiente_objeto_puestos
+       add {4}.l 1.l {4}.l
+       jump :autog_bucle_objetos_puestos.l
+:autog_fin_puestos
+ jeq {0}.l -1.l :autog_no_encontrado.l
+
+:autog_fin_busqueda
+ copy {0}.l (sp)
+ call :acc_get.l 0x01.b ~
+ return 0
+ 
+:autog_no_encontrado
+:autog_sin_nombre
+
+ copy 26.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+
+;;;;;;;;;
+; AUTOD ;
+;;;;;;;;;;;;;;;;
+:acc_autod
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ copy 0.l (:exito).l
+ jeq (:flag034).l 255.l :autod_sin_nombre.l
+ copy -1.l {0}.l
+ copy 0.l {20}.l
+ 
+ copy 0.l {4}.l
+:autod_bucle_objetos_llevados
+       jgt {4}.l (:numero_ultimo_objeto).l :autod_fin_llevados.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autod_siguiente_objeto_llevados.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autod_no_adjetivo_llevados.l
+       jeq (:flag035).l 255.l :autod_no_adjetivo_llevados.l
+       jne {12}.l (:flag035).l :autod_siguiente_objeto_llevados.l
+      :autod_no_adjetivo_llevados
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 254.l :autod_siguiente_objeto_llevados.l
+       copy {4}.l {0}.l
+      :autod_siguiente_objeto_llevados
+       add {4}.l 1.l {4}.l
+       jump :autod_bucle_objetos_llevados.l
+:autod_fin_llevados
+ jne {0}.l -1.l :autod_fin_busqueda.l
+ 
+ copy 0.l {4}.l
+:autod_bucle_objetos_puestos
+       jgt {4}.l (:numero_ultimo_objeto).l :autod_fin_puestos.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autod_siguiente_objeto_puestos.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autod_no_adjetivo_puestos.l
+       jeq (:flag035).l 255.l :autod_no_adjetivo_puestos.l
+       jne {12}.l (:flag035).l :autod_siguiente_objeto_puestos.l
+      :autod_no_adjetivo_puestos
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 253.l :autod_siguiente_objeto_puestos.l
+       copy {4}.l {0}.l
+      :autod_siguiente_objeto_puestos
+       add {4}.l 1.l {4}.l
+       jump :autod_bucle_objetos_puestos.l
+:autod_fin_puestos
+ jne {0}.l -1.l :autod_fin_busqueda.l
+ 
+ copy 0.l {4}.l
+:autod_bucle_objetos_aqui
+       jgt {4}.l (:numero_ultimo_objeto).l :autod_fin_aqui.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autod_siguiente_objeto_aqui.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autod_no_adjetivo_aqui.l
+       jeq (:flag035).l 255.l :autod_no_adjetivo_aqui.l
+       jne {12}.l (:flag035).l :autod_siguiente_objeto_aqui.l
+      :autod_no_adjetivo_aqui
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag038).l :autod_siguiente_objeto_aqui.l
+       copy {4}.l {0}.l
+      :autod_siguiente_objeto_aqui
+       add {4}.l 1.l {4}.l
+       jump :autod_bucle_objetos_aqui.l
+:autod_fin_aqui
+ jeq {0}.l -1.l :autod_no_encontrado.l
+ 
+:autod_fin_busqueda
+ copy {0}.l (sp)
+ call :acc_drop.l 0x01.b ~
+ return 0
+:autod_no_encontrado
+:autod_sin_nombre
+ copy 28.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+
+;;;;;;;;;
+; AUTOW ;
+;;;;;;;;;;;;;;;;
+:acc_autow
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ copy 0.l (:exito).l
+ jeq (:flag034).l 255.l :autow_sin_nombre.l
+ copy -1.l {0}.l
+ copy 0.l {20}.l
+ copy 0.l {4}.l
+:autow_bucle_objetos_llevados
+       jgt {4}.l (:numero_ultimo_objeto).l :autow_fin_llevados.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autow_siguiente_objeto_llevados.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autow_no_adjetivo_llevados.l
+       jeq (:flag035).l 255.l :autow_no_adjetivo_llevados.l
+       jne {12}.l (:flag035).l :autow_siguiente_objeto_llevados.l
+      :autow_no_adjetivo_llevados
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 254.l :autow_siguiente_objeto_llevados.l
+       copy {4}.l {0}.l
+      :autow_siguiente_objeto_llevados
+       add {4}.l 1.l {4}.l
+       jump :autow_bucle_objetos_llevados.l
+:autow_fin_llevados
+ jne {0}.l -1.l :autow_fin_busqueda.l
+ 
+ copy 0.l {4}.l
+:autow_bucle_objetos_puestos
+       jgt {4}.l (:numero_ultimo_objeto).l :autow_fin_puestos.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autow_siguiente_objeto_puestos.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autow_no_adjetivo_puestos.l
+       jeq (:flag035).l 255.l :autow_no_adjetivo_puestos.l
+       jne {12}.l (:flag035).l :autow_siguiente_objeto_puestos.l
+      :autow_no_adjetivo_puestos
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 253.l :autow_siguiente_objeto_puestos.l
+       copy {4}.l {0}.l
+      :autow_siguiente_objeto_puestos
+       add {4}.l 1.l {4}.l
+       jump :autow_bucle_objetos_puestos.l
+:autow_fin_puestos
+ jne {0}.l -1.l :autow_fin_busqueda.l
+ 
+ copy 0.l {4}.l
+:autow_bucle_objetos_aqui
+       jgt {4}.l (:numero_ultimo_objeto).l :autow_fin_aqui.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autow_siguiente_objeto_aqui.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autow_no_adjetivo_aqui.l
+       jeq (:flag035).l 255.l :autow_no_adjetivo_aqui.l
+       jne {12}.l (:flag035).l :autow_siguiente_objeto_aqui.l
+      :autow_no_adjetivo_aqui
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag038).l :autow_siguiente_objeto_aqui.l
+       copy {4}.l {0}.l
+      :autow_siguiente_objeto_aqui
+       add {4}.l 1.l {4}.l
+       jump :autow_bucle_objetos_aqui.l
+:autow_fin_aqui
+ jeq {0}.l -1.l :autow_no_encontrado.l
+ 
+:autow_fin_busqueda
+ copy {0}.l (sp)
+ call :acc_wear.l 0x01.b ~
+ return 0
+ 
+:autow_no_encontrado
+:autow_sin_nombre
+ copy 28.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+
+;;;;;;;;;
+; AUTOR ;
+;;;;;;;;;;;;;;;;
+:acc_autor
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ ; 4->usada para bucles
+ ; 8->usada para apuntar a tabla de objetos
+ ; 0->
+ ; 12->
+ 
+ copy 0.l (:exito).l
+ jeq (:flag034).l 255.l :autor_sin_nombre.l		; no viene nombre en la frase, mal asunto
+ copy -1.l {0}.l
+ copy 0.l {20}.l
+ copy 0.l {4}.l
+ 
+ 
+ ; primero vamos a hacer un recorrido por los objetos buscando objetos puestos que casen con el nombre y adjetivo de la sentencia actual
+:autor_bucle_objetos_puestos		
+	 jgt {4}.l (:numero_ultimo_objeto).l :autor_fin_puestos.l
+	 copy {4}.l {8}.l
+	 mul {8}.l 7.l {8}.l
+	 aload :objetos.l {8}.l {12}.l
+	 jne {12}.l (:flag034).l :autor_siguiente_objeto_puestos.l ; No coincide el nombre
+	 add {8}.l 1.l {8}.l
+	 aload :objetos.l {8}.l {12}.l
+	 jeq {12}.l 255.l :autor_no_adjetivo_puestos.l		   ; No tiene adjetivo	
+   jeq (:flag035).l 255.l :autor_no_adjetivo_puestos.l
+	 jne {12}.l (:flag035).l :autor_siguiente_objeto_puestos.l ; No coincide el adjetivo
+	:autor_no_adjetivo_puestos
+ 	 add {8}.l 1.l {8}.l
+	 aload :objetos.l {8}.l {12}.l
+	 jne {12}.l 253.l :autor_siguiente_objeto_puestos.l	   ; No lo llevamos puesto
+	 copy {4}.l {0}.l					   ; Hemos encontrado uno que casa, lo metemos en {0}
+	:autor_siguiente_objeto_puestos
+ 	 add {4}.l 1.l {4}.l
+ jump :autor_bucle_objetos_puestos.l
+:autor_fin_puestos
+ jne {0}.l -1.l :autor_fin_busqueda.l				   ; Si lo hemos encontrado saltamos a 'fin busqueda'
+ 
+ ; Este bucle es identico al anterior pero da por bueno un objeto llevado, no puesto
+ copy 0.l {4}.l
+:autor_bucle_objetos_llevados
+       jgt {4}.l (:numero_ultimo_objeto).l :autor_fin_llevados.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autor_siguiente_objeto_llevados.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autor_no_adjetivo_llevados.l		   ; No tiene adjetivo	
+       jeq (:flag035).l 255.l :autor_no_adjetivo_llevados.l
+       jne {12}.l (:flag035).l :autor_siguiente_objeto_llevados.l
+      :autor_no_adjetivo_llevados
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 254.l :autor_siguiente_objeto_llevados.l
+       copy {4}.l {0}.l
+      :autor_siguiente_objeto_llevados
+       add {4}.l 1.l {4}.l
+ jump :autor_bucle_objetos_llevados.l
+:autor_fin_llevados
+
+ jne {0}.l -1.l :autor_fin_busqueda.l				   ; Si lo hemos encontrado saltamos a 'fin busqueda'
+
+ 
+ ; y este es tres cuartos de lo mismo, para los objetos presentes 
+ copy 0.l {4}.l
+:autor_bucle_objetos_aqui
+       jgt {4}.l (:numero_ultimo_objeto).l :autor_fin_aqui.l
+       copy {4}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autor_siguiente_objeto_aqui.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autor_no_adjetivo_aqui.l		   ; No tiene adjetivo	
+       jeq (:flag035).l 255.l :autor_no_adjetivo_aqui.l
+       jne {12}.l (:flag035).l :autor_siguiente_objeto_aqui.l
+      :autor_no_adjetivo_aqui
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag038).l :autor_siguiente_objeto_aqui.l
+       copy {4}.l {0}.l
+      :autor_siguiente_objeto_aqui
+       add {4}.l 1.l {4}.l
+ jump :autor_bucle_objetos_aqui.l
+:autor_fin_aqui
+
+ jeq {0}.l -1.l :autor_no_encontrado.l 			; no se ha encontrado ninguno que case ni en HERE, ni en CARRIED ni en WORN
+
+ 
+:autor_fin_busqueda
+ copy {0}.l (sp)
+ call :acc_remove.l 0x01.b ~	; Llamamos a REMOVE con el numero de objeto encontrado
+ return 0
+ 
+:autor_no_encontrado
+:autor_sin_nombre
+ copy 23.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+
+;;;;;;;;;
+; PAUSE ;
+;;;;;;;;;;;;;;;;
+:acc_pause
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 56.l {4}.l
+ jnz {4}.l :pause_no_era_0.l
+ copy 5120.l {4}.l ; 256/50*1000 milisegundos
+:pause_no_era_0
+ copy 0 (sp)
+ copy 5.l (sp) ; gestalt_Timer
+ glk 0x04.l 0x02.b (:glk_result).l
+ jz (:glk_result).l :pause_sin_pausa.l
+ ;jump :pause_sin_pausa.l
+ copy {4}.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event()
+:pause_esperar
+ copy :evento_type.l (sp)
+ glk 0xC0.l 0x01.b ~ ; glk_select()
+ jeq (:evento_type).l 0x05.l :pause_hubo_evento_arrange.l
+ jne (:evento_type).l 0x06.l :pause_bucle_lectura_teclado.l ; No es redraw
+:pause_hubo_evento_arrange
+ bitor (:flag012).l 16.l (:flag012).l ;  Pongo a uno el bit del flag 12 que nos dice si hubo un evento arrange 
+ call :poner_grafico 0x00.b ~
+ jz (:hay_interrupt).l :no_interrupt_proc_pause .l
+ call :interrupt_proc.l 0x00.b ~
+:no_interrupt_proc_pause  
+:pause_bucle_lectura_teclado
+ jne (:evento_type).l 0x01.l :pause_esperar.l
+:pause_sin_pausa
+ copy 0.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event()
+ return 0
+
+;;;;;;;;
+; GOTO ;
+;;;;;;;;;;;;;;;
+:acc_goto
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy {0}.l (:flag038).l
+ return 0
+
+;;;;;;;;;;;
+; MESSAGE ;
+;;;;;;;;;;;;;;;;;;
+:acc_message
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy {0}.l (sp)
+ call :escribir_mensaje_usuario.l 0x01.l ~
+ streamchar 10
+ return 0
+
+;;;;;;;;;;
+; REMOVE ;
+;;;;;;;;;;;;;;;;;
+:acc_remove
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ copy 0.l (:exito).l
+ copy {0}.l (:flag051).l 
+ copy {0}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ mul {0}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l		
+ aload :objetos.l {8}.l {12}.l				; obtenemos su localidad
+ jeq {12}.l 254.l :remove_llevado_o_aqui.l		; Lo llevamos en las manos!!
+ jne {12}.l (:flag038).l :remove_ni_llevado_ni_aqui.l	; No lo llevamos en las manos ni esta en la localidad actual
+
+:remove_llevado_o_aqui					; El objeto lo tenemos en las manos o bien esta en la localidad actual
+ copy 50.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~		;  No llevas puesto _.
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+ 
+:remove_ni_llevado_ni_aqui
+ jeq {12}.l 253.l :remove_puesto.l			; Si lo llevo puesto salto a la rutina de quitarmelo
+ copy 23.l (sp)						; En caso contraio esta vete tu a saber donde
+ call :escribir_mensaje_sistema.l 0x01.b ~		; "No llevas eso puesto."
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+ 
+ 
+:remove_puesto						; Comprobamos que es una prenda
+ jlt (:flag001).l (:flag037).l :remove_me_cabe.l
+ copy 42.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~		; "No puedes quitarte _.  Tienes demasiadas cosas en las manos."
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+:remove_me_cabe
+ astore :objetos.l {8}.l 254.l
+ add (:flag001).l 1.l (:flag001).l
+ copy 38.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~		;"Te has quitado _."
+ copy 1.l (:exito).l
+ return 0
+
+;;;;;;;
+; GET ;
+;;;;;;;;;;;;;;
+:acc_get
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ 
+ copy 0.l (:exito).l			; En principio marco la accion como 'no exitosa'
+ copy {0}.l {4}.l
+ copy {0}.l (:flag051).l
+
+ copy {4}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ 
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {8}.l		; obtengo la localidad del objeto
+ 
+ jeq {8}.l 253.l :get_ya_lo_tenia.l
+ jeq {8}.l 254.l :get_ya_lo_tenia.l	; Si lo llevo puesto o lo llevo salto
+ 
+ jne {8}.l (:flag038).l :get_no_esta_aqui.l ; Si ni lo llevo ni lo llevo puesto ni esta aqui salto
+ 
+ add {4}.l 1.l {12}.l			; Está aquí
+ aload :objetos.l {12}.l {16}.l		; Cojo su peso
+ 
+ ; Si el objeto pesa 0 ni siquiera comprobamos si es contenedor, porque si lo fuera es un contenedor
+ ; 'mágico' en el que lo incluido 'no pesa'.
+ jz {16}.l :no_contenedor.l
+ 
+ add 1.l {12}.l {12}.l
+ aload :objetos.l {12}.l {20}.l ; en {20}.l los 32 bits bajos de indicadores si es contenedor
+ copy {20}.l (sp)
+ copy 1.l (sp)
+ call :bittest.l 0x02.b {20}.l
+ jz {20}.l :no_contenedor.l		; No es un contenedor
+
+ ; Si es contenedor, añadir el peso de los contenidos
+ copy {0}.l (sp)
+ call :calcular_peso_localidad.l 0x01.b (sp) ; Calculo el peso de los objetos dentro del objeto a coger
+ add (sp) {16}.l {16}.l   
+ 
+ :no_contenedor
+ 
+ copy 254.l (sp)
+ call :calcular_peso_localidad.l 0x01.b (sp) ; Calculo el peso de los objetos que llevo
+ add (sp) {16}.l {16}.l
+ copy 253.l (sp)
+ call :calcular_peso_localidad.l 0x01.b (sp) ; Calculo el peso de los objetos que llevo puestos
+ add (sp) {16}.l {16}.l
+ jgt {16}.l (:flag052).l :get_pesa_demasiado.l	;Si sumados + el del objeto es demasiado salto
+ 
+ jge (:flag001).l (:flag037).l :get_no_puedo_llevar_mas.l ; Si ya llevo demasiados objetos salto
+ 
+ astore :objetos.l {4}.l 254.l		; Le pongo en la localidad 254
+ add (:flag001).l 1.l (:flag001).l
+ copy 1.l (:exito).l			; condacto condicional finalizado con exito
+ copy 36.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+;  *************************   Casos fallidos: 
+:get_no_puedo_llevar_mas
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ copy 27.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ ; Y ADEMAS CANCELAR EL DOALL
+ ;... por ejemplo:
+ copy 0.l (:bandera_en_doall).l
+ return 0
+:get_pesa_demasiado
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ copy 43.l (sp)
+ copy 0.l (:bandera_en_doall).l
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+:get_no_esta_aqui
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ copy 26.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+:get_ya_lo_tenia
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ copy 25.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+
+;;;;;;;;
+; DROP ;
+;;;;;;;;;;;;;;;
+:acc_drop
+ dc.b 0xc1 0x04 0x05 0x00 0x00
+ copy 0.l (:exito).l
+ copy {0}.l {4}.l
+ copy {0}.l (:flag051).l
+ copy {4}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {8}.l
+ jeq {8}.l 253.l :drop_lo_lleva_puesto.l	; Salto si lo llevo puesto
+ jeq {8}.l (:flag038).l :drop_esta_aqui.l	; salto si esta aqui
+ jne {8}.l 254.l :drop_no_lo_tenia.l		; salto si no lo tengo
+ astore :objetos.l {4}.l (:flag038).l		; lo dejo
+ sub (:flag001).l 1.l (:flag001).l
+ copy 1.l (:exito).l				; exito
+ copy 39.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+ ; ************************* Casos fallidos:
+:drop_esta_aqui
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ copy 49.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+:drop_no_lo_tenia
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ copy 28.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+:drop_lo_lleva_puesto
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ copy 24.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+
+;;;;;;;;
+; WEAR ;
+;;;;;;;;;;;;;;;
+:acc_wear
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ copy {0}.l (:flag051).l 
+ copy 0.l (:exito).l
+ copy {0}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ mul {0}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag038).l :wear_no_aqui.l	
+ copy 49.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~  ; Fallido 1: esta aqui
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+:wear_no_aqui
+ jne {12}.l 253.l :wear_no_puesto.l
+ copy 29.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~  ; Fallido 2: ya lo llevamos puesto
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+:wear_no_puesto
+ jeq {12}.l 254.l :wear_llevado.l	    ; Fallido 3: no lo tenemos en las manos
+ copy 28.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+:wear_llevado				     ; vale, lo llevamos en las manos
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l		     ; cojo los lo_flags
+ copy {12}.l (sp)
+ copy 1.l (sp)
+ call :bittest 0x02.b {12}.l		     ; compruebo que esta a 1 el bit 1 (prenda)
+ jnz {12}.l :wear_es_prenda.l		
+ copy 40.l (sp)				     ; Fallido 4: no es una prenda
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+:wear_es_prenda				     ; Exito, me lo pongo
+ sub {8}.l 2.l {8}.l
+ astore :objetos.l {8}.l 253.l		; Me lo pongo
+ sub (:flag001).l 1.l (:flag001).l
+ copy 37.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 1.l (:exito).l
+ return 0
+
+;;;;;;;;;;;
+; DESTROY ;
+;;;;;;;;;;;;;;;;;;
+:acc_destroy
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy {0}.l {4}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {8}.l
+ jeq {8}.l 254.l :destroy_lo_llevaba.l
+ astore :objetos.l {4}.l 252.l
+ return 0
+:destroy_lo_llevaba
+ sub (:flag001).l 1.l (:flag001).l
+ astore :objetos.l {4}.l 252.l
+ return 0
+
+;;;;;;;;;;
+; CREATE ;
+;;;;;;;;;;;;;;;;;
+:acc_create
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy {0}.l {4}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {8}.l
+ jeq {8}.l 254.l :create_lo_llevaba.l
+ jeq {8}.l 253.l :create_lo_llevaba.l
+ astore :objetos.l {4}.l (:flag038).l
+ return 0
+:create_lo_llevaba
+ sub (:flag001).l 1.l (:flag001).l
+ astore :objetos.l {4}.l (:flag038).l
+ return 0
+
+;;;;;;;;
+; SWAP ;
+;;;;;;;;;;;;;;;
+:acc_swap
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ copy {0}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ copy {4}.l {16}.l
+ mul {16}.l 7.l {16}.l
+ add {16}.l 2.l {16}.l
+ aload :objetos.l {16}.l {20}.l
+ astore :objetos.l {8}.l {20}.l
+ astore :objetos.l {16}.l {12}.l
+ copy {4}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ return 0
+
+;;;;;;;;;
+; PLACE ;
+;;;;;;;;;;;;;;;;
+:acc_place
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ jne {4}.l 255 :place_not_255.l
+ copy (:flag038).l {4}.l
+:place_not_255 
+ copy {0}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 254.l :place_lo_llevaba.l
+:place_hazlo
+ jne {4}.l 255.l :place_no_era_aqui.l
+ astore :objetos.l {8}.l (:flag038).l
+ return 0
+:place_no_era_aqui
+ astore :objetos.l {8}.l {4}.l
+ jne {4}.l 254.l 0
+ add (:flag001).l 1.l (:flag001).l
+ return 0
+:place_lo_llevaba
+ sub (:flag001).l 1.l (:flag001).l
+ jump :place_hazlo.l
+
+;;;;;;;
+; SET ;
+;;;;;;;;;;;;;;
+:acc_set
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ astore :flags.l {0}.l 255.l
+ return 0
+
+;;;;;;;;;
+; CLEAR ;
+;;;;;;;;;;;;;;;;
+:acc_clear
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ astore :flags.l {0}.l 0.l
+ return 0
+
+;;;;;;;;
+; PLUS ;
+;;;;;;;;;;;;;;;
+:acc_plus
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ add {8}.l {4}.l {8}.l
+ astore :flags.l {0}.l {8}.l
+ return 0
+
+;;;;;;;;;
+; MINUS ;
+;;;;;;;;;;;;;;;;
+:acc_minus
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ sub {8}.l {4}.l {8}.l
+ astore :flags.l {0}.l {8}.l
+ return 0
+
+;;;;;;;
+; LET ;
+;;;;;;;;;;;;;;
+:acc_let
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ astore :flags.l {0}.l {4}.l
+ return 0
+
+;;;;;;;;;;;
+; NEWLINE ;
+;;;;;;;;;;;;;;;;;;
+:acc_newline
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ streamchar 10
+ return 0
+
+;;;;;;;;;
+; PRINT ;
+;;;;;;;;;;;;;;;;
+:acc_print
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ aload :flags.l {0}.l {4}.l
+ streamnum {4}.l
+ return 0
+
+;;;;;;;;;;;
+; SYSMESS ;
+;;;;;;;;;;;;;;;;;;
+:acc_sysmess
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy {0}.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+
+;;;;;;;;;;
+; COPYOF ;
+;;;;;;;;;;;;;;;;;
+:acc_copyof
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l {0}.l
+ aload :objetos.l {0}.l {0}.l
+ astore :flags.l {4}.l {0}.l
+ return 0
+
+;;;;;;;;;;
+; COPYOO ;
+;;;;;;;;;;;;;;;;;
+:acc_copyoo
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ mul {0}.l 7.l {0}.l
+ add {0}.l 2.l {0}.l
+ aload :objetos.l {0}.l {8}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {12}.l
+ astore :objetos.l {0}.l {12}.l
+ astore :objetos.l {4}.l {8}.l
+ copy {4}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ return 0
+
+;;;;;;;;;;
+; COPYFO ;
+;;;;;;;;;;;;;;;;;
+:acc_copyfo
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ astore :objetos.l {4}.l {8}.l
+ return 0
+
+;;;;;;;;;;
+; COPYFF ;
+;;;;;;;;;;;;;;;;;
+:acc_copyff
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ astore :flags.l {4}.l {8}.l
+ return 0
+
+;;;;;;;;;;;
+; LISTOBJ ;
+;;;;;;;;;;;;;;;;;;
+:acc_listobj
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ copy (:flag038).l (sp)
+ call :contar_objetos_en.l 0x01.b {0}.l
+ jz {0}.l 0
+ copy 0x01.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy :objetos.l {4}.l
+ copy 0.l {12}.l
+:listobj_bucle_objetos
+ jge {4}.l :fin_de_objetos.l :listobj_no_mas.l
+ aload {4}.l 2.l {8}.l
+ jne {8}.l (:flag038).l :listobj_siguiente_objeto.l
+ bitand (:flag012).l 8.l {8}.l  ; Si el bit 3 del flag 12 esta 0 cuento PSIs
+ jz {8}.l :cuenta_psi
+ aload {4}.l 4.l {8}.l
+ bitand {8}.l 8.l {8}.l 
+ jnz {8}.l :listobj_siguiente_objeto.l ; Si es un psi me lo salto
+:cuenta_psi 
+ copy {12}.l (sp)
+ bitor (:flag053).l 128.l (:flag053).l
+ bitand (:flag053).l 64 (sp)
+ jnz (sp) :listobj_listado_continuo.l
+ call :describir_objeto_en_mensaje_nolowercase.l 0x01.b ~
+ streamchar 10
+ jump :listobj_siguiente_objeto.l
+:listobj_listado_continuo
+ call :describir_objeto_en_mensaje.l 0x01.b ~
+ sub {0}.l 1.l {0}.l
+ jgt {0}.l 0 :listobj_no_era_el_ultimo.l
+ copy 48.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listobj_no_mas.l
+:listobj_no_era_el_ultimo
+ jgt {0}.l 1 :listobj_no_era_el_penultimo.l
+ copy 47.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listobj_siguiente_objeto.l
+:listobj_no_era_el_penultimo
+ copy 46.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listobj_siguiente_objeto.l
+:listobj_siguiente_objeto
+ add {4}.l 28.l {4}.l
+ add {12}.l 1.l {12}.l
+ jump :listobj_bucle_objetos.l
+:listobj_no_mas
+ return 0
+
+
+
+
+
+
+;;;;;;;;
+; BELL ;
+;;;;;;;;;;;;;;;
+:acc_bell
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;
+; ADD ;
+;;;;;;;;;;;;;;
+:acc_add
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ aload :flags.l {4}.l {12}.l
+ add {8}.l {12}.l {12}.l
+ astore :flags.l {4}.l {12}.l
+ return 0
+
+;;;;;;;
+; SUB ;
+;;;;;;;;;;;;;;
+:acc_sub
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ aload :flags.l {0}.l {8}.l
+ aload :flags.l {4}.l {12}.l
+ sub {8}.l {12}.l {12}.l
+ astore :flags.l {4}.l {12}.l
+ return 0
+
+;;;;;;;;;
+; PARSE ;
+;;;;;;;;;;;;;;;;
+:cnd_parse
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ jnz (:bandera_buffer_vacio).l 1
+ call :extraer_frase.l 0x00.b ~
+ jz (:bandera_habia_frase).l 1
+ return 0
+
+;;;;;;;;;;
+; LISTAT ;
+;;;;;;;;;;;;;;;;;
+:acc_listat
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ jne {0}.l 255 :listat_not_255.l
+ copy (:flag038).l {0}.l
+:listat_not_255 
+ copy {0}.l (sp)
+ call :contar_objetos_en.l 0x01.b {4}.l
+ jz {4}.l :listat_no_habia_objetos.l
+ copy :objetos.l {8}.l
+ copy 0.l {16}.l	; {16}-> Bucle de objetos
+:listat_bucle_objetos
+ jgt {16}.l (:numero_ultimo_objeto).l :listat_no_mas.l
+ copy {16}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l	 ; -> obtengo la localidad
+ jne {12}.l {0}.l :listat_siguiente_objeto.l ; -> y si no es igual paso de el objeto
+ bitand (:flag012).l 8.l {8}.l  ; Si el bit 3 del flag 12 esta 0 cuento PSIs
+ jz {8}.l :cuenta_psi_listat
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l	 ; -> obtengo los atributos bajos
+ bitand {12}.l 8.l {12}.l 
+ jnz {12}.l :listat_siguiente_objeto.l ; Si es un psi me lo salto
+:cuenta_psi_listat
+ copy {16}.l (sp)
+ bitor (:flag053).l 128.l (:flag053).l
+ bitand (:flag053).l 64 {20}.l
+ jnz {20}.l :listat_listado_continuo.l
+ call :describir_objeto_en_mensaje.l_nolowercase 0x01.b ~
+ streamchar 10
+ jump :listat_siguiente_objeto.l
+:listat_listado_continuo
+ call :describir_objeto_en_mensaje.l 0x01.b ~
+ sub {4}.l 1.l {4}.l
+ jgt {4}.l 0.l :listat_no_era_el_ultimo.l
+ copy 48.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listat_no_mas.l
+:listat_no_era_el_ultimo
+ jgt {4}.l 1 :listat_no_era_el_penultimo.l
+ copy 47.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listat_siguiente_objeto.l
+:listat_no_era_el_penultimo
+ copy 46.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listat_siguiente_objeto.l
+:listat_siguiente_objeto
+ add {16}.l 1.l {16}.l
+ jump :listat_bucle_objetos.l
+:listat_no_mas
+ return 0
+ 
+:listat_no_habia_objetos
+ copy 53.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ return 0
+
+
+
+;;;;;;;;;;;
+; PROCESS ;
+;;;;;;;;;;;;;;;;;;
+:acc_process
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ jgt {0}.l (:ultimo_proceso).l :proceso_no_existe.l
+ aload :tabla_procesos.l {0}.l {8}.l
+ copy {4}.l (sp) ; se le pasa la entrada a la que tiene que ir
+ call {8}.l 0x01.b ~
+ return 0
+:proceso_no_existe
+ streamstr :process_error_msg.l
+ streamnum {0}.l
+ streamchar 10
+ return 0
+
+;;;;;;;
+; MES ;
+;;;;;;;;;;;;;;
+:acc_mes
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy {0}.l (sp)
+ call :escribir_mensaje_usuario.l 0x01.b ~
+ return 0
+
+;;;;;;;;
+; MODE ;
+;;;;;;;;;;;;;;;
+:acc_mode
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy {0}.l (:flag040).l
+ return 0
+
+;;;;;;;;
+; TIME ;
+;;;;;;;;;;;;;;;
+:acc_time
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy {0}.l (:flag048).l
+ copy {4}.l (:flag049).l
+ return 0
+
+;;;;;;;;;
+; DOALL ;
+;;;;;;;;;;;;;;;;
+:acc_doall
+ dc.b 0xc1 0x04 0x07 0x00 0x00
+ copy 1.l (:bandera_en_doall).l
+ copy 0.l {4}.l
+ copy 0.l {24}.l
+:doall_bucle_objetos
+ jz (:bandera_en_doall).l 0 ; si fallo algun condacto que interrumpe DOALL rompemos el bucle
+ jgt {4}.l (:numero_ultimo_objeto).l :doall_fin.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ bitand (:flag012).l 8.l {12}.l  ; Si el bit 3 del flag 12 esta 0 paso por  PSIs
+ jz {12}.l :cuenta_psi_doall
+ add {8}.l 4.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ bitand {12}.l 8.l {12}.l 
+ jnz {12}.l :doall_siguiente_objeto.l ; Si es un psi me lo salto
+ sub {8}.l 4.l {8}.l
+:cuenta_psi_doall
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {0}.l 255.l :doall_no_es_aqui.l
+ jne {12}.l (:flag038).l :doall_siguiente_objeto.l
+ jump :doall_llamar_proceso
+:doall_no_es_aqui
+ jne {12}.l {0}.l :doall_siguiente_objeto.l
+ ;aqui, llamar al proceso correspondiente
+ ; con el objeto correspondiente
+:doall_llamar_proceso
+ add {24}.l 1.l {24}.l
+ sub {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l (:flag034).l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l (:flag035).l
+ copy {4}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ copy (:entrada_para_doall).l (sp)
+ copy (:proceso_en_doall).l (sp)
+ call :acc_process.l 0x02.b ~
+ jnz (:bandera_describir_localidad).l 0
+ jnz (:bandera_salir).l 0
+:doall_siguiente_objeto
+ add {4}.l 1.l {4}.l
+ jump :doall_bucle_objetos.l
+:doall_fin
+ jnz {24}.l :doall_final_del_todo.l
+ copy 1.l (:bandera_hecho).l
+:doall_final_del_todo
+ copy 0.l (:bandera_en_doall).l
+ return 0
+
+;;;;;;;;;;
+; PROMPT ;
+;;;;;;;;;;;;;;;;;
+:acc_prompt
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy {0}.l (:flag042).l
+ return 0
+
+;;;;;;;;;
+; WEIGH ;
+;;;;;;;;;;;;;;;;
+:acc_weigh
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy {0}.l (sp)
+ call :calcular_peso.l 0x01.b {8}.l
+ jlt {8}.l 0xff.l :weigh_no_pesa_mucho.l
+ copy 0xff.l {8}.l
+:weigh_no_pesa_mucho
+ astore :flags.l {4}.l {8}.l
+ return 0
+
+
+
+;;;;;;;;;
+; PUTIN ;
+;;;;;;;;;;;;;;;;
+:acc_putin
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ copy 0.l (:exito).l
+ jeq {0}.l {4}.l :putin_autometer
+ copy {0}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ mul {0}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l 253.l :putin_no_puesto.l
+ copy 24.l (sp)					; Lo llevamos puesto
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :putin_newtext_y_done.l
+:putin_no_puesto
+ jne {12}.l (:flag038).l :putin_ni_puesto_ni_aqui.l	
+ copy 49.l (sp)					  ; Esta aqui
+ call :escribir_mensaje_sistema.l 0x01.b ~		
+ jump :putin_newtext_y_done.l
+:putin_ni_puesto_ni_aqui
+ jeq {12}.l 254.l :putin_meter.l		  ; Lo tenemos en las manos, va bien
+ copy 28.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~	  ; No esta por aqui
+ jump :putin_newtext_y_done.l
+:putin_autometer				  ; Ha intentado meter un objeto en si mismo
+ copy 8.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~	  ; No puedes hacer eso
+ jump :putin_newtext_y_done.l
+:putin_meter 
+ mul {0}.l 7.l {8}.l
+ add {8}.l  2.l {8}.l
+ astore :objetos.l {8}.l {4}.l
+ sub (:flag001).l 1.l (:flag001).l
+ copy 44.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy {4}.l (sp)
+ call :describir_objeto_en_mensaje.l 0x01.b ~
+ copy 51.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 1.l (:exito).l
+ return 0
+:putin_newtext_y_done
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+
+;;;;;;;;;;;
+; TAKEOUT ;
+;;;;;;;;;;;;;;;;;;
+:acc_takeout
+ dc.b 0xc1 0x04 0x07 0x00 0x00
+ copy 0.l (:exito).l
+ copy {0}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ mul {0}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 253.l :takeout_puesto_o_llevado.l
+ jne {12}.l 254.l :takeout_ni_puesto_ni_llevado.l
+:takeout_puesto_o_llevado
+ copy 25.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :takeout_newtext_y_done.l
+:takeout_ni_puesto_ni_llevado
+ jne {12}.l (:flag038).l :takeout_no_aqui.l
+ copy 45.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy {4}.l (sp)
+ call :describir_objeto_en_mensaje.l 0x01.l ~
+ copy 51.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :takeout_newtext_y_done.l
+:takeout_no_aqui
+ jeq {12}.l {4}.l :takeout_esta_dentro.l
+ copy 52.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy {4}.l (sp)
+ call :describir_objeto_en_mensaje.l 0x01.l ~
+ copy 51.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :takeout_newtext_y_done.l
+:takeout_esta_dentro
+ copy 253.l (sp)
+ call :calcular_peso_localidad.l 0x01.b {16}.l
+ copy 254.l (sp)
+ call :calcular_peso_localidad.l 0x01.b {20}.l
+ copy {0}.l (sp)
+ call :calcular_peso.l 0x01.b {24}.l
+ add {24}.l {20}.l {24}.l
+ add {24}.l {16}.l {24}.l ; ahora, en 24 tenemos el peso de todo
+ jle {24}.l (:flag052).l :takeout_no_pesa_demasiado.l
+ copy 43.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :takeout_newtext_y_done.l
+:takeout_no_pesa_demasiado
+ jlt (:flag001).l (:flag037).l :takeout_me_cabe.l
+ copy 27.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ ; Y ADEMAS CANCELAR EL DOALL
+ copy 0.l (:bandera_en_doall).l
+ jump :takeout_newtext_y_done.l
+:takeout_me_cabe
+ astore :objetos.l {8}.l 254.l
+ add (:flag001).l 1.l (:flag001).l
+ copy 36.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy 1.l (:exito).l
+ return 0
+:takeout_newtext_y_done
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+
+;;;;;;;;;;;
+; NEWTEXT ;
+;;;;;;;;;;;;;;;;;;
+:acc_newtext
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy 1.l (:bandera_buffer_vacio).l
+ return 0
+
+;;;;;;;;;;;
+; ABILITY ;
+;;;;;;;;;;;;;;;;;;
+:acc_ability
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy {0}.l (:flag037).l
+ copy {4}.l (:flag052).l
+ return 0
+
+;;;;;;;;;;
+; WEIGHT ;
+;;;;;;;;;;;;;;;;;
+:acc_weight
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy 254.l (sp)
+ call :calcular_peso_localidad.l 0x01.l {4}.l
+ copy 253.l (sp)
+ call :calcular_peso_localidad.l 0x01.l (sp)
+ add {4}.l (sp) {4}.l
+ jlt {4}.l 255.l :weight_no_pesa_mucho.l
+ copy 0xff.l {4}.l
+:weight_no_pesa_mucho
+ astore :flags.l {0}.l {4}.l
+ return 0
+
+;;;;;;;;;;
+; RANDOM ;
+;;;;;;;;;;;;;;;;;
+:acc_random
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ random 100 {4}.l
+ astore :flags.l {0}.l {4}.l
+ return 0
+
+;;;;;;;;;
+; WHATO ;
+;;;;;;;;;;;;;;;;
+
+:acc_whato
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ jz (:flag034).l :whato_sin_nombre.l
+ copy -1.l {0}.l
+ copy 0.l {20}.l
+ copy 0.l {4}.l
+:whato_bucle_objetos_llevados
+ jgt {4}.l (:numero_ultimo_objeto).l :whato_fin_llevados.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whato_siguiente_objeto_llevados.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whato_no_adjetivo_llevados.l
+ jeq (:flag035).l 255.l :whato_no_adjetivo_llevados.l
+ jne {12}.l (:flag035).l :whato_siguiente_objeto_llevados.l
+:whato_no_adjetivo_llevados
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l 254.l :whato_siguiente_objeto_llevados.l
+ copy {4}.l {0}.l
+:whato_siguiente_objeto_llevados
+ add {4}.l 1.l {4}.l
+ jump :whato_bucle_objetos_llevados.l
+:whato_fin_llevados
+ jne {0}.l -1.l :whato_fin_busqueda.l
+
+ copy 0.l {4}.l
+:whato_bucle_objetos_puestos
+ jgt {4}.l (:numero_ultimo_objeto).l :whato_fin_puestos.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whato_siguiente_objeto_puestos.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whato_no_adjetivo_puestos.l
+ jeq (:flag035).l 255.l :whato_no_adjetivo_puestos.l
+ jne {12}.l (:flag035).l :whato_siguiente_objeto_puestos.l
+:whato_no_adjetivo_puestos
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l 253.l :whato_siguiente_objeto_puestos.l
+ copy {4}.l {0}.l
+:whato_siguiente_objeto_puestos
+ add {4}.l 1.l {4}.l
+ jump :whato_bucle_objetos_puestos.l
+:whato_fin_puestos
+ jne {0}.l -1.l :whato_fin_busqueda.l
+ 
+ copy 0.l {4}.l
+:whato_bucle_objetos_presentes
+ jgt {4}.l (:numero_ultimo_objeto).l :whato_fin_presentes.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whato_siguiente_objeto_presentes.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whato_no_adjetivo_presentes.l
+ jeq (:flag035).l 255.l :whato_no_adjetivo_presentes.l
+ jne {12}.l (:flag035).l :whato_siguiente_objeto_presentes.l
+:whato_no_adjetivo_presentes
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag038).l :whato_siguiente_objeto_presentes.l
+ copy {4}.l {0}.l
+:whato_siguiente_objeto_presentes
+ add {4}.l 1.l {4}.l
+ jump :whato_bucle_objetos_presentes.l
+:whato_fin_presentes
+ jne {0}.l -1.l :whato_fin_busqueda.l
+ 
+ copy 0.l {4}.l 
+:whato_bucle_objetos_cualquiersitio
+ jgt {4}.l (:numero_ultimo_objeto).l :whato_fin_cualquiersitio.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whato_siguiente_objeto_cualquiersitio.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whato_no_adjetivo_cualquiersitio.l
+ jeq (:flag035).l 255.l :whato_no_adjetivo_cualquiersitio.l
+ jne {12}.l (:flag035).l :whato_siguiente_objeto_cualquiersitio.l
+:whato_no_adjetivo_cualquiersitio
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ copy {4}.l {0}.l
+:whato_siguiente_objeto_cualquiersitio
+ add {4}.l 1.l {4}.l
+ jump :whato_bucle_objetos_cualquiersitio.l
+:whato_fin_cualquiersitio
+ jeq {0}.l -1.l :whato_no_encontrado.l
+ 
+:whato_fin_busqueda
+ copy {0}.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ return 0
+:whato_no_encontrado
+:whato_sin_nombre
+ copy 255.l (sp)
+ call :poner_obj_referenciado 0x01.b ~
+ return 0
+
+;;;;;;;;;
+; RESET ;
+;;;;;;;;;;;;;;;;
+:acc_reset
+ dc.b 0xc1 0x04 0x05 0x00 0x00
+ copy 0.l {12}.l
+:reset_bucle_objetos
+ copy {12}.l {4}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {8}.l
+ jne {8}.l (:flag038).l :reset_objeto_no_aqui.l
+ astore :objetos.l {4}.l {0}.l
+ jump :reset_siguiente_objeto.l
+:reset_objeto_no_aqui
+ aload :localidad_inicial.l {12}.l {16}.l
+ astore :objetos.l {4}.l {16}.l
+:reset_siguiente_objeto
+ add {12}.l 1.l {12}.l
+ jle {12}.l (:numero_ultimo_objeto).l :reset_bucle_objetos.l
+ 
+ return 0
+
+;;;;;;;;
+; PUTO ;
+;;;;;;;;;;;;;;;
+:acc_puto
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ jne {0}.l 255.l :puto_no_loc_actual.l
+  copy (:flag038).l {0}.l
+ :puto_no_loc_actual
+ copy (:flag051).l {4}.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ add {8}.l 2.l {8}.l
+ aload :objetos.l {8}.l {12}.l ; en {12}, el lugar del objeto
+ jne {12}.l 254.l :puto_no_lo_llevaba.l
+ sub (:flag001).l 1.l (:flag001).l
+:puto_no_lo_llevaba
+ astore :objetos.l {8}.l {0}.l
+ jne {0}.l 254.l :puto_no_lo_ha_cogido.l
+ add (:flag001).l 1.l (:flag001).l
+:puto_no_lo_ha_cogido
+ copy {0}.l (:flag054).l
+ return 0
+
+;;;;;;;;;;;
+; NOTDONE ;
+;;;;;;;;;;;;;;;;;;
+:acc_notdone
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ copy 0.l (:bandera_hecho).l
+ return 0
+
+;;;;;;;;;
+; AUTOP ;
+;;;;;;;;;;;;;;;;
+:acc_autop
+ dc.b 0xc1 0x04 0x07 0x00 0x00
+ copy 0.l (:exito).l
+ jeq (:flag034).l 255.l :autop_sin_nombre.l
+ copy -1.l {20}.l
+ copy 0.l {24}.l
+:autop_bucle_objetos_llevados
+       jgt {24}.l (:numero_ultimo_objeto).l :autop_fin_llevados.l
+       copy {24}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autop_siguiente_objeto_llevados.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autop_no_adjetivo_llevados.l
+       jeq (:flag035).l 255.l :autop_no_adjetivo_llevados.l
+       jne {12}.l (:flag035).l :autop_siguiente_objeto_llevados.l
+      :autop_no_adjetivo_llevados
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 254.l :autop_siguiente_objeto_llevados.l
+       copy {24}.l {20}.l
+      :autop_siguiente_objeto_llevados
+       add {24}.l 1.l {24}.l
+       jump :autop_bucle_objetos_llevados.l
+:autop_fin_llevados
+ jne {20}.l -1.l :autop_fin_busqueda.l
+ 
+ copy 0.l {24}.l
+:autop_bucle_objetos_puestos
+       jgt {24}.l (:numero_ultimo_objeto).l :autop_fin_puestos.l
+       copy {24}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autop_siguiente_objeto_puestos.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autop_no_adjetivo_puestos.l
+       jeq (:flag035).l 255.l :autop_no_adjetivo_puestos.l
+       jne {12}.l (:flag035).l :autop_siguiente_objeto_puestos.l
+      :autop_no_adjetivo_puestos
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 253.l :autop_siguiente_objeto_puestos.l
+       copy {24}.l {20}.l
+      :autop_siguiente_objeto_puestos
+       add {24}.l 1.l {24}.l
+       jump :autop_bucle_objetos_puestos.l
+:autop_fin_puestos
+ jne {20}.l -1.l :autop_fin_busqueda.l
+ 
+ copy 0.l {24}.l
+:autop_bucle_objetos_aqui
+       jgt {24}.l (:numero_ultimo_objeto).l :autop_fin_aqui.l
+       copy {24}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autop_siguiente_objeto_aqui.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autop_no_adjetivo_aqui.l
+       jeq (:flag035).l 255.l :autop_no_adjetivo_aqui.l
+       jne {12}.l (:flag035).l :autop_siguiente_objeto_aqui.l
+      :autop_no_adjetivo_aqui
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag038).l :autop_siguiente_objeto_aqui.l
+       copy {24}.l {20}.l
+      :autop_siguiente_objeto_aqui
+       add {24}.l 1.l {24}.l
+       jump :autop_bucle_objetos_aqui.l
+:autop_fin_aqui
+ jeq {20}.l -1.l :autop_no_encontrado.l
+ 
+:autop_fin_busqueda
+ copy {0}.l (sp)
+ copy {20}.l (sp)
+ call :acc_putin.l 0x02.b ~
+ return 0
+:autop_no_encontrado
+:autop_sin_nombre
+ copy 28.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~ 
+ return 0
+
+;;;;;;;;;
+; AUTOT ;
+;;;;;;;;;;;;;;;;
+:acc_autot
+ dc.b 0xc1 0x04 0x0b 0x00 0x00
+ copy 0.l (:exito).l
+ jeq (:flag034).l 255.l :autot_sin_nombre.l
+ copy -1.l {40}.l
+ copy 0.l {20}.l
+ copy 0.l {24}.l
+:autot_bucle_objetos_cont
+       jgt {24}.l (:numero_ultimo_objeto).l :autot_fin_cont.l
+       copy {24}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autot_siguiente_objeto_cont.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autot_no_adjetivo_cont.l
+       jeq (:flag035).l 255.l :autot_no_adjetivo_cont.l
+       jne {12}.l (:flag035).l :autot_siguiente_objeto_cont.l
+      :autot_no_adjetivo_cont
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l {0}.l :autot_siguiente_objeto_cont.l
+       copy {24}.l {40}.l
+      :autot_siguiente_objeto_cont
+       add {24}.l 1.l {24}.l
+       jump :autot_bucle_objetos_cont.l
+:autot_fin_cont
+ jne {40}.l -1.l :autot_fin_busqueda.l
+ 
+ copy 0.l {24}.l
+:autot_bucle_objetos_llevados
+       jgt {24}.l (:numero_ultimo_objeto).l :autot_fin_llevados.l
+       copy {24}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autot_siguiente_objeto_llevados.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq (:flag035).l 255.l :autot_no_adjetivo_llevados.l
+       jeq {12}.l 255.l :autot_no_adjetivo_llevados.l
+       jne {12}.l (:flag035).l :autot_siguiente_objeto_llevados.l
+      :autot_no_adjetivo_llevados
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 254.l :autot_siguiente_objeto_llevados.l
+       copy {24}.l {40}.l
+      :autot_siguiente_objeto_llevados
+       add {24}.l 1.l {24}.l
+       jump :autot_bucle_objetos_llevados.l
+:autot_fin_llevados
+ jne {40}.l -1.l :autot_fin_busqueda.l
+ 
+ copy 0.l {24}.l
+:autot_bucle_objetos_puestos
+       jgt {24}.l (:numero_ultimo_objeto).l :autot_fin_puestos.l
+       copy {24}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autot_siguiente_objeto_puestos.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autot_no_adjetivo_puestos.l
+       jeq (:flag035).l 255.l :autot_no_adjetivo_puestos.l
+       jne {12}.l (:flag035).l :autot_siguiente_objeto_puestos.l
+      :autot_no_adjetivo_puestos
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l 253.l :autot_siguiente_objeto_puestos.l
+       copy {24}.l {40}.l
+      :autot_siguiente_objeto_puestos
+       add {24}.l 1.l {24}.l
+       jump :autot_bucle_objetos_puestos.l
+:autot_fin_puestos
+ jne {40}.l -1.l :autot_fin_busqueda.l
+ 
+ copy 0.l {24}.l
+:autot_bucle_objetos_aqui
+       jgt {24}.l (:numero_ultimo_objeto).l :autot_fin_aqui.l
+       copy {24}.l {8}.l
+       mul {8}.l 7.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag034).l :autot_siguiente_objeto_aqui.l
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jeq {12}.l 255.l :autot_no_adjetivo_aqui.l
+       jeq (:flag035).l 255.l :autot_no_adjetivo_aqui.l
+       jne {12}.l (:flag035).l :autot_siguiente_objeto_aqui.l
+      :autot_no_adjetivo_aqui
+       add {8}.l 1.l {8}.l
+       aload :objetos.l {8}.l {12}.l
+       jne {12}.l (:flag038).l :autot_siguiente_objeto_aqui.l
+       copy {24}.l {40}.l
+      :autot_siguiente_objeto_aqui
+       add {24}.l 1.l {24}.l
+       jump :autot_bucle_objetos_aqui.l
+:autot_fin_aqui
+ jeq {40}.l -1.l :autot_no_encontrado.l
+ 
+:autot_fin_busqueda
+ copy {0}.l (sp)
+ copy {40}.l (sp)
+ call :acc_takeout.l 0x02.b ~
+ return 0
+:autot_no_encontrado
+:autot_sin_nombre
+ copy 52.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ copy {0}.l
+ call :describir_objeto_en_mensaje.l 0x01.l ~
+ copy 51.l(sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ call :acc_done.l 0x00.b ~
+ return 0
+
+;;;;;;;;
+; MOVE ;
+;;;;;;;;;;;;;;;
+:cnd_move
+ dc.b 0xc1 0x04 0x4 0x00 0x00
+ aload :flags.l {0}.l {4}.l	; Carga el valor del flag en {4}
+ mul {4}.l 16.l {4}.l		; Guarda en {4} la direccion base de las conexiones de la localidad
+ add {4}.l (:flag033).l {4}.l	; Incrementa en el valor del verbo de direccion para apuntar al la salida en concreto
+ aload :conexiones.l {4}.l {8}.l
+ jeq {8}.l -1.l 0		; Si la salida es -1 retorno, no hay salida
+ astore :flags.l {0}.l {8}.l
+ return 1
+
+
+;;;;;;;;;;
+; EXTERN ;
+;;;;;;;;;;;;;;;;;
+:acc_extern
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;;
+; PAPER ;
+;;;;;;;;;;;;;;;;
+:acc_paper
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ jz (:glk_winnum_graficos).l :acc_paper_no_graficos
+ aload :colores.l {0}.l (sp)
+ ;copy {0}.l (sp)
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x00eb.l 0x02.b ~ ; glk_window_set_background_color(winnum_graficos, color)
+:acc_paper_no_graficos
+ return 0
+
+;;;;;;;
+; INK ;
+;;;;;;;;;;;;;;
+:acc_ink
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;;;
+; BORDER ;
+;;;;;;;;;;;;;;;;;
+:acc_border
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;;;;
+; CHARSET ;
+;;;;;;;;;;;;;;;;;;
+:acc_charset
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy {0}.l (:estilo_actual).l
+ ;copy {0}.l (sp)
+ ;glk 0x86.l 0x01.b ~
+ return 0
+
+;;;;;;;;
+; LINE ;
+;;;;;;;;;;;;;;;
+:acc_line
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;;;;
+; PICTURE ;
+;;;;;;;;;;;;;;;;;;
+:acc_picture
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ 
+ call :reabrir_ventana_grafica.l 0x00.b ~
+ copy {0}.l (:grafico_actual).l
+ call :poner_grafico.l 0x00.b ~
+
+ return 0
+
+;;;;;;;;;;;
+; GRAPHIC ;
+;;;;;;;;;;;;;;;;;;
+:acc_graphic
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jne {0}.l 0x01.l :acc_graphic_poner.l
+
+ ; QUITAR VENTANA GRAFICA
+
+ copy 0x00.l (:programa_quiere_graficos).l
+ call :cerrar_ventana_grafica.l 0x00.b ~
+ jump :acc_graphic_fin.l
+
+ ; PONER VENTANA GRAFICA
+
+:acc_graphic_poner
+ copy 0x01.l (:programa_quiere_graficos).l
+ call :reabrir_ventana_grafica.l 0x00.b ~
+
+:acc_graphic_fin
+ return 0
+
+;;;;;;;;;
+; INPUT ;
+;;;;;;;;;;;;;;;;
+:acc_input
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;;;
+; SAVEAT ;
+;;;;;;;;;;;;;;;;;
+:acc_saveat
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;;;
+; BACKAT ;
+;;;;;;;;;;;;;;;;;
+:acc_backat
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;;;;
+; PRINTAT ;
+;;;;;;;;;;;;;;;;;;
+:acc_printat
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ streamchar 32
+ return 0
+
+;;;;;;;;;;;
+; PROTECT ;
+;;;;;;;;;;;;;;;;;;
+:acc_protect
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ return 0
+
+;;;;;;;;
+; BEEP ;
+;;;;;;;;;;;;;;;
+:acc_beep
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy {8}.l (sp)
+ copy {4}.l (sp)
+ copy {0}.l (sp)
+ call :ejecutar_efecto.l 0x03.b ~
+ return 0
+
+;;;;;;;;;
+; SOUND ;
+;;;;;;;;;;;;;;;;
+:acc_sound
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jz {0}.l :acc_sound_poner_sonidos.l
+ copy 0.l (:programa_quiere_sonido).l
+ jump :acc_sound_final.l
+:acc_sound_poner_sonidos
+ copy 1.l (:programa_quiere_sonido).l
+:acc_sound_final
+ return 0
+
+
+;;;;;;;;;
+; OZERO ;
+;;;;;;;;;
+:cnd_ozero
+dc.b 0xc1 0x04 0x02 0x00 0x00
+jgt {4}.l 63.l 1			; si el bit es > 63 es absurdo, devuelve 'false'
+mul {0}.l 7.l {0}.l
+jlt {4}.l 32 :lo_ozero
+add  1.l {0}.l {0}.l
+sub {4}.l 32 {4}.l
+:lo_ozero
+add  4.l {0}.l {0}.l
+aload :objetos.l {0}.l {0}.l
+copy {0}.l (sp)
+copy {4}.l (sp)
+call :bittest 0x02.b (sp)
+jnz (sp) 0
+return 1
+
+;;;;;;;;;;;;
+; ONOTZERO ;
+;;;;;;;;;;;;
+:cnd_onotzero
+dc.b 0xc1 0x04 0x02 0x00 0x00
+jgt {4}.l 63.l 1			; si el bit es > 63 es absurdo, devuelve 'false'
+mul {0}.l 7.l {0}.l
+jlt {4}.l 32 :lo_onotzero
+add  1.l {0}.l {0}.l
+sub {4}.l 32 {4}.l
+:lo_onotzero
+add  4.l {0}.l {0}.l
+aload :objetos.l {0}.l {0}.l
+copy {0}.l (sp)
+copy {4}.l (sp)
+call :bittest 0x02.b (sp)
+jnz (sp) 1
+return 0
+
+
+;;;;;;;;
+; OSET ;
+;;;;;;;;;;;;;;;
+:acc_oset
+dc.b 0xc1 0x04 0x04 0x00 0x00
+; Viene en {0} el objno, y en {4} el bitno. {8} y {12} son variables globales
+jgt {4}.l 63.l 0			; si el bit es > 63 es absurdo, vuelve sin hacer nada 
+mul {0}.l 7.l {8}.l
+jlt {4}.l 32 :lo_oset
+add 1.l {8}.l  {8}.l
+sub {4}.l 32 {4}.l
+:lo_oset
+add 4.l {8}.l  {8}.l
+aload :objetos.l {8}.l {12}.l
+copy {12}.l (sp)
+copy {4}.l (sp)
+call :bitset 0x02.b (sp)
+copy (sp) {12}.l
+astore :objetos.l {8}.l {12}.l
+return 0
+
+
+;;;;;;;;;;
+; OCLEAR ;
+;;;;;;;;;;;;;;;;;
+:acc_oclear
+dc.b 0xc1 0x04 0x04 0x00 0x00
+; Viene en {0} el objno, y en {4} el bitno. {8} y {12} son variables globales
+jgt {4}.l 63.l 0			; si el bit es > 63 es absurdo, vuelve sin hacer nada 
+mul {0}.l 7.l {8}.l
+jlt {4}.l 32 :lo_oclear
+add 1.l {8}.l  {8}.l
+sub {4}.l 32 {4}.l
+:lo_oclear
+add 4.l {8}.l  {8}.l
+aload :objetos.l {8}.l {12}.l
+copy {12}.l (sp)
+copy {4}.l (sp)
+call :bitclear 0x02.b (sp)
+copy (sp) {12}.l
+astore :objetos.l {8}.l {12}.l
+return 0
+
+;;;;;;;;;;;
+; ISLIGHT ;
+;;;;;;;;;;;
+:cnd_islight
+dc.b 0xc1 0x04 0x01 0x00 0x00
+jz (:flag000).l 1		; Si hay luz en la localidad se cumple
+call :light_here.l 0x00.b {0}.l
+return {0}.l			; En caso contrario es cierto si hay un objeto con luz
+
+
+
+;;;;;;;;;;;;;;
+; ISNOTLIGHT ;
+;;;;;;;;;;;;;;
+:cnd_isnotlight
+dc.b 0xc1 0x04 0x01 0x00 0x00
+jz (:flag000).l 0		; Si hay luz en la localidad no se cumple
+call :light_here.l 0x00.b {0}.l	; En caso contrario se cumple si no hay objetos con luz
+jz {0}.l 1
+return 0
+
+;;;;;;;;;;;
+; VERSION ;
+;;;;;;;;;;;
+:acc_version
+dc.b 0xc1 0x00 0x00 0x00 0x00
+streamstr :spg_version.l
+return 0
+
+
+;;;;;;;;;
+; DEBUG ;
+;;;;;;;;;
+:acc_debug
+dc.b 0xc1 0x04 0x01 0x00 0x00
+copy {0}.l (:debug_activo).l
+return 0
+
+
+;;;;;;;;;
+; WRITE ;
+;;;;;;;;;;;;;;;;
+:acc_write
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy {0}.l (sp)
+ call :escribir_mensaje_write.l 0x01.b ~
+ return 0
+
+;;;;;;;;;;;
+; WRITELN ;
+;;;;;;;;;;;;;;;;;;
+:acc_writeln
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy {0}.l (sp)
+ call :escribir_mensaje_write.l 0x01.b ~
+ streamchar 10
+ return 0
+
+
+;;;;;;;;;;;
+; RESTART ;
+;;;;;;;;;;;;;;;;;;
+:acc_restart
+ dc.b 0xc1 0x04 0x02 0x00 0x00 ; En realidad jamas se llega a este codigo, pero debe estar
+ return 0
+
+
+;;;;;;;;;;;;;;
+; TRANSCRIPT ;
+;;;;;;;;;;;;;;
+:acc_transcript
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ jz {0}.l :acc_transcript_finalizar_transcript.l
+:acc_transcript_iniciar_transcript
+ copy (:glk_winnum_texto).l (sp) ; ventana
+ glk 0x2E.l 0x01.b (sp) ; ver si la ventana ya tiene flujo de eco [glk_window_get_echo_stream]
+ jnz (sp) 0 ; si ya tiene, no hacer nada y volver
+ copy 0.l (sp) ; rock = 0
+ copy 0x01.l (sp) ; fmode = filemode_Write
+ copy 0x102.l (sp) ; usage = fileusage_Transcript + fileusage_TextMode
+ glk 0x62.l 0x03.b {4}.l ; abrir fichero pedido al usuario y guardar referencia en {4}.l [glk_fileref_create_by_prompt]
+ jz {4}.l 0 ; ver si se ha podido; si no, salir
+ copy 0.l (sp) ; rock = 0
+ copy 0x01 (sp) ; fmode = fileMode_Write
+ copy {4}.l (sp) ; fileref = {4}.l (el que acabamos de abrir)
+ glk 0x42.l 0x03.b {8}.l ; abrir stream asociado al fichero, y guardar el strid en {8}.l [glk_stream_open_file]
+ jz {8}.l 0 ; ver si se ha podido; si no, salir
+ copy {8}.l (sp) ; strid = {8}.l (el que acabamos de abrir)
+ copy (:glk_winnum_texto).l (sp) ; ventana
+ glk 0x2D.l 0x02.b ~ ; asignar flujo de eco a la ventana de texto (:glk_winnum_texto) [glk_window_set_echo_stream]
+ return 0
+:acc_transcript_finalizar_transcript
+;primero, hallar el stream y cerrarlo
+ copy (:glk_winnum_texto).l (sp) ; ventana
+ glk 0x2E.l 0x01.b {4}.l ; ver si la ventana ya tiene flujo de eco [glk_window_get_echo_stream]
+ jz {4}.l 0; si no tenía, fuera
+;desasignarlo
+ copy 0.l (sp) ; strid = 0 (para desasignar echo)
+ copy (:glk_winnum_texto).l (sp) ; ventana
+ glk 0x2D.l 0x02.b ~ ; desasignar flujo de eco de la ventana de texto (:glk_winnum_texto) [glk_window_set_echo_stream]
+;cerrarlo
+ copy 0.l (sp) ; str_result = NULL
+ copy {4}.l (sp) ; stream = el de eco de la ventana
+ glk 0x44.l 0x02.b ~ ; [glk_stream_close]
+ return 0
+
+
+;;;;;;;;;;;
+; LISTNPC ;
+;;;;;;;;;;;;;;;;;;
+:acc_listnpc
+ dc.b 0xc1 0x04 0x08 0x00 0x00
+ copy {0}.l (sp)
+ call :contar_psi_en.l 0x01.b {24}.l
+ jz {24}.l 0  ; Si no hay PSI, no sale nada
+ jeq {0}.l 254.l :listnpc_inven.l  ; Si es en la localidad 254 en lugar de "Aquí estan... " sale "Llevas..."
+ copy {24}.l {20}.l
+ copy 63.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jgt {24}.l 1.l :listnpc_varios.l
+ copy 64.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listnpc_sigue.l
+:listnpc_varios
+ copy 65.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listnpc_sigue.l
+:listnpc_inven
+ copy 9.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+:listnpc_sigue
+ copy :objetos.l {4}.l
+ copy 0.l {12}.l
+:listnpc_bucle_objetos
+ jge {4}.l :fin_de_objetos.l :listnpc_no_mas.l
+ aload {4}.l 2.l {8}.l
+ jne {8}.l {0}.l :listnpc_siguiente_objeto.l
+ aload {4}.l 4.l {8}.l
+ bitand {8}.l 8.l {8}.l 
+ jz {8}.l :listnpc_siguiente_objeto.l ; Si no es un psi me lo salto
+ copy {12}.l (sp)
+ bitor (:flag053).l 128.l (:flag053).l
+ bitand (:flag053).l 64 (sp)
+ jnz (sp) :listnpc_listado_continuo.l
+ call :describir_objeto_en_mensaje_nolowercase.l 0x01.b ~
+ streamchar 10
+ jump :listnpc_siguiente_objeto.l
+:listnpc_listado_continuo
+ call :describir_objeto_en_mensaje_nolowercase.l 0x01.b ~
+ sub {24}.l 1.l {24}.l
+ jgt {24}.l 0.l :listnpc_no_era_el_ultimo.l
+ copy 48.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listnpc_no_mas.l
+:listnpc_no_era_el_ultimo
+ jgt {24}.l 1 :listnpc_no_era_el_penultimo.l
+ copy 47.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listnpc_siguiente_objeto.l
+:listnpc_no_era_el_penultimo
+ copy 46.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :listnpc_siguiente_objeto.l
+:listnpc_siguiente_objeto
+ add {4}.l 28.l {4}.l
+ add {12}.l 1.l {12}.l
+ jump :listnpc_bucle_objetos.l
+:listnpc_no_mas
+ return 0

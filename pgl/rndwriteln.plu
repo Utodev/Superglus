@@ -1,0 +1,23 @@
+;CND RNDWRITELN A 14 14 14 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+:acc_rndwriteln
+dc.b 0xc1 0x04 0x04 0x00 0x00
+ random 3.l {12}.l
+ jeq {12}.l 2.l :rndwriteln2.l
+ jeq {12}.l 1.l :rndwriteln1.l
+ copy {0}.l (sp)
+ jump :rndwriteln_call.l
+:rndwriteln1 
+ copy {4}.l (sp)
+ jump :rndwriteln_call.l
+:rndwriteln2 
+ copy {8}.l (sp)
+:rndwriteln_call
+ call :escribir_mensaje_write.l 0x01.b ~
+streamchar 10
+return 0
+
+

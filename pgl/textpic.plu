@@ -1,0 +1,23 @@
+;CND TEXTPIC A 2 2 0 0
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+; TEXTPIC value value
+; Pinta en la ventana de texto el grafico cuyo recurso esta indicado por el primer valor, y en el modo 
+; de alineacion que indica el segundo
+; 
+
+
+:acc_textpic
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ 
+ jz (:hay_graficos).l 0
+ jz (:programa_quiere_graficos).l 0
+
+ copy 0.l (sp)
+ copy {4}.l (sp)		      ; la alineacion	
+ copy {0}.l (sp)	              ; el recurso
+ copy (:glk_winnum_texto).l (sp)
+ glk 0x00e1.l 0x04.b ~                ; glk_image_draw(glk_winnum_texto, img, position, val2=0)
+ return 0
+

@@ -1,0 +1,42 @@
+;CND OBJFOUND C 2 9 0 0
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+;objfound  atrno locno+
+
+;RUTINAS DE CALCULO DE SI HAY UN OBJETO CON EL ATRIBUTO X EN TAL SITIO
+
+; se recibe como parametro el atributo y el lugar, en ese orden
+; devuelve 1 si habia algun objeto o cero en caso contrario
+
+; {0} -> El atributo
+; {4} -> La localidad
+; {8} -> Recorre los objetos
+; {12} -> Apunta a la posicion en la tabla de objetos
+
+:cnd_objfound
+dc.b 0xc1 0x04 0x07 0x00 0x00
+copy 0x00.l {8}.l	
+:bucle_objfound
+copy {8}.l (:flag011).l			; Meto en el flag 11 el numero de objeto referenciado
+mul {8}.l 7.l {12}.l
+add 2.l {12}.l  {12}.l			; Apunto a la localidad del objeto
+aload :objetos.l {12}.l {16}.l
+jne {16}.l {4}.l :objfound_siguiente.l	; Si no está en la misma localidad ignoramos el objeto
+add {12}.l 2.l {12}.l
+copy {0}.l {20}.l
+jle {20}.l 31.l :objfound_loflags.l	; si el atributo esta en el primer bloque ya estamos apuntando bien
+add 1.l {12}.l  {12}.l		; en caso contrario apuntamos al siguiente bloque
+sub {20}.l 32.l {20}.l		; y restamos 32 al atributo para que apunte bien
+:objfound_loflags
+aload :objetos.l {12}.l {16}.l
+copy {16}.l (sp)
+copy {20}.l (sp)			
+call :bittest.l 0x02.b {16}.l
+jnz {16}.l 1				; Salgo habiendo encontrado un objeto
+:objfound_siguiente
+add {8}.l 1.l {8}.l
+jle {8}.l (:numero_ultimo_objeto).l :bucle_objfound.l
+copy 255.l {:flag011}.l			; marco en el flag 12 que no habia objeto
+return 0 				; Salgo sin encontrar objeto alguno
+

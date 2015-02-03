@@ -1,0 +1,18 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Archivo .ula generado por spg - compilador de Superglus  ;
+;               (c)2001-2009 Yokiyoki/Uto                  ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Este archivo es (C) Julio Sangrador y Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+stack 16384
+ext 16384
+
+section vcode
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+; PROCESOS DEL USUARIO ;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+; TABLA DE RESPUESTAS
+

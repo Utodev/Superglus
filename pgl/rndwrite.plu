@@ -1,0 +1,20 @@
+;CND RNDWRITE A 14 14 14 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+:acc_rndwrite
+dc.b 0xc1 0x04 0x04 0x00 0x00
+ random 3.l {12}.l
+ jeq {12}.l 2.l :rndwrite2.l
+ jeq {12}.l 1.l :rndwrite1.l
+ copy {0}.l (sp)
+ jump :rndwrite_call.l
+:rndwrite1 
+ copy {4}.l (sp)
+ jump :rndwrite_call.l
+:rndwrite2 
+ copy {8}.l (sp)
+:rndwrite_call
+ call :escribir_mensaje_write.l 0x01.b ~
+ return 0

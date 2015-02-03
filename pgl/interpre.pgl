@@ -1,0 +1,2305 @@
+; Este archivo es (C) Julio Sangrador y Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+;;;;;;;;;;;;;;
+; INTERPRETE ;
+;;;;;;;;;;;;;;
+
+
+
+;*******************************************************************
+;********  Coloca los objetos en sus localidades originales ********
+;*******************************************************************
+:colocar_objetos
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy 0.l {0}.l
+:colocar_objetos_bucle_objetos
+ copy {0}.l {4}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :localidad_inicial.l {0}.l (sp)
+ astore :objetos.l {4}.l (sp)
+ add {0}.l 1.l {0}.l
+ jle {0}.l (:numero_ultimo_objeto).l :colocar_objetos_bucle_objetos.l
+ return 0 
+ 
+ 
+;*******************************************************************
+;**********  Restablece los atributos de objeto originales *********
+;*******************************************************************
+:restablecer_atributos
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy 0.l {0}.l
+:restablecer_atributos_bucle_objetos
+ copy {0}.l {4}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 4.l {4}.l
+ 
+ mul {0}.l 2.l {8}.l
+ aload :atributos_inicial.l {8}.l (sp)
+ astore :objetos.l {4}.l (sp)
+ add {4}.l 1.l {4}.l
+ add {8}.l 1.l {8}.l
+ aload :atributos_inicial.l {8}.l (sp)
+ astore :objetos.l {4}.l (sp)
+ 
+ add {0}.l 1.l {0}.l
+ jle {0}.l (:numero_ultimo_objeto).l :restablecer_atributos_bucle_objetos.l
+ return 0
+ 
+ 
+;*******************************************************************
+;*****************  Restablece salidas originales ******************
+;*******************************************************************
+:restablecer_salidas
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ copy  (:total_mensajes_localidades).l {4}.l 
+ mul   {4}.l 16.l {4}.l  ; 16 conexiones por localidad
+ mul   {4}.l 4.l {4}.l   ; 4 bytes por conexion
+:bucle_restablecer_salidas
+ sub {4}.l 1.l {4}.l
+ aloadb :conexiones_copia.l {4}.l {0}.b
+ astoreb :conexiones.l {4}.l {0}.b
+ jnz {4}.l :bucle_restablecer_salidas.l
+ return 0
+ 
+ 
+;*******************************************************************
+;***************  Borra la tabla de efectos sonando ****************
+;*******************************************************************
+:restablece_tablaefectos
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy 0.l {0}
+:clear_effects_loop
+ 	astore :efecto_sonando.l {0}.l 0.l
+ 	add {0}.l 4.l {0}.l
+ 	jlt {0}.l 64.l :clear_effects_loop.l
+ return 0
+
+
+;*******************************************************************
+;*************************  Inicializacion *************************
+;*******************************************************************
+:inicializar
+ dc.b 0xc1 0x04 0x00 0x00 0x00
+ copy 0x100.l (:numero_de_flag).l
+:seguir_anulando
+ sub (:numero_de_flag).l 0x01.l (:numero_de_flag).l
+ astore :flags.l (:numero_de_flag).l 0x00.l
+ jnz (:numero_de_flag).l :seguir_anulando.l
+ copy 4.l (:flag037).l
+ copy 9.l (:flag012).l; terminaciones pronominales activadas, doall y demás no pasan por PSIs ....00001001
+ copy 10.l (:flag052).l
+ copy 255.l (:flag046).l
+ copy 255.l (:flag047).l
+ copy 64.l (:flag053).l
+ copy (:numero_inicial_de_objetos_llevados).l (:flag001).l ; Lo pone el compilador: nº de objetos llevados (no puestos)
+ copy 0 (:musica_sonando).l
+ call :restablece_tablaefectos 0x00.b ~
+ copy 0 (:bandera_salir).l
+ copy 0 (:bandera_habia_frase).l
+ copy 0 (:bandera_tiempo_agotado).l
+ copy 0 (:bandera_hecho).l
+ copy 0 (:bandera_habia_conexion).l
+ copy 1 (:bandera_buffer_vacio).l
+ copy 0 (:bandera_describir_localidad).l
+ copy 0 (:bandera_fin_de_LS).l
+ copy 0 (:bandera_esta_seguro).l
+ copy 1 (:bandera_jugar_otra_vez).l
+ copy 0 (:bandera_en_doall).l
+ copy 0 (:bandera_en_response).l
+ copy 255.l (:verboanterior).l
+ copy 255.l (:adverbioanterior).l
+ copy 255.l (:nombre1anterior).l
+ copy 255.l (:adjetivo1anterior).l
+ copy 255.l (:preposicionanterior).l
+ copy 255.l (:nombre2anterior).l
+ copy 255.l (:adjetivo2anterior).l
+ call :colocar_objetos.l 0x00.b ~	; Vuelve a colocar los objetos en su localidad inicial
+ call :restablecer_atributos 0x00.b ~	; Restablece los atributos iniciales de los objetos
+ call :restablecer_salidas 0x00.b ~;  Restablece las salidas originales
+ return 0
+
+;*******************************************************************
+;***************  Realiza la descripción de localidad***************
+;*******************************************************************
+:describir_localidad
+ dc.b 0xc0 0x00 0x00
+ jz (:flag002).l :no_decrementar_flag_2.l
+ sub (:flag002).l 1.l (:flag002).l
+:no_decrementar_flag_2
+ jz (:flag000).l :no_decrementar_flag_3.l
+ jz (:flag003).l :no_decrementar_flag_3.l
+ sub (:flag003).l 1.l (:flag003).l
+:no_decrementar_flag_3
+ jz (:flag000).l :no_decrementar_flag_4.l
+ jz (:flag004).l :no_decrementar_flag_4.l
+ call :light_here.l 0x00.b (:auxiliar).l
+ jnz (:auxiliar).l :no_decrementar_flag_4.l
+ sub (:flag004).l 1.l (:flag004).l
+:no_decrementar_flag_4
+ bitand (:flag040).l 1.l (:valor_flag).l
+ jnz (:valor_flag).l :no_limpiar_pantalla.l
+ call :limpiar_pantalla.l 0x00.b ~
+:no_limpiar_pantalla
+ jz (:flag000).l :realmente_describir.l
+ call :light_here.l 0x00.b (:auxiliar).l
+ jnz (:auxiliar).l :realmente_describir.l  
+ copy 0.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ ; cuadro "oscuridad"
+ copy 256.l (sp)
+ call :acc_picture.l 0x01.b ~
+ return 0
+:realmente_describir
+; pintar imagen
+ copy (:flag038).l (sp)
+ call :acc_picture.l 0x01.b ~
+; poner musica de fondo
+ copy (:flag038).l (sp)
+ call :ejecutar_musica.l 0x01.b ~
+; describir
+ linearsearch (:flag038).l 4.l :tabla_desc_lugares.l 8.l (:total_mensajes_localidades).l 0.l 0.l (sp)
+ add (sp) 4.l (sp)
+ aload (sp) 0.l (:direccion_mensaje).l
+ ;aload :tabla_desc_lugares.l (:flag038).l (:direccion_mensaje).l
+ call :escribir_ms.l 0x00.b ~
+ return 0
+
+
+
+;*******************************************************************
+;**********  Imprime el mensaje de prompt correspondiente **********
+;*******************************************************************
+:imprimir_prompt
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy (:flag042).l {0}.l
+ jnz {0}.l :imprimir_prompt_usuario
+ random 100.l (:numero_aleatorio).l
+ jlt (:numero_aleatorio).l 70.l :segundo_prompt
+ copy 2.l {0}.l
+ jump :imprimir_prompt_usuario.l
+:segundo_prompt
+ jlt (:numero_aleatorio).l 40.l :tercer_prompt
+ copy 3.l {0}.l
+ jump :imprimir_prompt_usuario.l
+:tercer_prompt
+ jlt (:numero_aleatorio).l 10.l :cuarto_prompt
+ copy 4.l {0}.l
+ jump :imprimir_prompt_usuario.l
+:cuarto_prompt
+ copy 5.l {0}.l
+ jump :imprimir_prompt_usuario.l
+:imprimir_prompt_usuario
+ copy {0}.l (sp)
+ call :escribir_mensaje_sistema 0x01.b ~
+ return 0
+
+
+;*******************************************************************
+;*******************  Rutina del input de ordenes ******************
+;*******************************************************************
+:solicitar_entrada_del_jugador
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+:solicitar_entrada_del_jugador_inicio
+ copy 0.l (:bandera_buffer_vacio).l
+ copy 33.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ bitand (:flag049).l 127.l (:flag049).l
+ mul (:flag048).l 25.l (:contador_timeout).l
+ copy 40.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(40)
+ :coger_input
+ bitand (:flag012).l 0xFFFFFFEF.l (:flag012).l ;  Pongo a cero el bit del flag 12 que nos dice si hubo un evento arrange
+ copy 0.l (:posicion_en_buffer).l
+ copy (:caracteres_preescritos).l (sp)
+ copy 0xff.l (sp)
+ copy :buffer.l (sp)
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xD0.l 0x04.b ~ ; glk_request_line_event(glk_winnum_texto, &buffer, 255, 0)
+:solicitar_bucle_lectura_teclado
+ copy :evento_type.l (sp)
+ glk 0xC0.l 0x01.b ~ ; glk_select()
+ jeq (:evento_type).l 0x03.l :solicitar_hubo_evento_de_linea.l
+ jeq (:evento_type).l 0x01.l :solicitar_hubo_evento_de_temporizador.l
+ jeq (:evento_type).l 0x05.l :solicitar_hubo_evento_arrange.l
+ jeq (:evento_type).l 0x07.l :solicitar_hubo_evento_soundnotify.l 
+ jne (:evento_type).l 0x06.l :solicitar_bucle_lectura_teclado.l ; No es redraw
+:solicitar_hubo_evento_arrange
+ bitor (:flag012).l 16.l (:flag012).l ;  Pongo a uno el bit del flag 12 que nos dice si hubo un evento arrange 
+ call :poner_grafico 0x00.b ~
+ jump :solicitar_bucle_lectura_teclado.l
+:solicitar_hubo_evento_soundnotify
+ jeq (:evento_val2).l 17.l :solicitar_hubo_evento_soundnotify_musica.l
+ jlt (:evento_val2).l 17.l :solicitar_hubo_evento_soundnotify_efectos.l
+ jump :solicitar_bucle_lectura_teclado.l
+:solicitar_hubo_evento_soundnotify_efectos
+ sub (:evento_val2).l 1.l (:evento_val2).l
+ mul (:evento_val2).l 4.l (:evento_val2).l
+ astore :efecto_sonando.l (:evento_val2).l 0.l
+ jump :solicitar_bucle_lectura_teclado.l
+:solicitar_hubo_evento_soundnotify_musica 
+ copy 0.l (:musica_sonando).l
+ jump :solicitar_bucle_lectura_teclado.l
+:solicitar_hubo_evento_de_temporizador
+ jz (:hay_interrupt).l :no_interrupt_proc.l
+ call :interrupt_proc.l 0x00.b ~
+:no_interrupt_proc 
+ bitand (:flag012).l 0xFFFFFFEF.l (:flag012).l ;  Pongo a cero el bit del flag 12 que nos dice si hubo un evento arrange
+ jz (:flag048).l :solicitar_bucle_lectura_teclado.l
+ sub (:contador_timeout).l 1.l (:contador_timeout).l
+ jnz (:contador_timeout).l :solicitar_bucle_lectura_teclado.l
+ ; y aqui es donde se trata el timeout
+ copy 1 (:bandera_buffer_vacio).l
+ bitor (:flag049).l 128.l (:flag049).l
+ copy :evento_type.l (sp)
+ copy (:glk_winnum_texto).l (sp)
+ glk 0xd1.l 0x02.b ~ ; glk_cancel_line_event(glk_winnum_texto, &evento)
+ copy (:evento_val1).l (:caracteres_preescritos).l
+ copy 0.l (sp)
+ glk 0xD6.l 0x01.b ~ ; glk_request_timer_event(0)
+ copy 0.l (:bandera_habia_frase).l
+ return 0
+:solicitar_hubo_evento_de_linea
+ jz (:evento_val1).l :no_hubo_texto.l
+ astorebit :flag049.l 7 0 ; no ha habido timeout
+ astoreb :buffer.l (:evento_val1).l 0x00 ; para terminar la cadena - ¿prescindible?
+ copy 0.l (:caracteres_preescritos).l
+ return 0
+:no_hubo_texto
+ copy 61.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :solicitar_entrada_del_jugador_inicio.l
+
+
+
+;*******************************************************************
+;*** Convierte un caracter a su equivalente en mayúsculas **********
+;*******************************************************************
+:caracter_a_mayusculas
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ jlt {0}.l 127.l :standar_ascii.l
+ sub {0}.l 127.l {0}.l
+ aloadb :ascii_convert {0}.l {0}.l
+ return {0}.l
+ :standar_ascii
+ jlt {0}.l 0x61.l :caracter_a_mayusculas_salir.l
+ jgt {0}.l 0x7a.l :caracter_a_mayusculas_salir.l
+ sub {0}.l 32.l {0}.l
+:caracter_a_mayusculas_salir
+ return {0}.l
+
+
+;*******************************************************************
+;************  Extrae una palabra del buffer de ordenes ************
+;*******************************************************************
+:extraer_palabra
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ call :quitaseparadores.l 0x00.b ~
+:extpal_while_saltar_espacios
+ aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+ jz (:caracter_en_buffer).l :extpal_fin_while_saltar_espacios.l
+ copy 0.l (:bandera_frase_vacia).l
+ jne (:caracter_en_buffer).l 32.l :extpal_fin_while_saltar_espacios.l
+ add (:posicion_en_buffer).l 1.l (:posicion_en_buffer).l
+ jump :extpal_while_saltar_espacios.l
+:extpal_fin_while_saltar_espacios
+ jnz (:caracter_en_buffer).l :extpal_sigue_habiendo_caracteres.l
+ copy 1 (:bandera_fin_de_LS).l
+ copy 1 (:bandera_buffer_vacio).l
+ return 0
+:extpal_sigue_habiendo_caracteres
+ copy 1.l (:auxiliar).l
+:extpal_for_de_1_a_11
+ jgt (:auxiliar).l 11.l :extpal_fin_for_de_1_a_11.l
+ astoreb :buffer_palabra_actual.l (:auxiliar).l 0x00.b
+ add (:auxiliar).l 1.l (:auxiliar).l
+ jump :extpal_for_de_1_a_11.l
+:extpal_fin_for_de_1_a_11
+ copy :buffer_palabra_actual.l (:posicion_en_palabra).l
+ copy 0 (:auxiliar).l
+:extpal_while_hay_palabra
+ jge (:auxiliar).l (:logitud_palabras).l :extpal_fin_while_hay_palabra.l			
+ ;aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+ aloadb :buffer.l (:posicion_en_buffer).l (sp)
+ call :caracter_a_mayusculas.l 0x01.b (:caracter_en_buffer).l
+ jz (:caracter_en_buffer).l :extpal_fin_while_hay_palabra.l ; fin de buffer
+ jeq (:caracter_en_buffer).l 32.l :extpal_fin_while_hay_palabra.l ; espacio
+ jeq (:caracter_en_buffer).l 34.l :extpal_caracter_de_fin_de_LS.l ; comillas
+ jeq (:caracter_en_buffer).l 44.l :extpal_caracter_de_fin_de_LS.l ; coma
+ jeq (:caracter_en_buffer).l 46.l :extpal_caracter_de_fin_de_LS.l ; punto
+ astoreb :buffer_palabra_actual.l (:auxiliar).l (:caracter_en_buffer).l
+ add (:posicion_en_buffer).l 1.l (:posicion_en_buffer).l
+ add (:posicion_en_palabra).l 1.l (:posicion_en_palabra).l
+ add (:auxiliar).l 1.l (:auxiliar).l
+ jump :extpal_while_hay_palabra.l
+:extpal_fin_while_hay_palabra
+ jnz (:caracter_en_buffer).l :extpal_no_era_fin_de_buffer.l
+ copy 1 (:bandera_buffer_vacio).l
+ jump :extpal_while_hay_palabra2.l
+:extpal_no_era_fin_de_buffer
+ jump :extpal_while_hay_palabra2.l
+:extpal_caracter_de_fin_de_LS
+ copy 1 (:bandera_fin_de_LS).l
+:extpal_while_hay_palabra2
+ aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+ jz (:caracter_en_buffer).l :extpal_fin_while_hay_palabra2.l ; fin de buffer
+ jeq (:caracter_en_buffer).l 32.l :extpal_fin_while_hay_palabra2.l ; espacio
+ jeq (:caracter_en_buffer).l 34.l :extpal_caracter_de_fin_de_LS2.l ; comillas
+ jeq (:caracter_en_buffer).l 44.l :extpal_caracter_de_fin_de_LS2.l ; coma
+ jeq (:caracter_en_buffer).l 46.l :extpal_caracter_de_fin_de_LS2.l ; punto
+ add (:posicion_en_buffer).l 1 (:posicion_en_buffer).l
+ jump :extpal_while_hay_palabra2.l
+:extpal_fin_while_hay_palabra2
+ jnz (:caracter_en_buffer).l :extpal_no_era_fin_de_buffer2.l
+ copy 1 (:bandera_buffer_vacio).l
+:extpal_no_era_fin_de_buffer2
+ return 1
+:extpal_caracter_de_fin_de_LS2
+ add 1.l (:posicion_en_buffer).l (:posicion_en_buffer).l
+ copy 1 (:bandera_fin_de_LS).l
+ return 1
+
+
+;*******************************************************************
+;***********  Busca terminación pronominal en palabra  *************
+;*******************************************************************
+;-----------------------------------------------------------------------------------------------------
+; Esta funcion:
+;   - Devuelve 1 si encontro terminacion pronominal, cero en caso contrario. Se encuentra
+;     una terminacion si se acaba en lo, la , las ,los, les, las y además lo que queda
+;     de palabra es un verbo.
+;   - Si las terminaciones pronominales estan quitadas, devuelve siempre cero (ver flag 12)
+;-----------------------------------------------------------------------------------------------------
+:buscar_terminacion_pronominal
+dc.b 0xc1 0x04 0x04 0x00 0x00
+ bitand (:flag012).l 1.l {4}.l
+ jz {4}.l 0										; El primer bit del flag 12 tiene que estar a 1 para que se miren las terminaciones
+ ; -- Copiar la palabra actual en un buffer temporal con el que trabajar
+ copy 0.l (:auxiliar).l
+:for_de_1_a_11
+ jgt (:auxiliar).l 11.l :fin_for_de_1_a_11.l
+ aloadb :buffer_palabra_actual.l (:auxiliar).l {8}.b
+ astoreb :buffer_palabra_actual_copia.l (:auxiliar).l {8}.b
+ add (:auxiliar).l 1.l (:auxiliar).l
+ jump :for_de_1_a_11.l
+:fin_for_de_1_a_11
+; -- Buscar el último caracter
+ copy 10.l (:auxiliar).l
+:bucle_ultimo_char
+ aloadb :buffer_palabra_actual_copia.l (:auxiliar).l {8}.l
+ sub (:auxiliar).l 1.l (:auxiliar).l
+ jz (:auxiliar).l 0			; -- si hemos llegado al principio mal asunto, aunque el ultimo caracter no fuera un #0, un solo caracter no hace terminacion, salimos diciendo que no hay terminacion
+ jz {8}.b :bucle_ultimo_char.l
+:pronominal_letra_final 
+ jeq {8}.b 83.b :pronominal_encontrado_s.l ; - "S"
+:pronominal_letra_intermedia 
+ jeq {8}.b 79.b :pronominal_encontrado_oae.l ; - "O"
+ jeq {8}.b 65.b :pronominal_encontrado_oae.l ; - "A"
+ jeq {8}.b 69.b :pronominal_encontrado_oae.l ; - "E"
+ ; Si llego aqui no acaba ni en S ni en OAE, no es terminacion
+ return 0
+:pronominal_encontrado_s
+ aloadb :buffer_palabra_actual_copia.l (:auxiliar).l {8}.b
+ sub (:auxiliar).l 1.l (:auxiliar).l
+ jump :pronominal_letra_intermedia.l
+:pronominal_encontrado_oae
+ aloadb :buffer_palabra_actual_copia.l (:auxiliar).l {8}.b
+ jne {8}.b 76.b 0 ; - Si no es una L no es terminacion
+; -- Si llegamos aqui hemos encontrado terminacion, ahora hay que comprobar que quitandola lo que queda es un verbo
+:quitar_terminacion
+ jgt (:auxiliar).l 11.l :fin_quitar_terminacion.l
+ astoreb :buffer_palabra_actual_copia.l (:auxiliar).l 0.b
+ add (:auxiliar).l 1.l (:auxiliar).l
+ jump :quitar_terminacion.l
+:fin_quitar_terminacion 
+:buscar_verbo 
+ linearsearch :palabra_actual_copia.l  13.b  :palabras.l  24.b -1.l 0x00.b 0x03.b (:auxiliar_b).l
+ jz (:auxiliar_b).l 0 ; No era un verbo
+; -- Si llegamos aqui hemos encontrado un verbo con terminacion pronominal
+:otro_for_de_1_a_11
+ jgt (:auxiliar).l 11.l :fin_otro_for_de_1_a_11.l
+ aloadb :buffer_palabra_actual_copia.l (:auxiliar).l {8}.b
+ astoreb :buffer_palabra_actual.l (:auxiliar).l {8}.b
+ add (:auxiliar).l 1.l (:auxiliar).l
+ jump :otro_for_de_1_a_11.l
+:fin_otro_for_de_1_a_11 
+return 1
+
+
+;*******************************************************************
+;************  Quita caracteres separadores de buffer **************
+;*******************************************************************
+:quitaseparadores
+dc.b 0xc1 0x04 0x02 0x00 0x00
+:quitaseparadores_while_separador
+ aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+ jz (:caracter_en_buffer).l 0 
+ jeq (:caracter_en_buffer).l 34.l :quitaseparadores_es_separador.l
+ jeq (:caracter_en_buffer).l 44.l :quitaseparadores_es_separador.l
+ jeq (:caracter_en_buffer).l 46.l :quitaseparadores_es_separador.l
+ return 0
+:quitaseparadores_es_separador
+ add (:posicion_en_buffer).l 1.l (:posicion_en_buffer).l
+ jump :quitaseparadores_while_separador.l
+
+
+;*******************************************************************
+;******************  Extrae una frase del buffer *******************
+;*******************************************************************
+:extraer_frase
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ jz (:bandera_buffer_vacio).l :analizar_frase.l ; hay algo en el buffer
+ :inicio_extraer_frase
+ copy 0.l (:bandera_habia_frase).l
+ call :imprimir_prompt.l 0x00 ~
+ call :solicitar_entrada_del_jugador.l 0.b ~
+ jz (:debug_activo).l :extraer_frase_normal
+ ; ver si es entrada de debugger
+ aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+ jeq (:caracter_en_buffer).l 0x21.l :inicio_extraer_frase.l ; empieza por ! (transcript comentario)
+ jne (:caracter_en_buffer).l 0x40.l :extraer_frase_normal.l ; empieza por @
+ call :debugger.l 0x00.b ~
+ jump :inicio_extraer_frase
+:extraer_frase_normal
+ copy 255.l (:verboanterior).l
+ ;copy 255.l (:nombre1anterior).l
+:analizar_frase
+ copy 0.l (:bandera_fin_de_LS).l ; bandera_fin_de_LS = {0}
+ copy -1.l (:auxverbo).l
+ copy -1.l (:auxnombre1).l
+ copy -1.l (:auxadjetivo1).l
+ copy -1.l (:auxnombre2).l
+ copy -1.l (:auxadjetivo2).l
+ copy -1.l (:auxpreposicion).l
+ copy -1.l (:auxadverbio).l
+ copy -1.l (:auxpronombre).l
+ bitand (:flag012).l 0xFFFFFFFD.l (:flag012).l ; Pone a 0 el bit que indica que se encontró una palabra desconocida despues del verbo (;astorebit :flag012.l 1 0 )
+ bitand (:flag012).l 0xFFFFFFFB.l (:flag012).l ; Pone a 0 el bit que indica que se encontró una preposición después del primer nombre
+ copy (:verboanterior).l (:flag033).l
+ copy (:adverbioanterior).l (:flag036).l
+ jeq (:flag034).l 255.l :anterior_frase_sin_nombre.l
+ copy (:nombre1anterior).l (:flag034).l
+:anterior_frase_sin_nombre
+ copy (:adjetivo1anterior).l (:flag035).l
+ copy (:preposicionanterior).l (:flag043).l
+ copy (:nombre2anterior).l (:flag044).l
+ copy (:adjetivo2anterior).l (:flag045).l
+ copy 1.l (:bandera_frase_vacia).l
+:while_not_fin_de_LS
+ jnz (:bandera_fin_de_LS).l :fin_while_not_fin_de_LS.l
+ astoreb :buffer_palabra_actual.l 0.l 0x00.b
+ call :extraer_palabra.l 0.b (sp)
+ jz (sp) :fin_while_not_fin_de_LS.l
+ call :buscar_terminacion_pronominal.l 0x00.b (:pronomterm).l  
+:a_buscar
+ linearsearch :palabra_actual.l  13.b  :palabras.l  24.b -1.l 0x00.b 0x03.b (:dir_palabra_actual).l
+ jnz (:dir_palabra_actual).l :palabra_es_conocida.l
+ jeq (:auxverbo).l -1.l :sigue_while_not_fin_de_LS.l  ; Si aun no he encontrado verbo no seteo el bit de "palabra desconocida encontrada"
+ bitor (:flag012).l 2.l (:flag012).l
+ jump :sigue_while_not_fin_de_LS.l
+:palabra_es_conocida
+ copy 1.l (:palabra_encontrada).l
+ aload (:dir_palabra_actual).l 4.l (:tipo_palabra_actual).l
+ aload (:dir_palabra_actual).l 5.l (:num_palabra_actual).l
+ jne (:auxverbo).l -1.l :no_era_verbo.l
+ jnz (:tipo_palabra_actual).l :no_era_verbo.l
+ copy (:num_palabra_actual).l (:auxverbo).l
+ ; -------- terminacion pronominal -----
+ jz (:pronomterm).l :no_terminacion.l
+ copy (:nombre1anterior).l (:auxnombre1).l
+ copy 0.l (:pronomterm).l
+ :no_terminacion
+ ; -------------------------------------
+ copy 1.l (:bandera_habia_frase).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_verbo
+ jne (:auxnombre1).l -1.l :no_era_nombre1.l
+ jne (:tipo_palabra_actual).l 1.l :no_era_nombre1.l
+ copy (:num_palabra_actual).l (:auxnombre1).l
+ ;jnz (:bandera_buffer_vacio).l :poiuy.L ; Esta linea ha sido comentada porque producia que cosas como 
+ 					 ; "asdasdasd nombre", donde asdasdasd es un verbo desconocido
+ 					 ; y "nombre" es un nombre conocido, no pasaran por la tabla
+ 					 ; de respuestas. Se comprobo y PAW si lo permitia (NMP tambien
+ 					 ; por cierto) así que se ha cambiado
+ copy 1.l (:bandera_habia_frase).l
+:poiuy		; nombres convertibles a verbo
+ jge (:num_palabra_actual).l 20.l :sigue_while_not_fin_de_LS.l
+ jne (:auxverbo).l -1.l :sigue_while_not_fin_de_LS.l
+ 
+ copy (:num_palabra_actual).l (:auxverbo).l
+ copy -1.l (:auxnombre1).l
+ copy 1.l (:bandera_habia_frase).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_nombre1
+ jne (:auxnombre2).l -1.l :no_era_nombre2.l
+ jne (:tipo_palabra_actual).l 1.l :no_era_nombre2.l
+ copy (:num_palabra_actual).l (:auxnombre2).l
+ copy 1.l (:bandera_habia_frase).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_nombre2
+ jne (:auxadjetivo1).l -1.l :no_era_adjetivo1.l
+ jne (:tipo_palabra_actual).l 2.l :no_era_adjetivo1.l
+ copy (:num_palabra_actual).l (:auxadjetivo1).l
+ copy 1.l (:bandera_habia_frase).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_adjetivo1
+ jne (:auxadjetivo2).l -1.l :no_era_adjetivo2.l
+ jne (:tipo_palabra_actual).l 2.l :no_era_adjetivo2.l
+ copy (:num_palabra_actual).l (:auxadjetivo2).l
+ copy 1.l (:bandera_habia_frase).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_adjetivo2
+ jne (:auxadverbio).l -1.l :no_era_adverbio.l
+ jne (:tipo_palabra_actual).l 3.l :no_era_adverbio.l
+ copy (:num_palabra_actual).l (:auxadverbio).l
+ copy 1.l (:bandera_habia_frase).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_adverbio
+ jne (:auxpronombre).l -1.l :no_era_pronombre.l
+ jne (:tipo_palabra_actual).l 4.l :no_era_pronombre.l
+ copy (:num_palabra_actual).l (:auxpronombre).l
+ copy 1.l (:bandera_habia_frase).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_pronombre
+ jne (:tipo_palabra_actual).l 5.l :no_era_conjuncion.l
+ copy 1 (:bandera_fin_de_LS).l
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_conjuncion
+ jne (:auxpreposicion).l -1.l :no_era_preposicion.l
+ jne (:tipo_palabra_actual).l 6.l :no_era_preposicion.l
+ copy (:num_palabra_actual).l (:auxpreposicion).l
+ copy 1.l (:bandera_habia_frase).l 
+ jeq (:auxnombre1).l -1.l :sigue_while_not_fin_de_LS.l ; Si no hay aun nombre en la frase simplemente sigo
+ bitor (:flag012).l 4.l (:flag012).l ; Pero si ya habia un nombre y la preposicion viene detrás, seteo el bit 2 del flag 12
+ jump :sigue_while_not_fin_de_LS.l
+:no_era_preposicion
+:sigue_while_not_fin_de_LS
+ jump :while_not_fin_de_LS.l
+:fin_while_not_fin_de_LS
+ call :comprueba_frase_sin_verbo_ni_nombre.l 0x00.b ~
+ jeq (:auxverbo).l -1.l :sinVerbo.l
+ copy (:auxverbo).l (:flag033).l
+ copy 255.l (:flag034).l
+ copy 255.l (:flag035).l
+:sinVerbo
+ jeq (:auxnombre1).l -1.l :sinNombre1.l
+ copy (:auxnombre1).l (:flag034).l
+ jlt (:flag034).l 50.l :sinNombre1.l
+ copy (:flag034).l (:flag046).l ; Nombre del pronombre
+ copy 255.l (:flag047).l ; y adjetivo a cero
+:sinNombre1
+ jeq (:auxadjetivo1).l -1.l :sinAdjetivo1.l
+ copy (:auxadjetivo1).l (:flag035).l
+ jlt (:flag034).l 50.l :sinAdjetivo1.l
+ copy (:flag035).l (:flag047).l ; Adjetivo del pronombre
+:sinAdjetivo1
+ jeq (:auxnombre2).l -1.l :sinNombre2.l
+ copy (:auxnombre2).l (:flag044).l
+:sinNombre2
+ jeq (:auxadjetivo2).l -1.l :sinAdjetivo2.l
+ copy (:auxadjetivo2).l (:flag045).l
+:sinAdjetivo2
+ jeq (:auxadverbio).l -1.l :sinAdverbio.l
+ copy (:auxadverbio).l (:flag036).l
+:sinAdverbio
+ jeq (:auxpreposicion).l -1.l :sinPreposicion.l
+ copy (:auxpreposicion).l (:flag043).l
+:sinPreposicion
+ jeq (:auxpronombre).l -1.l :sinPronombre.l
+ jne (:auxnombre1).l -1.l :sinPronombre.l
+ copy (:flag046).l (:flag034).l
+ copy (:flag047).l (:flag035).l
+:sinPronombre
+ copy (:flag033).l (:verboanterior).l
+ ;copy (:flag036).l (:adverbioanterior).l
+ jeq (:flag034).l 255 :frase_sin_nombre2.l  ; Si la frase anterior no tenia nombre no machacamos el "nombre1anterior", para permitir cosas como COGE LIBRO, INVEN, DEJALO
+ copy (:flag034).l (:nombre1anterior).l
+ :frase_sin_nombre2
+ copy 255.l (:adjetivo1anterior).l		; Tengo mis dudas sobre si aqui habria que poner 255 o (:flag035)
+ copy 255.l (:preposicionanterior).l
+ copy 255.l (:adverbioanterior).l
+ copy 255.l (:nombre2anterior).l
+ copy 255.l (:adjetivo2anterior).l
+ call :obtener_obj_referenciado.l 0x00.b ~	; Trato de actualizar el objeto referenciado (f51, f54-57) si es posible
+ return 0
+:comprueba_frase_sin_verbo_ni_nombre  ; Comprueba si la frase no trae ni verbo ni nombre, en ese
+				      ; caso marca auxverbo con 255 para evitar que sea copiado
+				      ; el verbo anterior, cosa que solo debe ocurrir si la frase
+				      ; trae al menos nombre
+dc.b 0xc0 0x00 0x00
+jne (:auxverbo).l -1.l 0
+jne (:auxnombre1).l -1.l 0
+copy 255.l (:auxverbo).l
+return 0
+
+
+;*******************************************************************
+;********  Obtiene frase y procesa flags de autodecremento *********
+;*******************************************************************
+:obtener_orden
+ dc.b 0xc0 0x00 0x00
+ jz (:flag005).l :no_decrementar_flag_5.l
+ sub (:flag005).l 1.l (:flag005).l
+:no_decrementar_flag_5
+ jz (:flag006).l :no_decrementar_flag_6.l
+ sub (:flag006).l 1.l (:flag006).l
+:no_decrementar_flag_6
+ jz (:flag007).l :no_decrementar_flag_7.l
+ sub (:flag007).l 1.l (:flag007).l
+:no_decrementar_flag_7
+ jz (:flag008).l :no_decrementar_flag_8.l
+ sub (:flag008).l 1.l (:flag008).l
+:no_decrementar_flag_8
+ jz (:flag000).l :no_decrementar_flag_9.l
+ jz (:flag009).l :no_decrementar_flag_9.l
+ sub (:flag009).l 1.l (:flag009).l
+:no_decrementar_flag_9
+ jz (:flag000).l :no_decrementar_flag_10.l
+ call :light_here.l 0x00.b (:auxiliar).l
+ jnz (:auxiliar).l :no_decrementar_flag_10.l
+ jz (:flag010).l :no_decrementar_flag_10.l
+ sub (:flag010).l 1.l (:flag010).l
+:no_decrementar_flag_10
+:repetir_hasta_frase_valida
+ copy 0.l (:palabra_encontrada).l
+ call :extraer_frase.l 0x00 ~
+ jnz (:palabra_encontrada).l 0
+ copy 62.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ call :acc_newtext.l 0x00.b ~
+ jump :repetir_hasta_frase_valida.l
+
+;*******************************************************************
+;****  Rutina de substitucion de secuencias de escape por objeto ***
+;*******************************************************************
+:describir_objeto_en_mensaje
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ copy 0.l {16}.l
+ mul {0}.l 7.l {4}.l
+ add {4}.l 4.l {4}.l
+ 
+ aload :objetos.l {4}.l {20}.l
+ bitand {20}.l 8.l {20}.l 
+ jnz {20}.l :describir_objeto_es_psi.l ; Si es un psi tengo que hacerlo sin el lowercase
+ 
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {4}.l
+ copy 0.l {8}.l
+:desc_obj_saltar_espacios
+ add {8}.l 1.l {8}.l
+ aloadb {4}.l {8}.l {12}.l
+ jz {12}.l 0
+ jeq {12}.l 32 :desc_obj_saltar_espacios.l
+:desc_obj_bucle
+ aloadb {4}.l {8}.l {12}.l
+ jz {12}.l 0
+ jeq {12}.l 0x2e 0 ; punto
+  ; ---- Bloque para pasar el primer caracter a minúsculas si procede -----
+ jnz {16}.l :desc_obj_write_char.l				; Sale si no es primer caracter
+ jlt {12}.l 65 :desc_obj_write_char.l     ; Sale si < 'A'
+ jgt {12}.l 90 :desc_obj_write_char.l    ; Sale si > 'Z'
+ add {12}.l 32.l {12}.l										; lowercase()
+  ; ------------------------------------------------------------------------
+ :desc_obj_write_char 
+ streamchar {12}.l
+ copy 1.l {16}.l
+ add {8}.l 1.l {8}.l
+ jump :desc_obj_bucle.l
+:describir_objeto_es_psi
+ copy {0}.l (sp)
+ call :describir_objeto_en_mensaje_nolowercase.l 0x01.b ~
+ return 0
+
+;*******************************************************************
+;****  Rutina de substitucion de secuencias de escape por objeto ***
+;*******************************************************************
+ ; --- Copia de la funcion anterior, que no pasa a lowercase el primer caracter ---
+ :describir_objeto_en_mensaje_nolowercase
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ mul {0}.l 7.l {4}.l
+ add {4}.l 6.l {4}.l
+ aload :objetos.l {4}.l {4}.l
+ copy 0.l {8}.l
+:desc_obj_saltar_espacios_nolowercase
+ add {8}.l 1.l {8}.l
+ aloadb {4}.l {8}.l {12}.l
+ jz {12}.l 0
+ jeq {12}.l 32 :desc_obj_saltar_espacios_nolowercase.l
+:desc_obj_bucle_nolowercase
+ aloadb {4}.l {8}.l {12}.l
+ jz {12}.l 0
+ jeq {12}.l 0x2e 0 ; punto
+ streamchar {12}.l
+ add {8}.l 1.l {8}.l
+ jump :desc_obj_bucle_nolowercase.l
+
+;*******************************************************************
+;****  Calcula objeto referido y substituye por texto de objeto  ***
+;*******************************************************************
+:describir_objeto_referido
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ jne (:flag051).l 255 :describir_objeto_referido2
+ call :obtener_obj_referenciado.l 0x00.b ~
+:describir_objeto_referido2
+ jeq (:flag051).l 255 0  ; Si no hay objeto refernciado no pinto nada
+ copy (:flag051).l (sp)
+ call :describir_objeto_en_mensaje.l 0x01.l ~
+ return 0
+
+;********************************************************************
+;* Calcula objeto referido flag 11 y substituye por texto de objeto *
+;********************************************************************
+:describir_objeto_referido_flag11
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy (:flag011).l (sp)
+ call :describir_objeto_en_mensaje.l 0x01.l ~
+ return 0
+
+ 
+ 
+;*******************************************************************
+;******  Escribe un mensaje, mensaje del sistema, loc o write ******
+;*******************************************************************
+:escribir_ms
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy (:estilo_actual).l (sp)
+ glk 0x86.l 0x01.b ~
+ copy 1.l {4}.l
+:escribir_ms_bucle
+ aloadb (:direccion_mensaje).l {4}.l {8}.l
+ jz {8}.l 0
+ jne {8}.l 0x5f :escribir_ms_caracter_1.l ; ** no es guion bajo **
+ call :describir_objeto_referido.l 0x00 ~
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+:escribir_ms_caracter_1 
+ jne {8}.l 0x2a :escribir_ms_caracter_2.l ; ** no es asterisco **
+ copy (:direccion_mensaje).l (sp) 	** Escribir el mensaje referido por el flag 11 **
+ copy (:flag011).l (sp)
+ call :escribir_mensaje_usuario.l 0x01.l ~
+ copy (sp) (:direccion_mensaje).l
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+:escribir_ms_caracter_2
+ jne {8}.l 0x7C :escribir_ms_caracter_3.l ; ** no es un pipe **
+ copy (:direccion_mensaje).l (sp)	** Escribir el mensaje del sistema referido por el flag 11 **	
+ copy (:flag011).l (sp)
+ call :escribir_mensaje_sistema.l 0x01.l ~
+ copy (sp) (:direccion_mensaje).l
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+:escribir_ms_caracter_3
+ jne {8}.l 0x23 :escribir_ms_caracter_4.l ; ** no es un # ** 
+ call :describir_objeto_referido_flag11.l 0x00 ~ ; ** escribir el objeto referido por el flag 11 **
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+:escribir_ms_caracter_4
+ jne {8}.l 0x40 :escribir_ms_caracter_5.l ; ** no es una @ ** 
+ copy (:direccion_mensaje).l (sp)
+ linearsearch (:flag011).l 4.l :tabla_desc_lugares.l 8.l (:total_mensajes_localidades).l 0.l 0.l (sp)
+ add (sp) 4.l (sp)
+ aload (sp) 0.l (:direccion_mensaje).l
+ call :escribir_ms.l 0x00.b ~
+ copy (sp) (:direccion_mensaje).l	; ** escribir la localidad referida por el flag 11 **
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+:escribir_ms_caracter_5
+ jne {8}.l 0x5E :escribir_ms_caracter_6.l ; ** no es un ^ **
+ copy (:direccion_mensaje).l (sp)
+ copy (:flag011).l (sp)
+ call :acc_process.l 0x01.b ~            ;  ** Llamar al proceso referido por el flag 11
+ copy (sp) (:direccion_mensaje).l
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+:escribir_ms_caracter_6
+ jne {8}.l 0x5C :escribir_ms_caracter_final.l; ** no es un \ **
+ add {4}.l 1.l {4}.l
+ aloadb (:direccion_mensaje).l {4}.l {8}.l
+ jz {8}.l 0    ; Si lo siguiente a la \ es el fin de cadena ignoro el caracter
+ jeq {8}.l 0x5f :escribir_ms_caracter_final ; es \_
+ jeq {8}.l 0x2a :escribir_ms_caracter_final ; es \*
+ jeq {8}.l 0x7C :escribir_ms_caracter_final ; es \|
+ jeq {8}.l 0x23 :escribir_ms_caracter_final ; es \#
+ jeq {8}.l 0x40 :escribir_ms_caracter_final ; es \@
+ jeq {8}.l 0x5E :escribir_ms_caracter_final ; es \^
+ jeq {8}.l 0x5C :escribir_ms_caracter_final ; es \\
+ copy {8}.l (sp)
+ call :hex_to_int.l 0x01.b (sp)
+ glk 0x86.l 0x01.b ~    ; Cambio el charset
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+:escribir_ms_caracter_final
+ streamchar {8}.l        ;** es un caracter normal **
+ add {4}.l 1.l {4}.l
+ jump :escribir_ms_bucle.l
+
+
+;*******************************************************************
+;********************  Escribe un mensaje del sistema **************
+;*******************************************************************
+:escribir_mensaje_sistema
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ linearsearch {0}.l 4.l :tabla_mensajes_sistema.l 8.l (:total_mensajes_sistema).l 0.l 0.l {4}.l
+ jz {4}.l :escribir_mensaje_sistema_error.l
+ add {4}.l 4.l {4}.l
+ aload {4}.l 0.l (:direccion_mensaje).l
+ call :escribir_ms.l 0x00.b ~
+ return 0
+ :escribir_mensaje_sistema_error
+ streamstr :sysmess_error_msg.l
+ streamnum {0}.l
+ streamchar 10
+ return 0
+ 
+ 
+;*******************************************************************
+;********************  Escribe un mensaje de usuario ***************
+;*******************************************************************
+:escribir_mensaje_usuario
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ linearsearch {0}.l 4.l :tabla_mensajes_usuario.l 8.l (:total_mensajes_usuario).l 0.l 0.l {4}.l
+ jz {4}.l :escribir_mensaje_usuario_error.l
+ add {4}.l 4.l {4}.l
+ aload {4}.l 0.l (:direccion_mensaje).l
+ call :escribir_ms.l 0x00.b ~
+ return 0
+:escribir_mensaje_usuario_error
+ streamstr :message_error_msg.l
+ streamnum {0}.l
+ streamchar 10
+ return 0
+ 
+;*******************************************************************
+;*********************  Escribe un mensaje de write ****************
+;*******************************************************************
+:escribir_mensaje_write
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ linearsearch {0}.l 4.l :tabla_mensajes_write.l 8.l (:total_mensajes_write).l 0.l 0.l (sp)
+ add (sp) 4.l (sp)
+ aload (sp) 0.l (:direccion_mensaje).l
+ call :escribir_ms.l 0x00.b ~
+ return 0
+
+
+;*******************************************************************
+;**************  Incrementa flags de turnos (31,32) ****************
+;*******************************************************************
+:pasar_turno
+ dc.b 0xc0 0x00 0x00
+ add (:flag031).l 0x01.l (:flag031).l
+ jgt (:flag031).l 255.l :aumentar_msb_turnos.l
+ return 0
+:aumentar_msb_turnos
+ add (:flag032).l 0x01.l (:flag032).l
+ copy 0.l (:flag031).l
+ return 0
+
+;*******************************************************************
+;********  Comprueba tabla de conexiones para movimiento ***********
+;*******************************************************************
+:comprobar_tabla_conexiones
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy 38.l (sp)
+ call :cnd_move.l 0x01 (sp)
+ jz (sp) 0
+ return 1
+
+;#####################################
+;########  BUCLE PRINCIPAL ###########
+;#####################################
+:bucle_principal
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+:empezar_describiendo
+ copy 0.l (:bandera_describir_localidad).l
+ call :describir_localidad.l 0x00.l ~
+ call :pro001.l 0x00.l ~
+ jnz (:bandera_describir_localidad).l :empezar_describiendo.l
+:siguiente_orden
+ jnz (:bandera_salir).l 0
+ call :pro002.l 0x00.l ~
+ jnz (:bandera_salir).l 0
+ jnz (:bandera_describir_localidad).l :empezar_describiendo.l
+:coger_orden
+ call :obtener_orden.l 0x00.l ~
+ jnz (:bandera_frase_vacia).l :coger_orden.l ; Si la frase obtenida viene vacia ('') vuelve a pedir otra, no la procesa
+ bitand (:flag049).l 128.l (sp)
+ jnz (sp) :tiempo_agotado.l
+ jnz (:bandera_habia_frase).l :habia_frase.l
+ ;jnz (:bandera_tiempo_agotado).l
+ copy 6.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :siguiente_orden.l
+:tiempo_agotado
+ copy 35.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ ;copy 0.l (:bandera_tiempo_agotado).l
+ jump :siguiente_orden.l
+:habia_frase
+ copy 0.l (:bandera_hecho).l
+ call :pasar_turno.l 0x00.b ~
+ copy 1.l (:bandera_en_response).l
+ call :pro000 0x00.b ~
+ copy 0.l (:bandera_en_response).l
+ jnz (:bandera_describir_localidad).l :empezar_describiendo.l
+ jnz (:bandera_hecho).l :comprobar_bandera_salir.l
+ jlt (:flag033).l 14.l :era_movimiento.l
+ copy 8.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :siguiente_orden.l
+:era_movimiento
+ call :comprobar_tabla_conexiones.l 0x00.l (sp)
+ jnz (sp) :empezar_describiendo.l
+ ;jnz (:bandera_habia_conexion).l :siguiente_orden.l
+ copy 7.l (sp)
+ call :escribir_mensaje_sistema.l 0x01.b ~
+ jump :siguiente_orden.l
+:comprobar_bandera_salir
+ jz (:bandera_salir).l :siguiente_orden.l
+ return 0
+
+;#####################################
+;######  ENTRADA AL PROGRAMA #########
+;#####################################
+:main
+ dc.b 0xc0 0x00 0x00
+ setiosys 2 0
+:jugar_otra_vez
+ call :crear_ventana.l 0x00.l ~
+ call :inicializar_sonido.l 0x00.l ~
+ call :inicializar.l 0x00.l ~
+ call :bucle_principal.l 0x00.l ~
+ jz (:bandera_jugar_otra_vez).l :no_jugar_otra_vez.l
+ call :destruir_sonido.l 0x00.l ~
+ call :destruir_ventana.l 0x00.l ~
+ jump :jugar_otra_vez.l
+:no_jugar_otra_vez
+ streamstr :despedida.l
+ quit
+
+;*******************************************************************
+;**************************  Sugerir estilos ***********************
+;*******************************************************************
+:sugerir_estilos
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ ; --- Texto escrito normal (0) ---
+ copy (:cfg_typewriter_0).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_0).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_0).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_0).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_0).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 0.l (sp) ; style_Normal
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto enfatizado (1) ---
+ copy (:cfg_typewriter_1).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_1).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_1).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_1).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_1).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 1.l (sp) ; style_Emphasized
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto preformateado (2) ---
+ copy (:cfg_typewriter_2).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_2).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_2).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_2).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_2).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 2.l (sp) ; style_Preformatted
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto cabecera (3) ---
+ copy (:cfg_typewriter_3).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_3).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_3).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_3).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_3).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 3.l (sp) ; style_Header
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto subcabecera (4) ---
+ copy (:cfg_typewriter_4).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_4).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_4).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_4).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_4).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 4.l (sp) ; style_Subheader
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto alerta (5) ---
+ copy (:cfg_typewriter_5).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_5).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_5).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_5).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_5).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 5.l (sp) ; style_Alert
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto nota (6) ---
+ copy (:cfg_typewriter_6).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_6).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_6).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_6).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_6).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 6.l (sp) ; style_Note
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto cita (7) ---
+ copy (:cfg_typewriter_7).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_7).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_7).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_7).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto blanco
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_7).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 7.l (sp) ; style_Blockquote
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Texto de entrada (8) ---
+ copy (:cfg_typewriter_8).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_8).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_8).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_8).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto gris
+ ;copy 0x00ffffff.l (sp) ; gris
+ copy (:cfg_foreground_8).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 8.l (sp) ; style_Input
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Estilo de usuario 1 (9) ---
+ copy (:cfg_typewriter_9).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_9).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_9).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_9).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto gris
+ ;copy 0x00ffffff.l (sp) ; blanco
+ copy (:cfg_foreground_9).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 9.l (sp) ; style_User1
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ 
+ ; --- Estilo de usuario 2 (10) ---
+ copy (:cfg_typewriter_10).l (sp) ; anchura fija
+ copy 6.l (sp) ; stylehint_Proportional
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Negrita
+ copy (:cfg_bold_10).l (sp) ; weight
+ copy 4.l (sp) ; stylehint_Weight
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Cursiva
+ copy (:cfg_italic_10).l (sp) ; Oblique
+ copy 5.l (sp) ; stylehint_Oblique
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Justificación izquierda
+ copy 0.l (sp) ; stylehint_just_LeftFlush
+ copy 2.l (sp) ; stylehint_Justification
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría
+ copy 0.l (sp) ; 0 pixeles
+ copy 0.l (sp) ; stylehint_Indentation
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Sangría primera línea
+ copy 0.l (sp) ; 0 píxeles
+ copy 1.l (sp) ; stylehint_ParaIndentation
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Tamaño
+ copy 0.l (sp) ; tamaño normal
+ copy 3.l (sp) ; stylehint_Size
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Video inverso
+ copy 0.l (sp) ; no video inverso
+ copy 9.l (sp) ; stylehint_ReverseColor
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Fondo negro
+ ;copy 0x00000000.l (sp) ; negro
+ copy (:cfg_background_10).l (sp)
+ copy 8.l (sp) ; stylehint_BackColor
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ ; Texto gris
+ ;copy 0x00ffffff.l (sp) ; blanco
+ copy (:cfg_foreground_10).l (sp)
+ copy 7.l (sp) ; stylehint_TextColor
+ copy 10.l (sp) ; style_User2
+ copy 3.l (sp) ; wintype_TextBuffer
+ glk 0xb0.l 4.b ~ ; glk_stylehint_set()
+ return 0
+ 
+ 
+
+;*******************************************************************
+;*******************  Crear ventanas texto y gráfica ***************
+;*******************************************************************
+:crear_ventana
+ dc.b 0xc0 0x00 0x00
+
+ 
+ copy 0x00.l (:glk_winnum_texto).l
+ copy 0x00.l (:glk_winnum_graficos).l
+ copy 0x01.l (:programa_quiere_graficos).l
+ call :sugerir_estilos.l 0x00.b ~
+ copy 0x00.l (sp)
+ copy 0x03.l (sp) ; Textbuffer
+ copy 0x00.l (sp)
+ copy 0x00.l (sp)
+ copy 0x00.l (sp)
+ glk 0x23.b 0x05.b (:glk_winnum_texto).l ; glk_winnum_texto = glk_window_open(0,0,0,3,0)
+ 
+ 
+ ; cerrar y volver a abrir la ventana 
+ call :destruir_ventana.l 0x00.b ~
+ ;y volver a abrir
+ copy 0x00.l (sp)
+ copy 0x03.l (sp) ; Textbuffer
+ copy 0x00.l (sp)
+ copy 0x00.l (sp)
+ copy 0x00.l (sp)
+ glk 0x23.b 0x05.b (:glk_winnum_texto).l ; glk_winnum_texto = glk_window_open(0,0,0,3,0)
+;ya, ya la hemos vuelto a abrir
+; Preguntar si hay gráficos
+ copy 0x00.l (sp)
+ copy 0x06.l (sp)
+ glk 0x04.b 0x02.b (:hay_graficos).l ; hay_graficos = glk_gestalt(gestalt_Graphics,0)
+; Crear ventana gráfica si hay gráficos
+ jz (:hay_graficos).l :no_graficos_crear_ventana.l
+ copy 0x00.l (sp)
+ copy 0x05.l (sp) ; Graphics
+ copy (:cfg_graphic_percent).l (sp) ; Porcentaje
+ copy (:cfg_graphic_position).l (sp) ; winMethod_Above|winMethod_Proportional
+ copy (:glk_winnum_texto).l (sp)
+ glk 0x23.b 0x05.b (:glk_winnum_graficos).l ; glk_winnum_graficos = glk_window_open((:glk_winnum_texto),winMethod_Above|winMethod_Fixed,0,5,0)
+ ; Color de fondo negro
+ copy 0.l (sp)
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x00eb.l 0x02.b ~ ; glk_window_set_background_color(winnum_graficos, negro)
+:no_graficos_crear_ventana
+ copy (:glk_winnum_texto).l (sp)
+ glk 0x2f.b 0x01.b ~ ; glk_result = glk_set_window(glk_winnum_texto)
+ return 0
+
+ 
+;*******************************************************************
+;*******************  Destruir ventanas texto y gráfica ************
+;*******************************************************************
+:destruir_ventana
+ dc.b 0xc0 0x00 0x00
+ jz (:glk_winnum_graficos).l :destruir_ventana_sigue.l 
+ copy :glk_result.l (sp)
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x24.l 0x02.b ~ ; glk_window_close(glk_winnum_graficos, &glk_result)
+  copy 0.l (:glk_winnum_graficos).l
+ :destruir_ventana_sigue
+ jz (:glk_winnum_texto).l :destruir_ventana_sigue2
+ copy :glk_result.l (sp)
+ copy (:glk_winnum_texto).l (sp)
+ glk 0x24.l 0x02.b ~ ; glk_window_close(glk_winnum_texto, &glk_result)
+ copy 0.l (:glk_winnum_texto).l
+ :destruir_ventana_sigue2
+ return 0
+
+
+;*******************************************************************
+;**********************  Borrar ventana de texto *******************
+;*******************************************************************
+:limpiar_pantalla
+ dc.b 0xc0 0x00 0x00
+ copy (:glk_winnum_texto).l (sp)
+ glk 0x2a.b 0x01.b ~ ; glk_window_clear(glk_winnum_texto)
+ return 0
+
+;*******************************************************************
+;***************************  Poner gráfico ************************
+;*******************************************************************
+:poner_grafico
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ jz (:hay_graficos).l :no_graficos_poner_grafico.l
+ jz (:programa_quiere_graficos).l :no_graficos_poner_grafico.l
+ call :reabrir_ventana_grafica.l 0x00.b ~
+ jz (:glk_winnum_graficos).l :no_graficos_poner_grafico.l
+ ; // Limpiar pantalla
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x2a.b 0x01.b ~ ; glk_window_clear(glk_winnum_graficos)
+ ; // Calcular tamaño y posicion
+ copy :alto_ventana_grafica.l (sp)
+ copy :ancho_ventana_grafica.l (sp)
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x25.b 0x03.b ~ ; glk_window_get_size
+ copy :alto_grafico.l (sp)
+ copy :ancho_grafico.l (sp)
+ copy (:grafico_actual).l (sp)
+ glk 0x00e0.l 0x03.b (sp) ; glk_image_get_info
+ jnz (sp) :si_poner_grafico.l
+ call :cerrar_ventana_grafica.l 0x00.b ~
+ jump :no_graficos_poner_grafico.l
+:si_poner_grafico
+ shiftl (:ancho_ventana_grafica).l 0x08.l (:ancho_ventana_grafica).l
+ div (:ancho_ventana_grafica).l (:ancho_grafico).l (:ratio_x).l
+ ushiftr (:ancho_ventana_grafica).l 0x08.l (:ancho_ventana_grafica).l
+ shiftl (:alto_ventana_grafica).l 0x08.l (:alto_ventana_grafica).l
+ div (:alto_ventana_grafica).l (:alto_grafico).l (:ratio_y).l
+ ushiftr (:alto_ventana_grafica).l 0x08.l (:alto_ventana_grafica).l
+ jnz (:stretch_graphics) :pinta_stretch.l
+ jge (:ratio_x).l (:ratio_y).l :ratio_y_menor.l
+ ;ratio x menor
+ mul (:ancho_grafico).l (:ratio_x).l (:ancho_grafico).l
+ ushiftr (:ancho_grafico).l 0x08.l (:ancho_grafico).l
+ mul (:alto_grafico).l (:ratio_x).l (:alto_grafico).l
+ ushiftr (:alto_grafico).l 0x08.l (:alto_grafico).l
+ jump :realmente_poner.l
+ :pinta_stretch
+ mul (:ancho_grafico).l (:ratio_x).l (:ancho_grafico).l
+ ushiftr (:ancho_grafico).l 0x08.l (:ancho_grafico).l
+ mul (:alto_grafico).l (:ratio_y).l (:alto_grafico).l
+ ushiftr (:alto_grafico).l 0x08.l (:alto_grafico).l
+ jump :realmente_poner.l
+:ratio_y_menor
+ mul (:ancho_grafico).l (:ratio_y).l (:ancho_grafico).l
+ ushiftr (:ancho_grafico).l 0x08.l (:ancho_grafico).l
+ mul (:alto_grafico).l (:ratio_y).l (:alto_grafico).l
+ ushiftr (:alto_grafico).l 0x08.l (:alto_grafico).l
+:realmente_poner
+ sub (:ancho_ventana_grafica).l (:ancho_grafico).l (:x_grafico).l  ; centramos el grafico x = (ancho ventana - ancho grafico) / 2
+ ushiftr (:x_grafico).l 1.l (:x_grafico).l
+ sub (:alto_ventana_grafica).l (:alto_grafico).l (:y_grafico).l ; centramos el grafico y = (alto ventana - alto grafico) / 2
+ ushiftr (:y_grafico).l 1.l (:y_grafico).l
+ ; Meter imagen
+ copy (:alto_grafico).l (sp)
+ copy (:ancho_grafico).l (sp)
+ copy (:y_grafico).l (sp)
+ copy (:x_grafico).l (sp)
+ copy (:grafico_actual).l (sp)
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x00e2.l 0x06.b ~ ; glk_image_draw_scaled(glk_winnum_graficos, img, posx, posy, sizex, sizey)
+:no_graficos_poner_grafico
+ return 0
+
+;*******************************************************************
+;**********************  Reabrir ventana gráfica *******************
+;*******************************************************************
+:reabrir_ventana_grafica
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ jnz (:glk_winnum_graficos).l :no_graficos_reabrir_ventana.l
+ jz (:hay_graficos).l :no_graficos_reabrir_ventana.l
+ jz (:programa_quiere_graficos).l :no_graficos_reabrir_ventana.l
+ copy 0x00.l (sp)
+ copy 0x05.l (sp) ; Graphics
+ copy (:cfg_graphic_percent).l (sp) ; 50%
+ copy (:cfg_graphic_position).l (sp) ; winMethod_Above|winMethod_Proportional
+ copy (:glk_winnum_texto).l (sp)
+ glk 0x23.b 0x05.b (:glk_winnum_graficos).l ; glk_winnum_graficos = glk_window_open((:glk_winnum_texto),winMethod_Above|winMethod_Fixed,0,5,0)
+ ; color de fondo negro
+ copy 0.l (sp)
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x00eb.l 0x02.b ~ ; glk_window_set_background_color(winnum_graficos, negro)
+ call :poner_grafico.l 0x00.l ~
+:no_graficos_reabrir_ventana
+ return 0
+
+;*******************************************************************
+;**********************  Cerrar ventana gráfica  *******************
+;*******************************************************************
+:cerrar_ventana_grafica
+ dc.b 0xc1 0x00 0x00 0x00 0x00
+ jz (:hay_graficos).l :no_graficos_cerrar_ventana.l
+ jz (:glk_winnum_graficos).l :no_graficos_cerrar_ventana.l
+ copy :glk_result.l (sp)
+ copy (:glk_winnum_graficos).l (sp)
+ glk 0x24.b 0x02.b ~ ; glk_window_close(winnum_graficos, &glk_result);
+ copy 0x00.l (:glk_winnum_graficos).l
+:no_graficos_cerrar_ventana
+ return 0
+
+;*******************************************************************
+;***********************  Inicializar el sonido ********************
+;*******************************************************************
+:inicializar_sonido
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ jnz (:sonido_activado).l 0
+ copy 1.l (:sonido_activado).l 
+ copy 0x01.l (:programa_quiere_sonido).l
+ copy 0.l (sp)
+ copy 0x08.l (sp)
+ glk 0x04.l 0x02.b (:hay_sonido).l
+ jz (:hay_sonido).l :inicializar_sonido_no_sonido.l
+ copy 0.l (sp)
+ copy 13.l (sp)
+ glk 0x04.l 0x02.b (:hay_musica).l
+ copy 0.l (sp)
+ glk 0xf2.l 0x01.b (:canal_musica).l
+ jnz (:canal_musica).l :inicializar_sonido_sigue.l
+ copy 0.l (:hay_musica).l
+:inicializar_sonido_sigue
+ copy 0.l (:hay_sonido).l ; Por defecto no hay sfx
+ copy 0.l {8}.l
+:inicializar_efectos_bucle 
+ copy 0.l (sp)
+ glk 0xf2.l 0x01.b {4}.l ; Pido un canal
+ jz {4}.l :inicializar_sonido_no_sonido.l ; Si no hay salgo 
+ astore :canal_efectos.l {8}.l {4}.l
+ add {8}.l 4.l {8}.l
+ jlt {8}.l 64.l :inicializar_efectos_bucle.l ; 64 = 16 x 4
+ copy 1.l (:hay_sonido).l
+:inicializar_sonido_no_sonido
+ return 0
+ 
+;*******************************************************************
+;**********************  Parar y destruir el sonido ****************
+;******************************************************************* 
+:destruir_sonido
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ jz (:hay_sonido).l :destruir_musica.l
+ copy 0.l {0}.l
+:bucle_destruir_sfx 
+ aload :canal_efectos.l {0}.l (sp)
+ glk 0xf3.l 0x01.b ~ ;glk_schannel_destroy
+ astore :efecto_sonando.l {0}.l 0.l
+ astore :canal_efectos.l {0}.l 0.l
+ add {0}.l 4.l {0}.l
+ jlt {0}.l 64.l :bucle_destruir_sfx.l ; 16 x 4 = 64
+:destruir_musica
+ jz (:hay_musica).l :destruir_sonido_final.l
+ copy (:canal_musica).l (sp)
+ glk 0xf3.l 0x01.b ~ ;glk_schannel_destroy
+ copy 0.l (:musica_sonando).l
+ copy 0.l (:canal_musica).l
+:destruir_sonido_final
+ copy 0.l  (:sonido_activado).l
+ return 0
+ 
+  
+ 
+
+;*******************************************************************
+;***********************  Ejecutar efecto sonido *******************
+;*******************************************************************
+:ejecutar_efecto
+ dc.b 0xc1 0x04 0x05 0x00 0x00
+ jgt {4}.l 16.l 0  ; Si estamos fuera de canal adecuado (1-16), fin
+ jlt {4}.l 1.l 0
+ sub {4}.l 1.l {16}.l  ; resto 1 al canal para que en lugar de ed 1 a 16 vaya de 0 a 15, el {16} me hace de puntero mientras que el {4} mantiene el numero de canal
+ mul {16}.l 4.l {16}.l
+ astore :efecto_sonando.l {16}.l 0.l ; marco que el efecto ya no esta sonando si habia alguno en ese canal
+ jnz {8}.l :ejecutar_efecto_repeticiones_finitas.l ;  Si las repeticiones son 0 sigo
+ copy -1.l {8}.l
+ :ejecutar_efecto_repeticiones_finitas
+ jz (:hay_sonido).l 0 ; retorno si no hay sonido disponible
+ jz (:programa_quiere_sonido).l 0 ; retorno si el sonido esta deshabilitado
+ ; Primero, apagar canal efectos
+ aload :canal_efectos.l {16}.l (sp) ;schanid
+ glk 0xFA.l 0x01.b ~ ; glk_schannel_stop(channel)
+ ;Ahora, reproducir
+ copy {4}.l (sp) ; notify = num canal
+ copy {8}.l (sp)  ; repeticiones, tercer parámetro
+ copy {0}.l (sp) ; numero de recurso
+ aload :canal_efectos.l {16}.l {4}.l ; schanid
+ copy {4}.l (sp)
+ glk 0xF9.l 0x04.b {12}.l ; glk_schannel_start_ext(channel,sound, rep, notify)
+ jz {12}.l :ejecutar_efecto_error_sonido.l
+ astore :efecto_sonando.l {16}.l 1.l ; marco que el efecto está sonando
+ :ejecutar_efecto_error_sonido
+ return 0
+ 
+;*******************************************************************
+;***********************  Ejecutar musica sonido *******************
+;******************************************************************* 
+:ejecutar_musica
+ dc.b 0xc1 0x04 0x03 0x00 0x00
+ copy 0.l (:musica_sonando).l
+ jz (:hay_musica).l :ejecutar_musica_no_sonido.l
+ jz (:programa_quiere_sonido).l :ejecutar_musica_no_sonido.l
+ ; primero, apagar canal música
+ copy (:canal_musica).l (sp)
+ glk 0xFA.l 0x01.b ~ ; glk_schannel_stop(channel)
+ copy 17.l (sp); notify = nº canal , el canal de musica es el 17, detras de los 16 de efectos
+ copy -1.l (sp) ;repeat forever
+ copy {0}.l (sp)
+ copy (:canal_musica).l (sp)
+ glk 0xF9.l 0x04.b {8}.l ; glk_schannel_start_ext(channel,sound)
+ jz {8}.l :ejecutar_musica_error_sonido.l
+ copy 1.l (:musica_sonando).l
+:ejecutar_musica_error_sonido
+:ejecutar_musica_no_sonido
+ return 0
+
+
+;*******************************************************************
+;***************************  Manejo de bits ***********************
+;******************************************************************* 
+; Son utilizadas por el manejo de flags de objeto
+; Se debe apilar primero el numero a testear o cambiar y despues el bit
+; de manera que  el bit esté en {0} y el numero en {4}
+
+:bittest
+dc.b 0xc1 0x04 0x03 0x00 0x00
+copy 1.l {8}.l
+shiftl {8}.l {0}.l {8}.l
+bitand {8}.l {4}.l {8}.l
+jz {8}.l 0
+return 1
+
+:bitset
+dc.b 0xc1 0x04 0x03 0x00 0x00
+copy 1.l {8}.l
+shiftl {8}.l {0}.l {8}.l
+bitor {8}.l {4}.l {8}.l
+return {8}.l
+
+:bitclear
+dc.b 0xc1 0x04 0x03 0x00 0x00
+copy 1.l {8}.l
+shiftl {8}.l {0}.l {8}.l
+bitnot {8}.l {8}.l
+bitand {8}.l {4}.l {8}.l
+return {8}.l
+
+:bitneg
+dc.b 0xc1 0x04 0x03 0x00 0x00
+copy 1.l {8}.l
+shiftl {8}.l {0}.l {8}.l
+bitxor {8}.l {4}.l {8}.l
+return {8}.l
+
+
+;*******************************************************************
+;********************** Control de luz de localidad ****************
+;******************************************************************* 
+; Esta rutina, dado el valor de localidad apilado, devuelve 1 si hay algun objeto
+; con luz en la localidad indicada (con el bit de objeto 0 a 1)
+; {4} -> Recorre los objetos
+; {8} -> Apunta a la posicion en la tabla de objetos
+:light_present
+dc.b 0xc1 0x04 0x05 0x00 0x00
+copy 0x00.l {4}.l	
+:bucle_light
+mul {4}.l 7.l {8}.l
+add 2.l {8}.l  {8}.l				; Apunto a la localidad del objeto
+aload :objetos.l {8}.l {12}.l
+jne {12}.l {0}.l :light_present_siguiente	; Si no está en la misma localidad ignoramos el objeto
+add 2.l {8}.l  {8}.l
+aload :objetos.l {8}.l {12}.l
+copy {12}.l (sp)
+copy 0x00.l (sp)			; Compruebo el bit 0, el bit de luz
+call :bittest.l 0x02.b {16}.l
+jnz {16}.l 1				; Salgo habiendo encontrado luz
+;--------
+; aqui comprobariamos ahora si es transparente y contenedor o contenedor y abierto
+; en futuras versiones, para hacer una especie de llamada recursiva
+;---------
+:light_present_siguiente
+add {4}.l 1.l {4}.l
+jle {4}.l (:numero_ultimo_objeto).l :bucle_light
+return 0 				; Salgo sin encontrar luz
+
+
+
+;*******************************************************************
+;************************* Objeto con luz presente *****************
+;******************************************************************* 
+; Esta rutina no recibe parámetros, se limita a devolver 1 si encontro algun objeto con luz
+; en la localidad actual, en el inventario, o en los objetos 'puestos' 
+:light_here
+dc.b 0xc1 0x04 0x01 0x00 0x00
+copy (:flag038).l (sp)
+call :light_present.l 0x01.b {0}.l
+jnz {0}.l 1
+copy 254.l (sp)
+call :light_present.l 0x01.b {0}.l
+jnz {0}.l 1
+copy 253.l (sp)
+call :light_present.l 0x01.b {0}.l
+jnz {0}.l 1
+return 0
+
+;*******************************************************************
+;************************* Funciones del Debugger ******************
+;******************************************************************* 
+:getval
+dc.b 0xc1 0x04 0x02 0x00 0x00
+copy 0.l {0}.l
+jnz (:caracter_en_buffer).l :getval_valor_ok
+:getval_valor_erroneo
+streamstr :debug_error.l
+return -1.l
+:getval_valor_ok
+jz (:caracter_en_buffer).l :getval_fin.l
+jlt (:caracter_en_buffer).l 48.l :getval_valor_erroneo.l
+jgt (:caracter_en_buffer).l 57.l :getval_valor_erroneo.l
+sub (:caracter_en_buffer).l 48.l (:caracter_en_buffer).l	; convierto numero ASCII a valor numerico 
+mul {0}.l 10.l {0}.l
+add {0}.l (:caracter_en_buffer).l {0}.l
+add (:posicion_en_buffer).l 1.l (:posicion_en_buffer).l
+aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+jump :getval_valor_ok
+:getval_fin
+jgt {0}.l 255 :getval_valor_erroneo
+return {0}.l
+
+
+:debugger
+dc.b 0xc1 0x04 0x01 0x00 0x00
+add (:posicion_en_buffer).l 1.l (:posicion_en_buffer).l
+aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+jlt (:caracter_en_buffer).l 48.l :debug_no_numero
+jgt (:caracter_en_buffer).l 57.l :debug_no_numero
+; Empieza por numero, pide el valor de un flag
+call :getval.l 0x00.b {0}.l
+jeq {0}.l -1.l 0			; retorna si no resultó un valor numerico
+copy {0}.l (:debug_ultimo_flag).l	; guardo el ultimo flag consultado
+copy {0}.l (sp)
+call :acc_print 0x01.b ~		; Imprimo el valor del flag
+return 0
+
+:debug_no_numero			
+jne (:caracter_en_buffer).l 61.l :debug_no_asigna		; signo igual "="
+add (:posicion_en_buffer).l 1.l (:posicion_en_buffer).l
+aloadb :buffer.l (:posicion_en_buffer).l (:caracter_en_buffer).l
+call :getval.l 0x00.b {0}.l
+jeq {0}.l -1.l 0			; retorna si no resultó un valor numerico
+copy {0}.l (sp)
+copy (:debug_ultimo_flag).l (sp)
+call :acc_let.l 0x02.b ~		; Asigna el flag
+streamstr :debug_asigna.l
+streamnum (:debug_ultimo_flag).l
+streamchar 61
+streamnum {0}.l
+return 0
+:debug_no_asigna
+streamstr :debug_error.l
+return 0
+
+
+
+
+;*******************************************************************
+;*************** Obtiene el obj referenciado por SL actual  ********
+;******************************************************************* 
+:obtener_obj_referenciado
+dc.b 0xc1 0x04 0x03 0x00 0x00
+call :acc_whato.l 0x00.b ~		
+return 0
+
+
+;******************************************************************
+;******** Actualizar flags asociados a obj. referenciado  *********
+;******************************************************************
+; Actualiza el flag 51 y los asociados 54 a 57.
+:poner_obj_referenciado
+dc.b 0xc1 0x04 0x03 0x00 0x00
+copy {0}.l (:flag051).l
+jeq {0}.l 255.l :set_ref_noobject.l
+mul {0}.l 7.l {4}.l
+add {4}.l 2.l {4}.l
+aload :objetos.l {4}.l {8}.l	; obtengo localidad del objeto
+copy {8}.l (:flag054).l
+copy {0}.l (sp)
+call :calcular_peso.l 0x01.b {8}.l ; obtengo peso del objeto
+copy {8}.l (:flag055).l
+add {4}.l 2.l {4}.l
+aload :objetos.l {4}.l {8}.l	; obtengo lo_flags
+copy {8}.l (:flag056).l
+add {4}.l 1.l {4}.l
+aload :objetos.l {4}.l {8}.l	; obtengo hi_flags
+copy {8}.l (:flag057).l
+return 0
+:set_ref_noobject
+copy 0.l (:flag054).l
+copy 0.l (:flag055).l
+copy 0.l (:flag056).l
+copy 0.l (:flag057).l
+return 0
+
+
+;***************************************
+;********** Calcular peso  *************
+;***************************************
+:calcular_peso
+ dc.b 0xc1 0x04 0x04 0x00 0x00
+ copy {0}.l {4}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 3.l {4}.l
+ aload :objetos.l {4}.l {8}.l ; en 8, su peso
+ jz {8}.l 0 ; si no pesa, da igual que sea contenedor
+ add {4}.l 1.l {4}.l
+ aload :objetos.l {4}.l {12}.l ; en {12}.l los 32 bits bajos de indicadores si es contenedor
+ copy {12}.l (sp)
+ copy 2.l (sp)
+ call :bittest.l 0x02.b {12}.l
+ jz {12}.l :devolver_peso.l
+ ; sumar el peso contenido
+ copy {0}.l (sp)
+ call :calcular_peso_localidad.l 0x01.b (sp)
+ add {8}.l (sp) {8}.l
+:devolver_peso
+ return {8}.l
+
+:calcular_peso_localidad
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ copy 0.l {16}.l	; peso
+ copy 0.l {8}.l		; variable del bucle
+:bucle_objetos_calcular_peso_localidad
+ jgt {8}.l (:numero_ultimo_objeto).l :fin_bucle_calcular_peso_localidad.l
+ copy {8}.l {4}.l
+ mul {4}.l 7.l {4}.l
+ add {4}.l 2.l {4}.l
+ aload :objetos.l {4}.l {12}.l ; en 12, localidad del objeto
+ jne {12}.l {0}.l :siguiente_objeto_calcular_peso_localidad.l
+ copy {8}.l (sp)
+ call :calcular_peso.l 0x01.b (sp)
+ add {16}.l (sp) {16}.l
+:siguiente_objeto_calcular_peso_localidad
+ add {8}.l 1.l {8}.l
+ jump :bucle_objetos_calcular_peso_localidad.l
+:fin_bucle_calcular_peso_localidad
+ return {16}.l
+
+
+;*******************************************************************
+;***************** Contar numero de objetos en localidad  **********
+;******************************************************************* 
+:contar_objetos_en
+ dc.b 0xc1 0x04 0x06 0x00 0x00
+ copy 0.l {4}.l
+ copy :objetos.l {8}.l
+:contar_bucle_objetos
+ jge {8}.l :fin_de_objetos.l :contar_salir.l
+ aload {8}.l 2.l {12}.l
+ jne {12}.l {0}.l :contar_siguiente.l ; si no esta en el mismo sitio no cuenta
+ copy (:flag012).l {16}.l
+ bitand {16}.l 8.l {16}.l
+ jz {16}.l :anadir_cuenta_objetos.l
+ aload {8}.l 4.l {16}.l
+ bitand {16}.l 8.l {16}.l
+ jnz {16}.l :contar_siguiente.l  ; si son PSI no cuenta
+:anadir_cuenta_objetos 
+ add {4}.l 1 {4}.l
+:contar_siguiente
+ add {8}.l 28.l {8}.l
+ jump :contar_bucle_objetos.l
+:contar_salir
+ return {4}.l
+
+;*******************************************************************
+;****************** Contar numero de PSI en localidad  *************
+;*******************************************************************
+:contar_psi_en
+ dc.b 0xc1 0x04 0x05 0x00 0x00
+ copy 0.l {4}.l
+ copy :objetos.l {8}.l
+:contarpsi_bucle_objetos
+ jge {8}.l :fin_de_objetos.l :contarpsi_salir.l
+ aload {8}.l 2.l {12}.l
+ jne {12}.l {0}.l :contarpsi_siguiente.l ; si no esta en el mismo sitio no cuenta
+ aload {8}.l 4.l {16}.l
+ bitand {16}.l 8.l {16}.l
+ jz {16}.l :contarpsi_siguiente.l  ; si no son PSI no cuenta
+ add {4}.l 1 {4}.l
+:contarpsi_siguiente
+ add {8}.l 28.l {8}.l
+ jump :contarpsi_bucle_objetos.l
+:contarpsi_salir
+ return {4}.l
+
+;*******************************************************************
+;***************** Llamada a tabla de interrupciones  **************
+;*******************************************************************
+:call_int
+dc.b 0xc1 0x04 0x02 0x00 0x00
+aload :tabla_interrupciones.l {0}.l {4}.l
+jz {4}.l 1
+call {4}.l 0x00.b ~
+return 1
+
+
+
+
+;*******************************************************************
+;******************* Conversor hexadecimal, decimal ****************
+;*******************************************************************
+:hex_to_int
+dc.b 0xc1 0x04 0x01 0x00 0x00
+jge {0}.l 97 :hex_to_int_minuscula.l
+jge {0}.l 65 :hex_to_int_mayuscula.l
+sub {0}.l 48 {0}.l
+return {0}.l
+:hex_to_int_minuscula
+sub {0}.l 87 {0}.l
+return {0}.l
+:hex_to_int_mayuscula
+sub {0}.l 55 {0}.l
+return {0}.l
+
+
+;*******************************************************************
+;********************* Comprobar si efecto sonando *****************
+;*******************************************************************
+:	
+ dc.b 0xc1 0x04 0x02 0x00 0x00
+ copy 0.l {0}
+:efecto_sonando_loop
+ 	aload :efecto_sonando.l {4}.l 0.l
+ 	jnz {4}.l 1
+ 	add {0}.l 4.l {0}.l
+ 	jlt {0}.l 	.l :efecto_sonando_loop.l
+ return 0
+
+ 
+;;;;;;;;;;;;;;;
+; vocabulario ;
+;;;;;;;;;;;;;;;
+
+; Nota: Se ha cambiado de data a vdata porque en el fondo da igual y sino no se pueden modificar las salidas
+section vdata
+
+:palabras
+

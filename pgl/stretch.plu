@@ -1,0 +1,17 @@
+;CND STRETCH A 2 0 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+; ^------------------------------------------- Es un condacto
+;     ^--------------------------------------- Nombre
+;        ^------------------------------------ A= Accion, C= Condicion
+;          ^---------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;            ^-------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;	       ^------------------------------ 0 = aNada, 1 = aDescribir, 2=aEnd, 3=aFinDeTabla, 4=aCondicional
+
+:acc_stretch
+ dc.b 0xc1 0x04 0x01 0x00 0x00
+ copy {0}.l (:stretch_graphics).l
+ return 0
+ 
+	

@@ -1,0 +1,13 @@
+;CND WINSPLIT A 2 0 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+; WINSPLIT value
+
+:acc_winsplit
+dc.b 0xc1 0x04 0x03 0x00 0x00
+copy {0}.l (:cfg_graphic_percent).l
+call :destruir_ventana.l 0x00.l ~
+call :crear_ventana.l 0x00.l ~
+return 0

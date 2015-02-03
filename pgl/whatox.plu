@@ -1,0 +1,112 @@
+;CND WHATOX A 1 0 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+; ^------------------------------------------- Es un condacto
+;     ^--------------------------------------- Nombre
+;        ^------------------------------------ A= Accion, C= Condicion
+;          ^---------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;            ^-------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;	       ^------------------------------ 0 = aNada, 1 = aDescribir, 2=aEnd, 3=aFinDeTabla, 4=aCondicional
+
+:acc_whatox
+ dc.b 0xc1 0x04 0x07 0x00 0x00
+ jz (:flag034).l :whatox_sin_nombre.l
+ copy -1.l {16}.l
+ copy 0.l {4}.l
+:whatox_bucle_objetos_llevados
+ jgt {4}.l (:numero_ultimo_objeto).l :whatox_fin_llevados.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whatox_siguiente_objeto_llevados.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whatox_no_adjetivo_llevados.l
+ jeq (:flag035).l 255.l :whatox_no_adjetivo_llevados.l
+ jne {12}.l (:flag035).l :whatox_siguiente_objeto_llevados.l
+:whatox_no_adjetivo_llevados
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l 254.l :whatox_siguiente_objeto_llevados.l
+ copy {4}.l {16}.l
+:whatox_siguiente_objeto_llevados
+ add {4}.l 1.l {4}.l
+ jump :whatox_bucle_objetos_llevados.l
+:whatox_fin_llevados
+ jne {16}.l -1.l :whatox_fin_busqueda.l
+
+ copy 0.l {4}.l
+:whatox_bucle_objetos_puestos
+ jgt {4}.l (:numero_ultimo_objeto).l :whatox_fin_puestos.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whatox_siguiente_objeto_puestos.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whatox_no_adjetivo_puestos.l
+ jeq (:flag035).l 255.l :whatox_no_adjetivo_puestos.l
+ jne {12}.l (:flag035).l :whatox_siguiente_objeto_puestos.l
+:whatox_no_adjetivo_puestos
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l 253.l :whatox_siguiente_objeto_puestos.l
+ copy {4}.l {16}.l
+:whatox_siguiente_objeto_puestos
+ add {4}.l 1.l {4}.l
+ jump :whatox_bucle_objetos_puestos.l
+:whatox_fin_puestos
+ jne {16}.l -1.l :whatox_fin_busqueda.l
+ 
+ copy 0.l {4}.l
+:whatox_bucle_objetos_presentes
+ jgt {4}.l (:numero_ultimo_objeto).l :whatox_fin_presentes.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whatox_siguiente_objeto_presentes.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whatox_no_adjetivo_presentes.l
+ jeq (:flag035).l 255.l :whatox_no_adjetivo_presentes.l
+ jne {12}.l (:flag035).l :whatox_siguiente_objeto_presentes.l
+:whatox_no_adjetivo_presentes
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag038).l :whatox_siguiente_objeto_presentes.l
+ copy {4}.l {16}.l
+:whatox_siguiente_objeto_presentes
+ add {4}.l 1.l {4}.l
+ jump :whatox_bucle_objetos_presentes.l
+:whatox_fin_presentes
+ jne {16}.l -1.l :whatox_fin_busqueda.l
+ 
+ copy 0.l {4}.l 
+:whatox_bucle_objetos_cualquiersitio
+ jgt {4}.l (:numero_ultimo_objeto).l :whatox_fin_cualquiersitio.l
+ copy {4}.l {8}.l
+ mul {8}.l 7.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jne {12}.l (:flag034).l :whatox_siguiente_objeto_cualquiersitio.l
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ jeq {12}.l 255.l :whatox_no_adjetivo_cualquiersitio.l
+ jeq (:flag035).l 255.l :whatox_no_adjetivo_cualquiersitio.l
+ jne {12}.l (:flag035).l :whatox_siguiente_objeto_cualquiersitio.l
+:whatox_no_adjetivo_cualquiersitio
+ add {8}.l 1.l {8}.l
+ aload :objetos.l {8}.l {12}.l
+ copy {4}.l {16}.l
+:whatox_siguiente_objeto_cualquiersitio
+ add {4}.l 1.l {4}.l
+ jump :whatox_bucle_objetos_cualquiersitio.l
+:whatox_fin_cualquiersitio
+ jeq {16}.l -1.l :whatox_no_encontrado.l
+:whatox_fin_busqueda
+ astore :flags.l {0}.l {16}.l
+ return 0
+:whatox_no_encontrado
+:whatox_sin_nombre
+ astore :flags.l {0}.l 255.l
+ return 0

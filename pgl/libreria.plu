@@ -1,0 +1,25 @@
+;LIB Ejemplo
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+;---------------------------------------------------------
+; Esto es un ejemplo de una librería para superglus
+; permite añadir funciones assembler que luego pueden
+; ser utilizadas desde otros condactos, de modo que no
+; sera necesario realizar determinadas cosas en cada 
+; condacto plugin
+;
+; Nota: Nada asegura que los plugins sean colocados
+;	en el fichero ULA definitivo de ninguna manera
+;	en especial, asi que tenedlo en cuenta a la
+;	hora de hacer librerias
+;----------------------------------------------------------
+
+; Ejemplo de funcion (en este caso la funcion no hace nada)
+
+:function_idle
+dc.b 0xc1 0x00 0x00
+return 0
+
+;----------------------------------------------------------

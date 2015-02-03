@@ -1,0 +1,92 @@
+;CND HELP A 0 0 0 0
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+; ^------------------------------------------- Es un condacto
+;     ^--------------------------------------- Nombre
+;        ^------------------------------------ A= Accion, C= Condicion
+;          ^---------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;            ^-------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;	       ^------------------------------ 0 = aNada, 1 = aDescribir, 2=aEnd, 3=aFinDeTabla, 4=aCondicional
+
+:acc_help
+dc.b 0xc1 0x00 0x00
+streamstr :help_msga1.l
+streamchar 10
+streamchar 10
+streamstr :help_msg0.l
+streamchar 10
+streamchar 10
+streamstr :help_msg1.l
+streamchar 10
+streamchar 10
+streamstr :help_msg2.l
+streamchar 10
+streamchar 10
+streamstr :help_msg3.l
+streamchar 10
+streamchar 10
+streamstr :help_msg4.l
+streamchar 10
+streamchar 10
+streamstr :help_msg5.l
+streamchar 10
+streamchar 10
+streamstr :help_msg6.l
+streamchar 10
+streamchar 10
+streamstr :help_msg7.l
+streamchar 10
+streamchar 10
+streamstr :help_msg8.l
+streamchar 10
+streamchar 10
+streamstr :help_msg9.l
+streamchar 10
+streamchar 10
+streamstr :help_msgA.l
+streamchar 10
+streamchar 10
+streamstr :help_msgB.l
+streamchar 10
+streamchar 10
+streamstr :help_msgC.l
+streamchar 10
+streamchar 10
+return 0
+
+:help_msga1: dc.b ¿CÓMO DOY ÓRDENES AL PERSONAJE?
+:help_msg0: dc.b  Utiliza órdenes en imperativo o infinitivo: ABRE PUERTA, COGER LLAVE, SUBIR, etc.
+:help_msg1 dc.b "¿CÓMO ME MUEVO POR EL JUEGO?"
+:help_msg2 dc.b "Por regla general, mediante los puntos cardinales como norte (abreviado 'N'), sur (S), este (E), oeste (O) o direcciones espaciales (arriba, abajo, bajar, subir, entrar, salir, etc.). Algunas aventuras permiten también cosas como "ir a pozo". Normalmente podrás saber en que dirección puedes ir por la descripción del sitio, aunque algunos juegos implementan el comando 'SALIDAS' que te dirá exactamente cuales hay."
+:help_msg3 dc.b "¿CÓMO PUEDO SABER QUE OBJETOS LLEVO?"
+:help_msg4 dc.b "Teclea INVENTARIO (abreviado 'I')"
+:help_msg5 dc.b "¿CÓMO USO LOS OBJETOS?"
+:help_msg6 dc.b "Utiliza el verbo correcto, en lugar de USAR ESCOBA escribe BARRER."
+:help_msg7 dc.b "¿CÓMO PUEDO MIRAR DE CERCA UN OBJETO U OBSERVARLO MÁS DETALLADAMENTE?"
+:help_msg8 dc.b "Con el verbo examinar: EXAMINAR PLATO. Generalmente se puede usar la abreviatura 'EX' : EX PLATO."
+:help_msg9 dc.b "¿CÓMO PUEDO VER DE NUEVO LA DESCRIPCIÓN DEL SITIO DONDE ESTOY?"
+:help_msgA dc.b "Escribe MIRAR (abreviado 'M')."
+:help_msgB dc.b "¿CÓMO HABLO CON LOS PERSONAJES?"
+:help_msgC dc.b "En algunas aventuras también se puede utilizar el formato [HABLAR A LUIS]. Los métodos más comunes son [PERSONAJE, FRASE] o [DECIR A PERSONAJE 'FRASE']. Por ejemplo: [LUIS, HOLA] o [DECIR A LUIS 'HOLA']. "
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

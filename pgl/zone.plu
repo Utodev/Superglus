@@ -1,0 +1,9 @@
+;CND ZONE C 8 8 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+:cnd_zone
+dc.b 0xc1 0x04 0x02 0x00 0x00
+jgt {0}.l (:flag038).l 0
+jlt {4}.l (:flag038).l 0
+return 1

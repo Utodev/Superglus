@@ -1,0 +1,15 @@
+;CND MOD A 1 2 0 0
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+;^---------------------------------------- Nombre
+;    ^------------------------------------ A= Accion, C= Condicion
+;      ^---------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;        ^-------------------------------- 0 = nada, 1 = flagno, 2= value, 3=percent, 4=objno, 5=mesno,  6=smesno, 7=prono, 8=locno, 9=locno+, 10=adjective,  11=adverb, 12=preposition, 13=noun, 14=string
+;	   ^------------------------------ 0 = aNada, 1 = aDescribir, 2=aEnd, 3=aFinDeTabla, 4=aCondicional
+:acc_mod
+dc.b 0xc1 0x04 0x03 0x00 0x00
+aload :flags.l {0}.l {8}.l
+mod {8}.l {4}.l {8}.l
+astore :flags.l {0}.l {8}.l
+return 1

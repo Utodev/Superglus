@@ -1,0 +1,477 @@
+; Este archivo es (C) Julio Sangrador y Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+; VERSION DE SUPERGLUS ;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+:spg_version dc.b "Superglus 1.2 - Enero 2011"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+; MENSAJE DE DESPEDIDA ;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+:despedida
+ dc.b "Adiós...\n"
+
+:colores dc.l 0x00000000.l ; 0 - Negro
+ dc.l 0x000000FF.l ; 1 - Azul
+ dc.l 0x00FF0000.l ; 2 - Rojo
+ dc.l 0x00FF00FF.l ; 3 - Magenta
+ dc.l 0x0000FF00.l ; 4 - Verde
+ dc.l 0x0000FFFF.l ; 5 - Cyan
+ dc.l 0x00FFFF00.l ; 6 - Amarillo
+ dc.l 0x00FFFFFF.l ; 7 - Blanco
+ dc.l 0x00000000.l ; 8 - Negro
+ dc.l 0x00000000.l ; 9 - Negro
+ 
+
+;;;;;;;;;;;;;
+; VARIABLES ;
+;;;;;;;;;;;;;
+
+:logitud_palabras dc.l 10
+
+
+:stretch_graphics dc.l 0
+
+:glk_winnum_texto ds.l 1
+:glk_winnum_graficos ds.l 1
+:hay_graficos ds.l 1
+:grafico_actual ds.l 1
+:ancho_ventana_grafica ds.l 1
+:alto_ventana_grafica ds.l 1
+:ancho_grafico ds.l 1
+:alto_grafico ds.l 1
+:x_grafico ds.l 1
+:y_grafico ds.l 1
+:ratio_x ds.l 1
+:ratio_y ds.l 1
+
+:glk_result ds.l 1
+:glk_result2 ds.l 1
+
+:spare ds.l 10
+
+:estilo_actual ds.l 4
+:programa_quiere_graficos ds.l 41
+:hay_musica ds.l 4
+:hay_sonido ds.l 4
+:canal_musica ds.l 4
+:canal_efectos ds.l 64
+:programa_quiere_sonido ds.l 1
+:sonido_activado dc.l 0
+:musica_sonando dc.l 0
+:efecto_sonando ds.l 64
+
+
+:resultado_stream
+:resultado_stream_readcount ds.l 1
+:resultado_stream_writecount ds.l 1
+
+:bandera_salir dc.l 0
+:bandera_habia_frase dc.l 0
+:bandera_frase_vacia dc.l 0
+:bandera_tiempo_agotado dc.l 0
+:bandera_hecho dc.l 0
+:bandera_habia_conexion dc.l 0
+:bandera_buffer_vacio dc.l 1
+:bandera_describir_localidad dc.l 0
+:bandera_fin_de_LS dc.l 0
+:bandera_esta_seguro dc.l 0
+:bandera_jugar_otra_vez dc.l 1
+:bandera_en_doall dc.l 0.l
+:bandera_en_response dc.l 0.l
+
+:direccion_mensaje ds.l 1
+:numero_aleatorio ds.l 1
+:caracteres_preescritos dc.l 0
+:posicion_en_buffer dc.l 0
+:posicion_en_palabra dc.l 0
+:numero_de_flag ds.l 1
+:auxiliar dc.b 0 0 0
+:auxiliar_b dc.b 0
+:dummy4 dc.b 0 0 0
+:valor_flag ds.l 1
+:lugar_objeto ds.l 1
+:lugar_actual ds.l 1
+:dir_palabra_actual ds.l 1
+:tipo_pal_act dc.b 0 0 0
+:tipo_palabra_actual ds.b 1
+:num_pal_act dc.b 0 0 0
+:num_palabra_actual ds.b 1
+:dummy3 dc.b 0 0 0
+:turnos_jugados dc.l 0
+:proceso_en_doall dc.l 0
+:entrada_para_doall dc.l 0
+
+:auxverbo ds.l 1
+:auxnombre1 ds.l 1
+:auxadjetivo1 ds.l 1
+:auxnombre2 ds.l 1
+:auxadjetivo2 ds.l 1
+:auxpreposicion ds.l 1
+:auxadverbio ds.l 1
+:auxpronombre ds.l 1
+
+:verboanterior dc.l 255.l
+:adverbioanterior dc.l 255.l
+:nombre1anterior dc.l 255.l
+:adjetivo1anterior dc.l 255.l
+:preposicionanterior dc.l 255.l
+:nombre2anterior dc.l 255.l
+:adjetivo2anterior dc.l 255.l
+
+:evento_type ds.l 1
+:evento_win ds.l 1
+:evento_val1 ds.l 1
+:evento_val2 ds.l 1
+:exito ds.l 1
+
+:contador_timeout dc.l 0
+
+:palabra_actual dc.b 0xe0
+:buffer_palabra_actual ds.b 11
+:posicion_fin_de_palabra
+:dummy2 dc.b 0
+:cadena dc.b 0xe0
+:buffer ds.b 256
+:pronomterm dc.l 0.l
+
+:dummy dc.b 0 0
+
+:relleno_caracter_en_buffer dc.b 0 0 0
+:caracter_en_buffer ds.b 1
+:relleno_caracter_en_palabra dc.b 0 0 0
+:caracter_en_palabra ds.b 1
+dc.b 0 0 0
+:dir_objeto_actual ds.l 1
+:lugar_objeto_actual ds.l 1
+:descripcion_objeto_actual ds.l 1
+
+:debug_activo		dc.l 0
+:debug_ultimo_flag 	dc.l 0
+
+:debug_asigna dc.b "Flag "
+:debug_error dc.b "Error en comando de debugger.."
+
+:ramsave_done 		dc.l 0
+
+:palabra_encontrada dc.l 0
+
+
+:sysmess_error_msg dc.b "AVISO: Se intentó escribir mensaje del sistema inexistente: "
+:message_error_msg dc.b "AVISO: Se intentó escribir mensaje de usuario inexistente: "
+:process_error_msg dc.b "AVISO: Se intentó llamar a un proceso inexistente: "
+:ramload_error_msg dc.b "No se puede hacer RAMLOAD sin hacer previamente RAMSAVE."
+
+;;;;;;;;;;;;;;;;;;
+; TABLA DE FLAGS ;
+;;;;;;;;;;;;;;;;;;
+
+:flags
+:flag000 dc.l 0x00.l
+:flag001 dc.l 0x00.l
+:flag002 dc.l 0x00.l
+:flag003 dc.l 0x00.l
+:flag004 dc.l 0x00.l
+:flag005 dc.l 0x00.l
+:flag006 dc.l 0x00.l
+:flag007 dc.l 0x00.l
+:flag008 dc.l 0x00.l
+:flag009 dc.l 0x00.l
+:flag010 dc.l 0x00.l
+:flag011 dc.l 0x00.l
+:flag012 dc.l 0x00.l
+:flag013 dc.l 0x00.l
+:flag014 dc.l 0x00.l
+:flag015 dc.l 0x00.l
+:flag016 dc.l 0x00.l
+:flag017 dc.l 0x00.l
+:flag018 dc.l 0x00.l
+:flag019 dc.l 0x00.l
+:flag020 dc.l 0x00.l
+:flag021 dc.l 0x00.l
+:flag022 dc.l 0x00.l
+:flag023 dc.l 0x00.l
+:flag024 dc.l 0x00.l
+:flag025 dc.l 0x00.l
+:flag026 dc.l 0x00.l
+:flag027 dc.l 0x00.l
+:flag028 dc.l 0x00.l
+:flag029 dc.l 0x00.l
+:flag030 dc.l 0x00.l
+:flag031 dc.l 0x00.l
+:flag032 dc.l 0x00.l
+:flag033 dc.l 0x00.l
+:flag034 dc.l 0x00.l
+:flag035 dc.l 0x00.l
+:flag036 dc.l 0x00.l
+:flag037 dc.l 0x00.l
+:flag038 dc.l 0x00.l
+:flag039 dc.l 0x00.l
+:flag040 dc.l 0x00.l
+:flag041 dc.l 0x00.l
+:flag042 dc.l 0x00.l
+:flag043 dc.l 0x00.l
+:flag044 dc.l 0x00.l
+:flag045 dc.l 0x00.l
+:flag046 dc.l 0x00.l
+:flag047 dc.l 0x00.l
+:flag048 dc.l 0x00.l
+:flag049 dc.l 0x00.l
+:flag050 dc.l 0x00.l
+:flag051 dc.l 0x00.l
+:flag052 dc.l 0x00.l
+:flag053 dc.l 0x00.l
+:flag054 dc.l 0x00.l
+:flag055 dc.l 0x00.l
+:flag056 dc.l 0x00.l
+:flag057 dc.l 0x00.l
+:flag058 dc.l 0x00.l
+:flag059 dc.l 0x00.l
+:flag060 dc.l 0x00.l
+:flag061 dc.l 0x00.l
+:flag062 dc.l 0x00.l
+:flag063 dc.l 0x00.l
+:flag064 dc.l 0x00.l
+:flag065 dc.l 0x00.l
+:flag066 dc.l 0x00.l
+:flag067 dc.l 0x00.l
+:flag068 dc.l 0x00.l
+:flag069 dc.l 0x00.l
+:flag070 dc.l 0x00.l
+:flag071 dc.l 0x00.l
+:flag072 dc.l 0x00.l
+:flag073 dc.l 0x00.l
+:flag074 dc.l 0x00.l
+:flag075 dc.l 0x00.l
+:flag076 dc.l 0x00.l
+:flag077 dc.l 0x00.l
+:flag078 dc.l 0x00.l
+:flag079 dc.l 0x00.l
+:flag080 dc.l 0x00.l
+:flag081 dc.l 0x00.l
+:flag082 dc.l 0x00.l
+:flag083 dc.l 0x00.l
+:flag084 dc.l 0x00.l
+:flag085 dc.l 0x00.l
+:flag086 dc.l 0x00.l
+:flag087 dc.l 0x00.l
+:flag088 dc.l 0x00.l
+:flag089 dc.l 0x00.l
+:flag090 dc.l 0x00.l
+:flag091 dc.l 0x00.l
+:flag092 dc.l 0x00.l
+:flag093 dc.l 0x00.l
+:flag094 dc.l 0x00.l
+:flag095 dc.l 0x00.l
+:flag096 dc.l 0x00.l
+:flag097 dc.l 0x00.l
+:flag098 dc.l 0x00.l
+:flag099 dc.l 0x00.l
+:flag100 dc.l 0x00.l
+:flag101 dc.l 0x00.l
+:flag102 dc.l 0x00.l
+:flag103 dc.l 0x00.l
+:flag104 dc.l 0x00.l
+:flag105 dc.l 0x00.l
+:flag106 dc.l 0x00.l
+:flag107 dc.l 0x00.l
+:flag108 dc.l 0x00.l
+:flag109 dc.l 0x00.l
+:flag110 dc.l 0x00.l
+:flag111 dc.l 0x00.l
+:flag112 dc.l 0x00.l
+:flag113 dc.l 0x00.l
+:flag114 dc.l 0x00.l
+:flag115 dc.l 0x00.l
+:flag116 dc.l 0x00.l
+:flag117 dc.l 0x00.l
+:flag118 dc.l 0x00.l
+:flag119 dc.l 0x00.l
+:flag120 dc.l 0x00.l
+:flag121 dc.l 0x00.l
+:flag122 dc.l 0x00.l
+:flag123 dc.l 0x00.l
+:flag124 dc.l 0x00.l
+:flag125 dc.l 0x00.l
+:flag126 dc.l 0x00.l
+:flag127 dc.l 0x00.l
+:flag128 dc.l 0x00.l
+:flag129 dc.l 0x00.l
+:flag130 dc.l 0x00.l
+:flag131 dc.l 0x00.l
+:flag132 dc.l 0x00.l
+:flag133 dc.l 0x00.l
+:flag134 dc.l 0x00.l
+:flag135 dc.l 0x00.l
+:flag136 dc.l 0x00.l
+:flag137 dc.l 0x00.l
+:flag138 dc.l 0x00.l
+:flag139 dc.l 0x00.l
+:flag140 dc.l 0x00.l
+:flag141 dc.l 0x00.l
+:flag142 dc.l 0x00.l
+:flag143 dc.l 0x00.l
+:flag144 dc.l 0x00.l
+:flag145 dc.l 0x00.l
+:flag146 dc.l 0x00.l
+:flag147 dc.l 0x00.l
+:flag148 dc.l 0x00.l
+:flag149 dc.l 0x00.l
+:flag150 dc.l 0x00.l
+:flag151 dc.l 0x00.l
+:flag152 dc.l 0x00.l
+:flag153 dc.l 0x00.l
+:flag154 dc.l 0x00.l
+:flag155 dc.l 0x00.l
+:flag156 dc.l 0x00.l
+:flag157 dc.l 0x00.l
+:flag158 dc.l 0x00.l
+:flag159 dc.l 0x00.l
+:flag160 dc.l 0x00.l
+:flag161 dc.l 0x00.l
+:flag162 dc.l 0x00.l
+:flag163 dc.l 0x00.l
+:flag164 dc.l 0x00.l
+:flag165 dc.l 0x00.l
+:flag166 dc.l 0x00.l
+:flag167 dc.l 0x00.l
+:flag168 dc.l 0x00.l
+:flag169 dc.l 0x00.l
+:flag170 dc.l 0x00.l
+:flag171 dc.l 0x00.l
+:flag172 dc.l 0x00.l
+:flag173 dc.l 0x00.l
+:flag174 dc.l 0x00.l
+:flag175 dc.l 0x00.l
+:flag176 dc.l 0x00.l
+:flag177 dc.l 0x00.l
+:flag178 dc.l 0x00.l
+:flag179 dc.l 0x00.l
+:flag180 dc.l 0x00.l
+:flag181 dc.l 0x00.l
+:flag182 dc.l 0x00.l
+:flag183 dc.l 0x00.l
+:flag184 dc.l 0x00.l
+:flag185 dc.l 0x00.l
+:flag186 dc.l 0x00.l
+:flag187 dc.l 0x00.l
+:flag188 dc.l 0x00.l
+:flag189 dc.l 0x00.l
+:flag190 dc.l 0x00.l
+:flag191 dc.l 0x00.l
+:flag192 dc.l 0x00.l
+:flag193 dc.l 0x00.l
+:flag194 dc.l 0x00.l
+:flag195 dc.l 0x00.l
+:flag196 dc.l 0x00.l
+:flag197 dc.l 0x00.l
+:flag198 dc.l 0x00.l
+:flag199 dc.l 0x00.l
+:flag200 dc.l 0x00.l
+:flag201 dc.l 0x00.l
+:flag202 dc.l 0x00.l
+:flag203 dc.l 0x00.l
+:flag204 dc.l 0x00.l
+:flag205 dc.l 0x00.l
+:flag206 dc.l 0x00.l
+:flag207 dc.l 0x00.l
+:flag208 dc.l 0x00.l
+:flag209 dc.l 0x00.l
+:flag210 dc.l 0x00.l
+:flag211 dc.l 0x00.l
+:flag212 dc.l 0x00.l
+:flag213 dc.l 0x00.l
+:flag214 dc.l 0x00.l
+:flag215 dc.l 0x00.l
+:flag216 dc.l 0x00.l
+:flag217 dc.l 0x00.l
+:flag218 dc.l 0x00.l
+:flag219 dc.l 0x00.l
+:flag220 dc.l 0x00.l
+:flag221 dc.l 0x00.l
+:flag222 dc.l 0x00.l
+:flag223 dc.l 0x00.l
+:flag224 dc.l 0x00.l
+:flag225 dc.l 0x00.l
+:flag226 dc.l 0x00.l
+:flag227 dc.l 0x00.l
+:flag228 dc.l 0x00.l
+:flag229 dc.l 0x00.l
+:flag230 dc.l 0x00.l
+:flag231 dc.l 0x00.l
+:flag232 dc.l 0x00.l
+:flag233 dc.l 0x00.l
+:flag234 dc.l 0x00.l
+:flag235 dc.l 0x00.l
+:flag236 dc.l 0x00.l
+:flag237 dc.l 0x00.l
+:flag238 dc.l 0x00.l
+:flag239 dc.l 0x00.l
+:flag240 dc.l 0x00.l
+:flag241 dc.l 0x00.l
+:flag242 dc.l 0x00.l
+:flag243 dc.l 0x00.l
+:flag244 dc.l 0x00.l
+:flag245 dc.l 0x00.l
+:flag246 dc.l 0x00.l
+:flag247 dc.l 0x00.l
+:flag248 dc.l 0x00.l
+:flag249 dc.l 0x00.l
+:flag250 dc.l 0x00.l
+:flag251 dc.l 0x00.l
+:flag252 dc.l 0x00.l
+:flag253 dc.l 0x00.l
+:flag254 dc.l 0x00.l
+:flag255 dc.l 0x00.l
+
+
+:ascii_convert
+dc.b "€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿AAAAAAÆÇEEEEIIIIÐÑOOOOO×ØUUUUÝÞßAAAAAAæÇEEEEIIIIðÑOOOOO÷øUUUUýþÿ"
+
+:ramsave_file
+dc.b "spg.ram"
+
+; - Para terminaciones pronominales
+:palabra_actual_copia dc.b 0xe0
+:buffer_palabra_actual_copia ds.b 11
+:posicion_fin_de_palabra_copia
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;    INTERRUPCIONES    ;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Algunos condactos llaman dentro de su codigo a rutinas que pueden realizar extensiones
+; del condacto (o no). Para ello la funcion call_int comprueba que el valor en la tabla
+; de interrupciones de la interrupcion que sea es cero, en cuyo caso no hace nada, y en
+; caso contrario hace una llamada a la subrutina sita en la direccion indicada.
+; En principio esta pensado para permitir que se extiendan SAVE y LOAD, de modo que un
+; condacto o libreria plugin pueda poner sus propios datos y grabarlos/cargarlos al 
+; grabar/cargar partida.
+
+; Se supone que para la existencia de una extension por interrupcion se debe hacer lo siguiente:
+; 1) Crear una rutina de inicializacion, a modo de condacto, que el programador tendrá que poner.
+;    Dicho condacto toma el valor del puntero de interrupcion, lo guarda en una variable interna
+;    y substituye el puntero por un puntero a una rutina de extension.
+;2)  La rutina de extension es entonces llamada a la hora de ejecutarse el condacto, y su mision
+;    extendida debe realizarse, y despues llamar a la rutina que hubiera antes en el puntero, a
+;    no ser que el puntero fuera cero. De este modo se permiten extensiones concatenadas.
+;
+;    NOTA: habitualmente la rutina de extension para RAMSAVE y SAVE será la misma. No hay
+;          ningun problema en que ambos punteros apunten al mismo sitio.
+	
+    
+
+
+:tabla_interrupciones
+dc.l 0 0 0 0
+
+; INT 0 -> SAVE
+; INT 1 -> LOAD
+; INT 2 -> RAMSAVE
+; INT 3 -> RAMLOAD
+

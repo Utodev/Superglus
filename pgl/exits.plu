@@ -1,0 +1,86 @@
+;CND EXITS A 8 5 0 0
+; EXITS locno mesno
+; Dada una localidad y un mensaje utiliza dicho mensaje como base para dar una lista de las
+; salidas del lugar. El mensaje mesno debe ser un texto similar a "Salidas:", el mesno+1 algo
+; como "No veo salidas" y a partir del mesno+2 los mensajes correspondientes al verbo 0 de direccion
+; luego el verbo 1, etc. Por ejemplo si el verbo 'norte' es el nº 7 en el vocabulario deberá
+; ponerse en el mensaje mesno+2+7 el texto "al norte" y si 'subir' es el nº 3 debera ponerse
+; en el mensaje mesno+2+3 el texto "arriba". Exits usa los mensajes del sistema 46, 47 y 48 para
+; construir una frase valida del tipo: "Salidas visibles: al norte y arriba."
+; Si no hay luz el mensaje mesno será mostrado haya o no salidas.
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+:acc_exits
+dc.b 0xc1 0x04 0x6 0x00 0x00
+; antes de nada vamos a ver si hay luz, porque si no la hay no va a haber salidas visibles.
+jz (:flag000).l :exits_continua ; hay luz, continua 
+call :light_here.l 0x00.b {16}.l
+jnz {16}.l :exits_continua	; hay objeto con luz podemos continuar
+jump :exits_no_hay_salida.l
+
+:exits_continua
+; vamos a contar cuantas salidas hay
+mul {0}.l 16.l {0}.l		
+
+
+
+copy 0.l {16}.l			; contador a cero
+copy 0.l {8}.l			; {8} es el puntero que va moviendos, el contador del bucle
+:exits_bucle_cuenta
+	aload :conexiones.l {0}.l {12}.l	; carga la conexion 
+	jeq {12}.l -1.l :exits_no_es_salida.l
+	add 1.l {16}.l {16}.l		; Encontrada una salida
+	:exits_no_es_salida
+	add 1.l {8}.l {8}.l
+	add 1.l {0}.l {0}.l
+jlt {8}.l 16.l :exits_bucle_cuenta
+
+
+sub {0}.l 16.l {0}.l	; Vuelvo a dejar el {0}.l apuntando al principio de la lista de conexiones de la localidad
+
+; Ahora tengo en {16} el numero de salidas
+
+
+jz {16}.l :exits_no_hay_salida
+
+
+copy 0.l {8}.l
+copy {4}.l (sp)
+call :escribir_mensaje_usuario.l 0x01.b ~	; "Salidas visibles: "
+:exits_bucle_escribe
+	aload :conexiones.l {0}.l {12}.l	; carga la conexion 
+	jeq {12}.l -1.l :exits_no_es_salida_2.l
+	copy {4}.l {20}.l		; Encontrada una salida
+	add {20}.l 2.l {20}.l
+	add {8}.l {20}.l {20}.l	; Calculo el numero de mensaje
+	copy {20}.l (sp)
+	call :escribir_mensaje_usuario.l 0x01.b ~	; "al norte" (por ejemplo)
+	jgt {16}.l 2.l :exits_escribir_coma.l
+	jeq {16}.l 2.l :exits_escribir_y.l
+	copy 48.l (sp)
+	call :escribir_mensaje_sistema.l 0x01.b ~	; "."
+	jump :exits_sigue_bucle.l
+	:exits_escribir_coma
+	copy 46.l (sp)
+	call :escribir_mensaje_sistema.l 0x01.b ~	; ", "
+	jump :exits_sigue_bucle.l
+	:exits_escribir_y
+	copy 47.l (sp)
+	call :escribir_mensaje_sistema.l 0x01.b ~	; " y "
+	jump :exits_sigue_bucle.l
+	:exits_sigue_bucle
+	sub {16}.l 1.l {16}.l		
+	:exits_no_es_salida_2
+	add 1.l {8}.l {8}.l
+	add 1.l {0}.l {0}.l
+jlt {8}.l 16.l :exits_bucle_escribe
+return 1	
+:exits_no_hay_salida
+
+
+add {4}.l 1.l {4}.l
+copy {4}.l (sp)
+call :escribir_mensaje_usuario.l 0x01.b ~	; "No hay salidas visibles."
+return 1
