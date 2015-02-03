@@ -1,0 +1,6 @@
+;CND NORESP A 0 0 0 0
+
+:acc_noresp
+dc.b 0xc1 0x00 0x00
+copy 0.l (:bandera_en_response).l
+return 0

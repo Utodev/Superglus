@@ -1,0 +1,6 @@
+;CND RESP A 0 0 0 0
+
+:acc_resp
+dc.b 0xc1 0x00 0x00
+copy 1.l (:bandera_en_response).l
+return 0
