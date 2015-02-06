@@ -1,0 +1,15 @@
+;CND ISMOV C 0 0 0 0
+
+
+:cnd_ismov
+dc.b 0xc1 0x04 0x00 0x00 0x00
+jge (:flag033).l 14.l :ismov_check2.l
+jeq (:flag034).l 255.l 1.l  ; MOV+NO_PAL
+:ismov_check2
+jne (:flag033).l 255.l :ismov_check3.l
+jlt (:flag034).l 14.l 1.l  ; NO_PAL+MOV
+:ismov_check3
+jge (:flag033).l 14.l 0.l 
+jge (:flag034).l 14.l 0.l  ; MOV+MOV
+return 1.l
+

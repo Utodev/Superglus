@@ -1,0 +1,7 @@
+;CND ISNOTMOV C 0 0 0 0
+
+:cnd_isnotmov
+dc.b 0xc1 0x04 0x01 0x00 0x00
+call :cnd_ismov 0x00.b {0}.l
+jz {0}.l 1
+return 0

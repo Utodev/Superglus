@@ -1,0 +1,9 @@
+;CND ISNOTDONE C 0 0 0 0
+
+; Este archivo es (C) Carlos Sánchez, y está sujeto a licencia LGPL v3
+
+
+:cnd_isnotdone
+dc.b 0xc1 0x04 0x00 0x00 0x00
+jz (:bandera_hecho).l 1
+return 0
