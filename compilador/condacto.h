@@ -11,7 +11,7 @@
 typedef enum
 { nada, flagno, value, percent, objno, mesno,
   smesno, prono, locno, locno_, adjective,
-  adverb, preposition, noun, string
+  adverb, preposition, noun, string, verb
 }
 tipoArg;
 
@@ -20,7 +20,7 @@ typedef enum
 tipoLimpieza;
 
 typedef enum
-{ condicion, accion, mixto }
+{ condicion, accion, mixto, label, jump }
 tipoCondacto;
 
 typedef struct

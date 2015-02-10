@@ -242,139 +242,137 @@ VolcarProcesos ()
 
   for (npro = 0; npro < ultProceso + 1; npro++)
     {
-	  if (npro == interrupt_proc)
-		  fprintf (fichUla, ":interrupt_proc\n");
+		  if (npro == interrupt_proc)
+			  fprintf (fichUla, ":interrupt_proc\n");
 
-      fprintf (fichUla, ":pro%03d\n", npro);
-      fputs (" dc.b 0xc1 0x04 0x03 0x00 0x00\n", fichUla);
-	  fprintf (fichUla, ":pro%03d_restart\n", npro);
-      nent = 0;
-      /* Al principio de cada proceso veremos si hemos recibido un número de entrada como primer parámetro; si es así saltamos */
-      fprintf(fichUla,
-              " jz (:bandera_en_doall).l :no_entrada_para_doall_p%03d.l\n"
-              " jne (:proceso_en_doall).l %03d.l :no_entrada_para_doall_p%03d.l\n"
-			  " jump (:entrada_para_doall).l\n"
-              ":no_entrada_para_doall_p%03d\n", npro, npro, npro, npro);
-              laEntrada = SiguienteEntrada (npro, NULL);
-      while (laEntrada != NULL)
-	{
-	  pCondacto = laEntrada->condactos;
-	  posicion = 0;
-	  fprintf (fichUla, ":p%03de%04d\n", npro, nent);
-	  strcpy (verboDeLaEntrada,
-		  BuscarPalabraPorNumero (laEntrada->verbo, verbo));
-	  strcpy (nombreDeLaEntrada,
-		  BuscarPalabraPorNumero (laEntrada->nombre, nombre));
-	  fprintf (fichUla, "; %s %s\n", verboDeLaEntrada, nombreDeLaEntrada);
-	  /* generar el codigo de entrada a la entrada */
-	  fprintf (fichUla,
-		   " jz (:bandera_en_response).l :p%03de%04d_condactos.l\n",
-		   npro, nent);
-	  if (laEntrada->verbo != -1)
-	    fprintf (fichUla, " jne (:flag033).l 0x%x.l :p%03de%04d.l\n",
-		     laEntrada->verbo, npro, nent + 1);
-	  if (laEntrada->nombre != -1)
-	    fprintf (fichUla, " jne (:flag034).l 0x%x.l :p%03de%04d.l\n",
-		     laEntrada->nombre, npro, nent + 1);
-	  /* generar codigo de condactos */
-	  fprintf (fichUla, ":p%03de%04d_condactos\n", npro, nent);
-	  while (posicion < (laEntrada->posicion))
-	    {
-	      elCondacto = condactos[pCondacto[posicion]];
-	      /* generar el codigo del condacto */
-	      if (!strcmp (elCondacto.nombre, "DOALL"))
+		  fprintf (fichUla, ":pro%03d\n", npro);
+		  fputs (" dc.b 0xc1 0x04 0x03 0x00 0x00\n", fichUla);
+		  fprintf (fichUla, ":pro%03d_restart\n", npro);
+		  nent = 0;
+		  /* Al principio de cada proceso veremos si hemos recibido un número de entrada como primer parámetro; si es así saltamos */
+		  fprintf(fichUla,
+				  " jz (:bandera_en_doall).l :no_entrada_para_doall_p%03d.l\n"
+				  " jne (:proceso_en_doall).l %03d.l :no_entrada_para_doall_p%03d.l\n"
+				  " jump (:entrada_para_doall).l\n"
+				  ":no_entrada_para_doall_p%03d\n", npro, npro, npro, npro);
+				  laEntrada = SiguienteEntrada (npro, NULL);
+		  while (laEntrada != NULL)
+		{
+		  pCondacto = laEntrada->condactos;
+		  posicion = 0;
+		  fprintf (fichUla, ":p%03de%04d\n", npro, nent);
+		  strcpy (verboDeLaEntrada,
+			  BuscarPalabraPorNumero (laEntrada->verbo, verbo));
+		  strcpy (nombreDeLaEntrada,
+			  BuscarPalabraPorNumero (laEntrada->nombre, nombre));
+		  fprintf (fichUla, "; %s %s\n", verboDeLaEntrada, nombreDeLaEntrada);
+		  /* generar el codigo de entrada a la entrada */
+		  fprintf (fichUla,
+			   " jz (:bandera_en_response).l :p%03de%04d_condactos.l\n",
+			   npro, nent);
+		  if (laEntrada->verbo != -1)
+			fprintf (fichUla, " jne (:flag033).l 0x%x.l :p%03de%04d.l\n",
+				 laEntrada->verbo, npro, nent + 1);
+		  if (laEntrada->nombre != -1)
+			fprintf (fichUla, " jne (:flag034).l 0x%x.l :p%03de%04d.l\n",
+				 laEntrada->nombre, npro, nent + 1);
+		  /* generar codigo de condactos */
+		  fprintf (fichUla, ":p%03de%04d_condactos\n", npro, nent);
+		  while (posicion < (laEntrada->posicion))
 			{
-				fprintf (fichUla, " copy :p%03de%04d.l {4}.l\n", npro,nent + 1); 
-				fprintf (fichUla, " sub {4}.l :no_entrada_para_doall_p%03d.l {4}.l\n", npro);
-				fprintf (fichUla, " add {4}.l 2.l {4}.l\n");
-	            fprintf (fichUla, " copy {4}.l (:entrada_para_doall).l\n");
-	            fprintf (fichUla, " copy %d.l (:proceso_en_doall).l\n", npro);
+			  elCondacto = condactos[pCondacto[posicion]];
+			  /* generar el codigo del condacto */
+			  if (!strcmp (elCondacto.nombre, "DOALL"))
+				{
+					fprintf (fichUla, " copy :p%03de%04d.l {4}.l\n", npro,nent + 1); 
+					fprintf (fichUla, " sub {4}.l :no_entrada_para_doall_p%03d.l {4}.l\n", npro);
+					fprintf (fichUla, " add {4}.l 2.l {4}.l\n");
+					fprintf (fichUla, " copy {4}.l (:entrada_para_doall).l\n");
+					fprintf (fichUla, " copy %d.l (:proceso_en_doall).l\n", npro);
+				}
+
+			  if (!strcmp (elCondacto.nombre, "RESTART"))
+				{
+					fprintf (fichUla, " jump :pro%03d_restart.l\n", npro); 
+				}
+
+
+				  if (elCondacto.tipoArg3 != nada)
+					{
+					 if (pCondacto[posicion+3] & 0x80000000) /* Direccionamiento indirecto */
+					 fprintf (fichUla, " copy (:flag%03d).l (sp)\n",  pCondacto[posicion + 3] & 0x7FFFFFFF);
+					  else
+					 fprintf (fichUla, " copy 0x%x.l (sp)\n",  pCondacto[posicion + 3]);
+					}
+
+
+				  if (elCondacto.tipoArg2 != nada)
+					{
+					 if (pCondacto[posicion+2] & 0x80000000) /* Direccionamiento indirecto */
+					 fprintf (fichUla, " copy (:flag%03d).l (sp)\n",  pCondacto[posicion + 2] & 0x7FFFFFFF);
+					  else
+					 fprintf (fichUla, " copy 0x%x.l (sp)\n",  pCondacto[posicion + 2]);
+					}
+                
+				   if (elCondacto.tipoArg1 != nada)
+					{
+					 if (pCondacto[posicion+1] & 0x80000000) /* Direccionamiento indirecto */
+					 fprintf (fichUla, " copy (:flag%03d).l (sp)\n",  pCondacto[posicion + 1] & 0x7FFFFFFF);
+					  else
+					 fprintf (fichUla, " copy 0x%x.l (sp)\n",  pCondacto[posicion + 1]);
+					}
+                
+			switch (elCondacto.tipo)
+			{
+				case condicion:
+				case mixto:
+				  fprintf (fichUla, " call :cnd_%s.l 0x%x.b (sp)\n",
+					   aMinusculas (elCondacto.nombre),
+					   0 + ((elCondacto.tipoArg1 != nada) ? 1 : 0) +
+					   ((elCondacto.tipoArg2 != nada) ? 1 : 0) + 
+					   ((elCondacto.tipoArg3 != nada) ? 1 : 0));
+				  fprintf (fichUla, " jz (sp) :p%03de%04d.l\n", npro,
+					   nent + 1);
+				  break;
+				case accion:
+				  fprintf (fichUla, " call :acc_%s.l %x.b ~\n",
+					   aMinusculas (elCondacto.nombre),
+					   0 + ((elCondacto.tipoArg1 != nada) ? 1 : 0) +
+					   ((elCondacto.tipoArg2 != nada) ? 1 : 0) +
+					   ((elCondacto.tipoArg3 != nada) ? 1 : 0) );
+				  if (!strcmp (elCondacto.nombre, "process"))
+					{
+					  fprintf (fichUla,
+						   " jnz (:bandera_describir_localidad).l :p%03de9999.l\n",
+						   npro);
+					  fprintf (fichUla,
+						   " jnz (:bandera_salir).l 0 ; por si se ha ejecutado END\n");
+					}
+				  break;
+				default:
+				  printf ("ERROR: tipo de condacto no reconocido\n");
 			}
-
-	      if (!strcmp (elCondacto.nombre, "RESTART"))
+			  /* y ahora, las operaciones de limpieza del condacto según el tipo del mismo */
+			switch (elCondacto.limpieza)
 			{
-				fprintf (fichUla, " jump :pro%03d_restart.l\n", npro); 
-		    }
-
-
-              if (elCondacto.tipoArg3 != nada)
-                {
-                 if (pCondacto[posicion+3] & 0x80000000) /* Direccionamiento indirecto */
-                 fprintf (fichUla, " copy (:flag%03d).l (sp)\n",  pCondacto[posicion + 3] & 0x7FFFFFFF);
-                  else
-                 fprintf (fichUla, " copy 0x%x.l (sp)\n",  pCondacto[posicion + 3]);
-                }
-
-
-              if (elCondacto.tipoArg2 != nada)
-                {
-                 if (pCondacto[posicion+2] & 0x80000000) /* Direccionamiento indirecto */
-                 fprintf (fichUla, " copy (:flag%03d).l (sp)\n",  pCondacto[posicion + 2] & 0x7FFFFFFF);
-                  else
-                 fprintf (fichUla, " copy 0x%x.l (sp)\n",  pCondacto[posicion + 2]);
-                }
-                
-               if (elCondacto.tipoArg1 != nada)
-                {
-                 if (pCondacto[posicion+1] & 0x80000000) /* Direccionamiento indirecto */
-                 fprintf (fichUla, " copy (:flag%03d).l (sp)\n",  pCondacto[posicion + 1] & 0x7FFFFFFF);
-                  else
-                 fprintf (fichUla, " copy 0x%x.l (sp)\n",  pCondacto[posicion + 1]);
-                }
-                
-               switch (elCondacto.tipo)
-		{
-		case condicion:
-		case mixto:
-		  fprintf (fichUla, " call :cnd_%s.l 0x%x.b (sp)\n",
-			   aMinusculas (elCondacto.nombre),
-			   0 + ((elCondacto.tipoArg1 != nada) ? 1 : 0) +
-			   ((elCondacto.tipoArg2 != nada) ? 1 : 0) + 
-			   ((elCondacto.tipoArg3 != nada) ? 1 : 0));
-		  fprintf (fichUla, " jz (sp) :p%03de%04d.l\n", npro,
-			   nent + 1);
-		  break;
-		case accion:
-		  fprintf (fichUla, " call :acc_%s.l %x.b ~\n",
-			   aMinusculas (elCondacto.nombre),
-			   0 + ((elCondacto.tipoArg1 != nada) ? 1 : 0) +
-			   ((elCondacto.tipoArg2 != nada) ? 1 : 0) +
-			   ((elCondacto.tipoArg3 != nada) ? 1 : 0) );
-		  if (!strcmp (elCondacto.nombre, "process"))
-		    {
-		      fprintf (fichUla,
-			       " jnz (:bandera_describir_localidad).l :p%03de9999.l\n",
-			       npro);
-		      fprintf (fichUla,
-			       " jnz (:bandera_salir).l 0 ; por si se ha ejecutado END\n");
-		    }
-		  break;
-		default:
-		  printf ("ERROR: tipo de condacto no reconocido\n");
+				case aDescribir:
+				case aEnd:
+				case aFinDeTabla:
+				  fprintf (fichUla,
+					   " return 0 ; debemos salir de todas las funciones\n");
+				  break;
+				case aCondicional:
+				  fprintf (fichUla,  " jz (:exito).l :p%03de9999.l ; debemos salir de la tabla\n",
+					   npro);
+				  break;
+			}
+			posicion += 4;
+		  }
+		  laEntrada = SiguienteEntrada (npro, laEntrada);
+		  nent++;
 		}
-	      /* y ahora, las operaciones de limpieza del condacto según el tipo del mismo */
-	      switch (elCondacto.limpieza)
-		{
-		case aDescribir:
-		case aEnd:
-		case aFinDeTabla:
-		  fprintf (fichUla,
-			   " return 0 ; debemos salir de todas las funciones\n");
-		  break;
-		case aCondicional:
-		  fprintf (fichUla,
-			   " jz (:exito).l :p%03de9999.l ; debemos salir de la tabla\n",
-			   npro);
-		  break;
-		}
-	      posicion += 4;
-	    }
-	  laEntrada = SiguienteEntrada (npro, laEntrada);
-	  nent++;
-	}
-      fprintf (fichUla, ":p%03de%04d\n:p%03de9999\nreturn 0\n", npro, nent,
-	       npro);
-    }
+    fprintf (fichUla, ":p%03de%04d\n:p%03de9999\nreturn 0\n", npro, nent, npro);
+   }
 }
 
 void

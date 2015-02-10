@@ -294,7 +294,29 @@ checkArg (int *a1, tipoArg tipo)
 	}
       else
 	casarLex (pPalabra);
-      break;
+    break;
+    case verb:
+      if (simbolo == pPalabra)
+	{
+	  if (!BuscarPalabra (lexema, &palabra) || (palabra.tipo != verbo))
+	    error (errSem, 10);
+	  *a1 = palabra.num;
+	  casarLex (pPalabra);
+	}
+      else if (simbolo == pSubrayado)
+	{
+	  *a1 = 255;
+	  casarLex (pSubrayado);
+	}
+      else if (simbolo == pNumero)
+	{
+	  *a1 = Val (lexema);
+	  casarLex (pNumero);
+	}
+      else
+	casarLex (pPalabra);
+    break;
+
     }
 }
 

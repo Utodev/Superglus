@@ -79,7 +79,6 @@
       <Culture>0x0c0a</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>C:\Documents and Settings\csanchez\Mis Documentos\Proyectos\pruebas\spg.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/spg.pdb</ProgramDatabaseFile>
@@ -120,7 +119,6 @@
       <Culture>0x0c0a</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>Release/spg.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\Release/spg.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
