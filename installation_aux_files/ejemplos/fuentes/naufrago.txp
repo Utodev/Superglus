@@ -1,0 +1,3016 @@
+;#############################################################
+;############ SUPERGLUS - LIBRERIA DE INICIO 3.1 #############
+;############              01/01/2005            #############      
+;#############################################################
+
+; Efectos sonoros
+
+#define snd escapeAire.ogg 1
+#define snd telefonoComunicando.ogg 2
+#define snd telefonoLlamando.ogg 3
+#define snd sonidoMar.ogg 4
+
+;        -        -        -        -        -        -        -        -        -
+
+#define const TurnosAcabaComida 150
+#define const TurnosBarcoLLega 15
+#define const TurnosLanchaDesincha 20
+
+; algunas definiciones útiles
+#define flg flgVerbo 33
+#define flg flgNombre 34
+
+; La aventura es sencilla, de una sola localidad
+; Hay dos condiciones de salida de la aventura
+;	- Se acaba la comida. Este contador debe ser 
+;	  descontado desde el principio
+
+#define flg flgAcabaComida 101
+
+;
+;	- La balsa salvavidas se deshincha. Después de cinco turnos
+;	  se oye un siseo
+
+#define flg flgContadorLanchaDeshincha 102
+#define flg flgLanchaDeshinchandose 103
+#define flg flgEmpiezaDeshincharse 104
+#define flg flgLanchaParcheada 105
+;
+;	- Eres encontrado
+
+; Hay un bolsillo en el bote, donde encontrarás:
+#define grf bote2.png 1
+;	- Parches para la balsa
+#define grf parche.png 2
+
+
+; Hay una bolsa semi escondido en un compartimento de la barca, que hay que examinar para
+; poder encontrar
+#define flg flgCompartimentoEncontrado 106
+;	- Debe haber una linterna con una pila dentro
+#define grf linterna.png 3
+#define flg flgLinternaAbierta 107
+;	- Pegamento
+;	- Lanzabengalas
+;	- Brújula
+;	- Comida (debe variar según se descontara el contador)
+;	- Alambre (que se debe trocear para conectar la pila al móvil)
+#define grf alambre.png 4
+
+; Tú llevas contigo: tu teléfono móvil
+#define flg flgTelefonoDescargado 108
+
+; Para poder ganar, se debe:
+;	- Montar la pila con el móvil para que se cargue
+;	- Llamar: entonces, pasará un avión (al cabo de unos turnos)
+#define flg flgLlamadaHecha 109
+#define flg flgBarcoViene 110
+#define flg flgBarcoRescateHaLLegado 111
+;	- disparar la bengala
+;	- remar hasta el barco
+#define flg flgHasRemado 112
+
+; El médico te visita tras tu llegada al hospital
+#define flg flgVisitaMedico 113
+
+/CTL
+
+; Estilo 6 (estilo de texto para respuestas de los psi's)
+$TYPEWRITER_6=Off
+$BOLD_6=Off
+$ITALIC_6=On
+$FOREGROUND_6=DDDDDD
+$BACKGROUND_6=000000 
+
+$TYPEWRITER_7=On
+$BOLD_7=Off
+$ITALIC_7=Off
+$FOREGROUND_7=FFFFFF
+$BACKGROUND_7=000000 
+
+;        -        -        -        -        -        -        -        -        -
+
+/VOC
+
+;--Movimientos, verbos y nombres < 14--
+
+N             2        noun
+NORTE         2        noun
+S             3        noun
+SUR           3        noun
+E             4        noun
+ESTE          4        noun
+O             5        noun
+OESTE         5        noun
+NE            6        noun
+NORESTE       6        noun
+NW            7        noun
+NOROESTE      7        noun
+NO            7        noun
+SE            8        noun
+SURESTE       8        noun
+SUDESTE       8        noun
+SUROESTE      9        noun
+SW            9        noun
+SO            9        noun
+ARRIBA        10       noun
+ABAJO         11       noun
+SUBIR         10       verb
+BAJAR         11       verb
+ENTRAR        12       verb
+SALIR         13       verb
+ENTRA         12       verb
+SAL           13       verb
+DEBUG 	      19       verb
+
+;--Nombres--    <20 indica que pueden ser usados como verbos
+;               <50 indica que son nombres propio, no seran
+;                   tenidos en cuenta por los pronombres.
+I             14       noun
+INVEN         14       noun
+TODO          20       noun
+BARCA	      50       noun
+BOTE	      50       noun
+ZODIAC        50       noun
+BALSA         50       noun
+LANCHA		50	noun
+PLASTICO	50	noun
+LONA		50	noun
+MOVIL		51	noun
+TELEFONO	51 	noun
+BOLSILLO	52	noun
+BOLSO		53	noun
+BOLSA		53	noun
+LINTERNA	54	noun
+SECCION		54 	noun
+PARCHE		55 	noun
+TABLAS		56	noun
+FONDO		56	noun
+SUELO		56	noun
+COMPARTIMENTO   56	noun
+MAR		57 	noun
+AGUA		57 	noun
+ALAMBRE		58	noun
+ALAMBRES	58	noun
+PILA		59	noun
+BATERIA		59	noun
+REMOS		60	noun
+REMO		60	noun
+BARCO		61	noun
+BUQUE		61	noun
+NAVIO		61	noun
+PERSONA		62	noun
+HOMBRE		62	noun
+SISEO		63	noun
+FUGA		63	noun
+PINCHAZO	63	noun
+AGUJERO		63 	noun
+BRAZO		64	noun
+BRAZOS		64	noun
+
+;--Verbos--
+COGER         20       verb
+COGE          20       verb
+TOMAR	      20       verb
+TOMA          20       verb
+SACAR		20	verb
+SACA		20	verb
+SACO		20	verb
+DEJAR         21       verb
+DEJA          21       verb
+PONER         21       verb
+PON           21       verb
+PEGAR           21       verb
+PEGA           21       verb
+PEGO           21       verb
+PONGO           21       verb
+METER		21	verb
+METE		21	verb
+METO		21 	verb
+
+QUITAR        22       verb
+QUITA         22       verb
+M             24       verb
+MIRAR         24       verb
+MIRA          24       verb
+QUIT          25       verb
+FIN           25       verb
+SAVE          26       verb
+GRABAR        26       verb
+GRABA         26       verb
+LOAD          27       verb
+CARGAR        27       verb
+CARGA         27       verb
+RAMSAVE       28       verb
+RAMLOAD       29       verb
+EXAMINAR      30       verb
+EXAMINA       30       verb
+EX            30       verb
+DECIR         31       verb
+DI            31       verb
+HABLAR        31       verb
+HABLA         31       verb
+PREGUNTAR     31       verb
+PREGUNTA      31       verb
+TIRAR         32       verb
+TIRA          32       verb
+EMPUJAR       33       verb
+EMPUJA        33       verb
+AYUDA	      34       verb
+HELP	      34       verb
+GIRAR         35       verb
+GIRA          35       verb
+ROTA          35       verb
+ROTAR         35       verb
+VOLTEAR       35       verb
+VOLTEA        35       verb
+LANZAR        36       verb
+LANZA         36       verb
+ESCUCHAR      37       verb
+ESCUCHA       37       verb
+PROBAR        38       verb
+PRUEBA        38       verb
+COMER         38       verb
+COME          38       verb
+BEBER         39       verb
+BEBE          39       verb
+TOCAR         40       verb
+TOCA          40       verb
+SALIDAS       41       verb
+X             41       verb
+OLER          42       verb
+HUELE         42       verb
+ESPERAR       43       verb
+ESPERA        43       verb
+CANTAR        44       verb
+CANTA         44       verb
+SALTAR        45       verb
+SALTA         45       verb
+ATACAR        46       verb
+ATACA         46       verb
+MATAR         46       verb
+MATA          46       verb
+SOPLA         47       verb
+SOPLAR        47       verb
+FROTAR        48       verb
+RASPAR        48       verb
+FROTA         48       verb
+RASPA         48       verb
+AGITAR        49       verb
+AGITA         49       verb
+MOVER         49       verb
+MUEVE         49       verb
+QUEMAR        50       verb
+QUEMA         50       verb
+PRENDER       50       verb
+PRENDE        50       verb
+EXCAVAR       51       verb
+EXCAVA        51       verb
+CAVAR         51       verb
+CAVA          51       verb
+CORTAR        52       verb
+CORTA         53       verb
+ATAR          54       verb
+ATA           54       verb
+ATO           54       verb
+UNIR	      54       verb
+UNE	      54       verb
+UNO	      54       verb
+LLENAR        55       verb
+LLENA         55       verb
+LLENO         55       verb
+NADAR         56       verb
+NADA          56       verb
+NADO          56       verb
+TREPAR        57       verb
+TREPA         57       verb
+ESCALAR       57       verb
+ESCALA        57       verb
+RETORCER      58       verb
+RETUERCE      58       verb
+TORCER        58       verb
+TUERCE        58       verb
+REZAR         59       verb
+REZA          59       verb
+PENSAR        60       verb
+PIENSA        60       verb
+PIENSO        60       verb
+DORMIR        61       verb
+DUERME        61       verb
+BESAR         62       verb
+BESA          62       verb
+LAMER         63       verb
+LAME          63       verb
+CHUPAR        63       verb
+CHUPA         63       verb
+CHUPO         63       verb
+ABRIR         64       verb
+ABRE          64       verb
+ABRO          64       verb
+CERRAR        65       verb
+CIERRA        65       verb
+CIERRO        65       verb
+ENCENDER      66       verb
+ENCIENDE      66       verb
+ENCIENDO      66       verb
+APAGAR        67       verb
+APAGA         67       verb
+APAGO         67       verb
+TRANSCRIPCION 68       verb
+TRANSCRIPT    68       verb
+ROMPER	      69       verb
+ROMPE	      69       verb
+ROMPO	      69       verb
+SUPERGLUS     70       verb
+VERSION	      70       verb
+REMAR		71	verb
+REMA		71	verb
+; REMO		71	verb ; no vale, coincide con los remos
+BOGAR		71	verb
+BOGA		71	verb
+BOGO		71	verb
+PARCHEAR	72	verb
+PARCHEA		72 	verb
+PARCHEO		72	verb
+LEVANTAR	73	verb
+LEVANTA		73	verb
+LEVANTO		73	verb
+LLAMAR		74	verb
+LLAMA		74	verb
+LLAMO		74	verb
+MARCAR		74	verb
+MARCA		74	verb
+MARCO		74	verb
+
+VOMITAR		75	verb
+VOMITA		75	verb
+VOMITO		75	verb
+
+MONTAR		54	verb ; sinónimo de atar
+MONTA		54	verb
+MONTO		54	verb
+CONECTA		54	verb
+CONECTAR	54	verb
+CONECTO		54	verb
+ENCHUFA		54	verb
+ENCHUFAR	54	verb
+ENCHUFO		54 	verb
+
+RECUERDA	76	verb
+RECORDAR	76	verb
+RECUERDO	76	verb
+
+BUSCAR		77	verb
+BUSCA		77	verb
+BUSCO		77	verb
+
+ARREGLA		78	verb
+ARREGLAR	78	verb
+ARREGLO		78	verb
+TAPAR		78	verb
+TAPA		78	verb
+TAPO		78	verb
+
+LLORAR		79	verb
+LLORA		79	verb
+LLORO		79	verb
+GRITAR		79	verb
+GRITA		79	verb
+GRITO		79	verb
+
+
+;--Adjetivos--
+PEQUEÑO       2        adjective
+PEQUEÑA       2        adjective
+GRANDE        3        adjective
+VIEJO         4        adjective
+VIEJA         4        adjective
+NUEVO         5        adjective
+NUEVA         5        adjective
+DURO          6        adjective
+DURA          6        adjective
+SUAVE         7        adjective
+LARGO         9        adjective
+LARGA         9        adjective
+
+;--Adverbios--
+RAPIDAMENT    2        adverb
+LENTAMENTE    3        adverb
+SILENCIOSA    4        adverb
+RUIDOSAMEN    5        adverb
+CUIDADOSAM    6        adverb
+TRANQUILAM    6        adverb
+
+;--Preposiciones--
+A             2        preposition
+AL            2        preposition
+DE            3        preposition
+DEL           3        preposition
+EN            4        preposition
+DENTRO	      4        preposition
+DESDE         5        preposition
+HACIA         6        preposition
+TRAS          7        preposition
+BAJO          8        preposition
+CON           9        preposition
+PARA          10       preposition
+POR           11       preposition
+EXCEPTO       12       preposition
+
+;--Pronombres--
+LO            2        pronoun
+LOS           2        pronoun
+LA            2        pronoun
+LAS           2        pronoun
+LE            2        pronoun
+LES           2        pronoun
+
+;--Conjunciones--
+Y             2        conjunction
+ENTONCES      2        conjunction
+          
+;        -        -        -        -        -        -        -        -        -
+/STX
+/0
+No puedes ver nada, está muy oscuro.
+
+/1
+Puedes ver:¬
+/2
+¿Que haces?
+
+/3
+¿Y bien?
+
+/4
+¿Que más?
+
+/5
+Tus órdenes:
+
+/6
+Me temo que no te entiendo, prueba con otras palabras.
+
+/7
+No puedes ir en esa dirección.
+
+/8
+¿Perdón?.
+
+/9
+Llevo:¬
+/10
+ (puesto/a)
+/11
+nada de nada.
+
+/12
+¿Seguro? 
+
+/13
+¿Juegas de nuevo? 
+
+/14
+Adiós...
+/15
+OK.
+
+/16
+<...>
+
+/17
+Has realizado¬
+/18
+ turno
+/19
+s
+/20
+.
+
+/21
+Tu puntuación es del¬
+/22
+%.
+
+/23
+No llevas puesto eso.
+
+/24
+No puedes.  Me temo que _ lo llevas puesto.
+
+/25
+Ya tienes _.
+
+/26
+No ves eso por aquí.
+
+/27
+No puedes llevar mas cosas.
+
+/28
+No tienes eso.
+
+/29
+Pero si ya llevas puesto _.
+
+/30        
+S
+/31        
+N
+/32
+Más...
+/33
+>¬
+/34        ;Vacio, no usado
+/35
+El tiempo pasa...
+
+/36
+Coges _.
+
+/37
+Te pones _.
+
+/38
+Te quitas _.
+
+/39
+Dejas _.
+
+/40
+No puedes ponerte _.
+
+/41
+No puedes quitarte _.
+
+/42
+No puedes quitarte _.  ¡Tienes demasiadas cosas en las manos!
+
+/43
+Me temo que _ pesa demasiado.
+
+/44
+Ahora _ esta en¬
+/45
+Ahora _ no está en¬
+/46
+, 
+/47
+ y¬
+/48
+.
+
+/49
+No tienes _.
+
+/50
+No llevas puesto _.
+
+/51
+.
+
+/52
+Eso no está en¬
+/53
+nada.
+
+/54
+Fichero no encontrado.
+
+/55
+Fichero corrupto.
+
+/56
+Error de E/S. Fichero no grabado.
+
+/57
+Directorio lleno.
+
+/58
+Disco lleno.
+
+/59
+Nombre de fichero no válido.
+
+/60
+Nombre del fichero:¬
+
+;        -        -        -        -        -        -        -        -        -
+/MTX
+/0
+La balsa está desierta!
+
+/1 = msgVersionAventura
+Náufrago revisión 1, Septiembre de 2007
+
+/10 = msgExplica
+Despiertas poco a poco ...
+suavemente ...
+como de un sueño reparador ...
+
+/101 = msgExplica01
+Abres los ojos. Parpadeas, mecido en una cuna roja
+con el cielo por dosel ...
+
+/102 = msgExplica02
+El sol acaricia tu piel. A la vez notas una brisa muy desagradable, que
+se incrementa a medida que asomas la cabeza por encima del borde ... esta
+no es una temperatura tropical -ni agradable-, piensas.
+
+/103 = msgExplica03
+Lentamente, te incorporas, viendo como el mar
+infinito se extiende en todas direcciones ...
+
+/104 = msgExplica04
+De repente, agolpadamente, todos los recuerdos vienen a tu memoria:
+la tormenta, el agua entrando por la compuerta de la bodega de carga,
+el ferry, -el Estonia, camino de Suecia, recuerdas-, inclinándose sobre sí mismo, y como, desesperado por conservar
+la vida, te aferraste a una de las lanchas salvavidas y te arrojaste al
+agua ... a dos o tres grados centígrados.
+
+Había gente que necesitaba ayuda, pero tú seguiste remando ... hasta caer
+extenuado sobre el fondo del bote.
+
+/105 = msgExplica05
+
+No podías -¿no es cierto?-, había demasiada gente en el agua -¿no?-,
+hubiesen hecho volcar el bote salvavidas, y entonces no habría sobrevivido
+ninguno, -¿verdad?.
+
+
+-Dos o tres grados-, piensas. Eso significa, de mantenerse uno dentro
+del agua, la muerte por hipotermia en menos de una hora.
+
+/106 = msgExplica06
+-Pero estoy vivo-. Piensas.
+-¿No es eso lo importante?-, te preguntas.
+
+
+¿Por qué me duele tanto el estómago? - piensas, mientras hundes la cabeza entre las manos.
+
+/11 = descBarca
+El sustento de tu miserable vida es una pieza de plástico y lona que flota
+(afortunadamente) en un mar aparentemente enorme, agresivo e inmisericorde.
+/12 = descMovil
+El famoso teléfono móvil. Es voluminoso e incómodo de llevar (ocupa el doble
+de tu perdida cartera), pero es increíble es estatus que otorga. Además, tú
+eres un personaje rico e influyente y debes llevar complementos acordes
+a tu posición.
+/13 = msgTelefonoDescargado
+No puedes evitar dar un respingo cuando piensas que el día anterior, cuando
+aún todo iba bien, pensaste que la batería siempre se descarga en el peor
+momento. Ahora no es que esté descargada, es que directamente el teléfono
+no funciona.
+/14 = descBolsillo
+Es un bolsillo modelado en la lona de la barca.
+
+/15 = descBolsa
+Es una bolsa de tela impermeable.
+
+/16 = descTablas
+Las tablas del fondo parecen formar un pequeño compartimento en el bote.
+/17 = descLinterna
+Es una linterna impermeable, con una sección que se abre para acceder a la pila.
+/18 = descParche
+Un parche para reparar pinchazos en una lancha como ésta.
+/19 = descAlambre
+Unos trozos de alambre de cobre
+/20 = msgRemasDesesperas
+Montas los remos y comienzas a remar. Al principio lo haces con ganas, con
+energía. Sin embargo, pronto tu vista cominenza a perderse en el horizonte,
+y la futilidad de tu intento en la inmensidad de la nada te desespera completamente.
+
+Entonces, remas más rápido. Incluso comienzas a gritar, movido por la angustia.
+Tu estómago se contrae, y entonces, movido por la frustración, golpeas hasta
+desmontar los remos y te tumbas boca arriba en la barca, tratando de recuperar
+respiración.
+/21 = msgRemasPeroNo
+Lentamente, montas los remos de nuevo y comienzas a remar. Lo haces pausadamente,
+pero pronto te das cuenta de que no lo haces con ganas, y de hecho, remar te
+frustra de alguna manera ... si al menos supieras hacia donde ... la costa
+es demasiado lejana, y del barco o la isla más cercano no puedes saber
+su localización.
+
+Sin dejarte llevar por el pánico, desmontas los remos y piensas en tu
+situación actual.
+/22 = descMar
+El mar se extiende en todas direcciones hasta el horizonte. Lo cierto es que
+hay una mancha oscura mires donde mires, pero no puedes decir si es la unión
+de mar y cielo o es que realmente hay tierra (en todas direcciones).
+
+Pegas un respingo: te das cuenta de que has pensado todo ésto como de carrerilla.
+Notas la ansiedad como abriéndose paso por tu estómago. Debes pensar una
+solución.
+/23 = msgPiensa
+Te ríes de ti mismo. Pensar.
+
+Ojalá pudieras pensar en otra cosa. No sabes
+si realmente hay solución, probablemente no vas a verla ni delante de
+tus narices, en tu estado actual. Quizás sea momento de no pensar. O no.
+/24 = msgLlamada0
+Apenas puedes controlar tu ansiedad mientras te preparas para marcar el número ...
+
+Pero, ¿Cuál?
+
+... en medio del mar, a quién llamar, a quién ...
+
+/25 = msgLlamada01
+"Claro, claro", Piensas ... el 112
+
+Marcas el 112, sin demasiadas esperanzas ... una pausa ...
+
+¡Se oyen varios tonos!
+
+
+/26 = msgLlamada02
+Una voz femenina responde: "Emergencias, 112"
+
+
+Al principio, te quedas mudo ... es como si hubiera sido demasiado fácil ...
+
+\6- ¿Oiga?\0
+
+Al punto, las palabras se atropellan en tu boca.
+\6- ¡Estoy en una balsa, en el medio del Báltico! ¡Hemos naufragado!
+¡El Estonia se ha perdido! ¡No sé dónde estoy! ¡Por favor, ayúdeme!
+
+- Tranquilícese, señor, ¿puede ver algo que indique su posición?
+
+- No, no ... no.
+
+- Está bien. ¿Puede describir el bote?\0
+
+
+Te da la risa ... "claro que puedo, estoy harto de verlo", piensas.
+
+\6- Es un bote rojo salvavidas.
+
+- Bien, vamos a tratar de localizarle por la señal del móvil. Manténgalo
+encendido mientras localizo a los barcos y aviones de rescate que están
+en ruta.\0
+
+...
+/26 = msgLlamada03
+\6- Bien, señor, le hemos localizado.
+
+- Un avión de reconocimiento pasará en breves momentos por su posición.
+Esté tranquilo, irán por usted.\0
+
+Se corta la comunicación.
+...
+/27 = msgLlamada04
+Un avión blanco con bandas azules y amarillas pasa por encima de ti
+a escasa altura,
+y realiza un viraje, mientras sacudes los brazos vigorosamente.
+
+El avión se va. Estás solo de nuevo. Te sientes triste y desamparado otra vez,
+y por otra parte, mucho más tranquilo.
+
+/28 = msgLlamada1
+Necesitas hablar con alguien.
+
+\6- 112, Emergencias\0
+
+
+Te sientes aliviado al escuchar, de nuevo, una voz al otro lado del
+teléfono.
+
+\6- Soy, ... yo, ... he visto pasar el avión de salvamento.
+
+- Sólo debe esperar a que el barco de salvamento se acerque lo suficiente
+como para que le recoja, señor.
+
+- Ya, ... yo, ..., ¿tardará mucho?
+
+- Unos minutos, señor ... la tormenta le desvió mucho del punto donde se hundió
+el barco.
+
+- ¿Unos minutos?
+
+- Unos cuantos minutos.
+\0
+
+Se te hace un nudo en el estómago. En este momento,
+hasta unos minutos parecen una eternidad.
+
+\6- Vale, gracias.
+
+- Mantenga la calma, señor, enseguida llegarán.\0
+
+/29 = msgLlamada2
+Llamas de nuevo ...
+
+\6- Señor, mantenga la calma. La ayuda está en camino. Debo atender otras llamadas.\0
+
+La línea queda muda.
+
+
+/30 = msgLlamada3
+Llamas de nuevo ...
+La batería del móvil se está acabando.
+Nadie contesta.
+
+/31 = msgLlamada4
+Piensas en llamar de nuevo ... pero, nadie contesta.
+
+/32 = msgQuienEres
+Cada vez recuerdas con más claridad ... a medida que intentas calmarte, los recuerdos
+comienzar a venir a tu mente.
+
+Eres Warren Buffett, multimillonario, entre los hombres más ricos del mundo.
+Claro que ahora todo ese dinero no te sirve de nada ...
+
+/33 = msgIntro
+29 de Septiembre de 1994
+
+
+
+\6El ferry "\9Estonia\6", se hunde en el mar Báltico, llevándose consigo
+850 personas.
+
+
+
+A pesar de cumplir con todas las normas de seguridad, la temperatura del agua,
+extremadamente baja, unida a la rapidez con la que se hundió el navío, hicieron
+imposible que la mayoría del pasaje se salvara.
+
+
+
+Las circunstancias del hundimiento continúan siendo un misterio. Algunos testimonios
+afirman que la compuerta de acceso para vehículos se abrió por alguna circunstancia,
+haciendo que el ferry se inundara rápidamente. La compuerta había pasado los chequeos
+de seguridad sin aparentes fallos.
+
+
+
+Posteriores investigaciones revelaron que la causa del hundimiento podría estar relacionada con
+el contrabando de armas desde Rusia ...
+\0
+
+/1000
+Salidas visibles:¬
+/1001
+No hay salidas visibles.
+/1002
+/1003
+/1004
+al norte
+/1005
+al sur
+/1006
+al este
+/1007
+al oeste
+/1008
+al noreste
+/1009
+al noroeste
+/1010
+al sureste
+/1011
+al suroeste
+/1012
+arriba
+/1013
+abajo
+/1014
+dentro
+/1015
+fuera
+
+
+
+;        -        -        -        -        -        -        -        -        -
+/OTX
+/0 = objTelefono
+un teléfono móvil
+/1 = objParche
+un parche de lona
+/2 = objLinterna
+una linterna
+/3 = objBolsillo
+un bolsillo de lona
+/4 = objBolsa
+una bolsa impermeable
+/5 = objTablasBalsa
+unas tablas en el fondo del bote
+/6 = objAlambres
+unos trozos de alambre
+/7 = objPila
+una pila
+/8 = objRemos
+unos remos
+/LTX
+/0 = locInic
+
+/1 = locBarca(mar.png)
+; No pongo el sonido del mar como música pq quiero que se repita, y para eso
+; hay que usar BEEP (efecto sonoro, no música)
+El mar mece lo que desde hace algún tiempo es el sustento de tu frágil vida.
+El mar abierto (si bien sabes que es el Báltico) se extiende
+en todas direcciones, sin atisbo posible de tierra.
+
+/2 = locHabHospital(hab.png)
+Una habitación de hospital. La habitación es luminosa y fresca, te sientes
+arropado en tu cama.
+
+/3
+/4
+
+/5 = locInic2(salvavidas.png)
+\9Náufrago
+
+
+por Baltasar, el arquero
+
+baltasarqARROBAyahoo.es\0
+
+
+
+
+/CON
+/0
+
+; Ejemplo
+; N        4
+; E        2
+
+
+;        -        -        -        -        -        -        -        -        -
+/OBJ
+;obj  loc          peso          nombre           adjetivo lo_atr                hi_atr
+;num  ini              
+/objTelefono    CARRIED        1        TELEFONO        _         00000000000000000000000000000000 00000000000000000000000000000000
+
+;                                                       ^Objeto da luz
+;                                                        ^Contenedor
+;                                                         ^Prenda
+
+
+/objParche    objBolsillo        1        PARCHE        _         00000000000000000000000000000000 00000000000000000000000000000000
+
+/objLinterna    objBolsa        1        LINTERNA        _         00000000000000000000000000000000 00000000000000000000000000000000
+
+;        -        -        -        -        -        -        -        -        -
+
+/objBolsillo    _        1        BOLSILLO        _         01000000000000000000000000000000 00000000000000000000000000000000
+
+/objBolsa    _        1       BOLSA        _         01000000000000000000000000000000 00000000000000000000000000000000
+
+/objTablasBalsa    _        1        TABLAS        _         00000000000000000000000000000000 00000000000000000000000000000000
+
+/objAlambres    objBolsa        1        Alambres        _         00000000000000000000000000000000 00000000000000000000000000000000
+
+/objPila    _        1        Pila        _         00000000000000000000000000000000 00000000000000000000000000000000
+
+/objRemos    locBarca        1        Remos        _         00000000000000000000000000000000 00000000000000000000000000000000
+/PRO 0
+
+
+; ############# ACCIONES MODIFICADAS POR EL PROGRAMADOR ##########
+
+
+AGITAR BRAZOS
+	NOTZERO flgBarcoRescateHaLLegado
+	WRITE "Los tripulantes te saludan a su vez, desde cubierta.\n"
+	WRITE "Parecen indicarte que remes hasta ellos.\n"
+	DONE
+
+AGITAR BRAZOS
+	WRITE "Te sientes un poco estúpido. No hay nadie mirando.\n"
+	DONE
+
+DORMIR _
+	AT locBarca
+	WRITE "Tratas de acostarte en el fondo del bote. Te encoges en posición fetal, pero no eres capaz de dejar de dar vueltas. El sol, además, quema tu piel. Necesitas resolver esto de una vez.\n"
+	DONE
+
+PONER _
+	PREP EN
+	LET flgVerbo _voc_ATAR
+
+SALIDAS _
+	NOTEQ flgNombre 255
+	LET flgVerbo _voc_EXAMINAR
+
+_ _
+	LT flgVerbo 20
+	NOTEQ flgVerbo _voc_INVEN
+	AT locHabHospital
+	LET flgVerbo _voc_SALIDAS
+
+SALIR _
+	LET flgVerbo _voc_SALIDAS
+
+SALIDAS _
+	AT locBarca
+	write "La única salida posible sería dejar el bote e ir nadando ... ¡no parece buena idea!\n"
+	DONE
+
+SALIDAS _
+	AT locHabHospital
+	write "Sí, hay una puerta, pero ... no te sientes con fuerzas para dejar la cama, aún.\n"
+	DONE
+
+_ _
+	LT flgVerbo 20
+	AT locBarca
+	NOTEQ flgVerbo _voc_INVEN
+	write "No tienes un compás a mano ...\n"
+	DONE		
+
+CARGAR	MOVIL
+	PRESENT objTelefono
+	ZERO flgTelefonoDescargado
+	WRITE "Ya, pero ... ¿cómo?\n"
+	DONE
+
+ARREGLAR MOVIL
+	PRESENT objTelefono
+	WRITE "Al móvil no le pasa nada. Sólo hay que cargarlo.\n"
+	DONE
+
+ARREGLAR MOVIL
+	ABSENT objTelefono
+	WRITE "Que recuerdes, no le pasaba nada. En cualquier caso, necesitas el móvil en sí.\n"
+	DONE
+
+CARGAR	MOVIL
+	PRESENT objTelefono
+	NOTZERO flgTelefonoDescargado
+	WRITE "El móvil está ya preparado para llamar.\n"
+	DONE
+
+; -----------------------------------------------------------
+I _
+ WRITE "Un día lo tienes todo, y cuando te das cuenta ... estás un bote con cuatro cosas ...\n\n"
+ INVEN
+
+BUSCAR _
+	; Convertir "buscar XXX" en "examinar XXX"
+	LET flgVerbo _voc_EXAMINAR	; examinar(30)
+
+MIRAR _
+	PREP dentro
+	LET flgVerbo _voc_EXAMINAR
+
+EXAMINAR SISEO
+	NOTZERO flgLanchaDeshinchandose
+	ZERO flgLanchaParcheada
+	WRITE "Ves la fuga: podrías parchear perfectamente.\n"
+	DONE
+
+EXAMINAR SISEO
+	NOTZERO flgLanchaDeshinchandose
+	NOTZERO flgLanchaParcheada
+	WRITE "Ves la fuga, con el parche que le aplicaste encima.\n"
+	DONE
+
+; -----------------------------------------------------------
+RECORDAR _
+	MESSAGE msgQuienEres
+	DONE
+
+; -----------------------------------------------------------
+
+LLORAR _
+	WRITE "Te tomas unos minutos de autocompasión, para descargar la ansiedad que sientes ...\nPero, eso sí, nada ha cambiado ...\n"
+	DONE
+
+VOMITAR _
+	AT locBarca
+	WRITE "Intentas vomitar, pero descubres que no tienes nada en el estómago ... lo cierto es que ni siquiera tienes náuseas.\n"
+	DONE
+
+VOMITAR _
+	WRITE "Ahora mismo no sientes ninguna molestia estomacal ...\n"
+	DONE
+
+; -----------------------------------------------------------
+LLAMAR _
+	NOTZERO flgTelefonoDescargado
+	ZERO flgLlamadaHecha
+	PLUS flgLlamadaHecha 1
+	MESSAGE msgLlamada0
+	ANYKEY
+	MESSAGE msgLlamada01
+	ANYKEY
+	BEEP telefonoLlamando.ogg 0
+	ANYKEY
+	MESSAGE msgLlamada02
+	ANYKEY
+	MESSAGE msgLlamada03
+	DONE
+
+LLAMAR _
+	NOTZERO flgTelefonoDescargado
+	EQ flgLlamadaHecha 1
+	PLUS flgLlamadaHecha 1
+	BEEP telefonoLlamando.ogg 0
+	ANYKEY
+	MESSAGE msgLlamada1
+	DONE
+
+LLAMAR _
+	NOTZERO flgTelefonoDescargado
+	EQ flgLlamadaHecha 2
+	PLUS flgLlamadaHecha 1
+	BEEP telefonoLlamando.ogg 0
+	ANYKEY
+	MESSAGE msgLlamada2
+	DONE
+
+LLAMAR _
+	NOTZERO flgTelefonoDescargado
+	EQ flgLlamadaHecha 3
+	PLUS flgLlamadaHecha 1
+	BEEP telefonoLlamando.ogg 0
+	ANYKEY
+	MESSAGE msgLlamada3
+	DONE
+
+LLAMAR _
+	NOTZERO flgTelefonoDescargado
+	GT flgLlamadaHecha 3
+	BEEP telefonoComunicando.ogg 0
+	MESSAGE msgLlamada4
+	DONE
+
+LLAMAR _
+	WRITE "Ojalá, ojalá pudieras ... pero ... ¿cómo?. El teléfono está descargado.\n"
+	DONE
+
+HABLAR HOMBRE
+	PREP con
+	NOTZERO flgVisitaMedico
+	WRITE "Vas a empezar a hablar, cuando el gesto irónico del hombre te interrumpe ...\n"
+	WRITE "\6- Vaya, Mike, veo que has despertado.\n"
+	ANYKEY
+	WRITE "Te sientes confuso ... ¿Mike?\n"
+	WRITE "\6- Lo siento, mi nombre es Warren.\n"
+	ANYKEY
+	WRITE "El hombre parece estar a punto de echarse una carcajada, aunque finalmente se contenta con emitir una especie de serie de gemidos contenidos, mientras sacude la cabeza y tuerce la boca.\n"
+	WRITE "\6- Lo que tú digas, ... Mike\n"
+	ANYKEY
+	WRITE "Un furor desconocido, que incluso a ti mismo asombra por la rabia contenida que destila, se apodera de ti.\n"
+	WRITE "\6- ¡Yo no soy Mike!\n"
+	ANYKEY
+	WRITE "\6- Claro que no. Eres el tal 'bufé', el ricachón con el que siempre soñaste en convertirte, ¿no es cierto?.\n"
+	WRITE "Balbuceas, tratando de articular la respuesta ...\n"
+	WRITE "\6- Yo no, ... ¿de qué me conoce usted?\n"
+	WRITE "\6- Te conozco desde que te metiste en este lío de contrabando de armas.\n"
+	WRITE "Sus palabras resuenan en tu cabeza ...\n- ¿Armas?\n\n"
+	WRITE "Algún tipo de instinto te hace recoger el extremo de la sábana, y subirlo como para paliar el frío. Solo que no hace frío.\n"
+	NEWLINE
+	WRITE "\6- Sí, armas. Y la cagaste. Pero bien.\n"
+	ANYKEY
+	WRITE "Intentas establecer una defensa ...\n"
+	WRITE "\6- ¿Pero qué dice? ¿Se ha vuelto loco?\n"
+	WRITE "... sin embargo, muy a tu pesar, su cara empieza a sonarte familiar.\n"
+	ANYKEY
+	WRITE "\6- Como te decía, la has cagado pero bien.\n"
+	WRITE "\6- ¿Qué narices hiciste para hundir el ferry?\n"
+	ANYKEY
+	WRITE "Tus palabras suenan absurdas y entrecortadas.\n"
+	WRITE "\6- Yo, ... yo ...\n"
+	ANYKEY
+	WRITE "De repente, como si alguien hubiera encendido la luz dentro de tu cabeza, los recuerdos empiezan a fluir ...\n"
+	ANYKEY
+	WRITE "Recuerdas a aquel entrometido, la pelea, la explosión siguiente ...\n"
+	ANYKEY
+	WRITE "... y el agua entrando por la compuerta de entrada de coches\n"
+	ANYKEY
+	WRITE "Vuelves a mirar a aquel tipo. Sabes quién es. Sabes quien eres, de verdad. Lo sabes todo.\n"
+	WRITE "Abres la boca de par en par ...\n"
+	WRITE "\6- ¡Yo lo hice!\n"
+	ANYKEY
+	WRITE "\6- Sí.\n"
+	WRITE "El hombre asiente gravemente.\n"
+	WRITE "\6- Pero lo hiciste muy mal.\n"
+	ANYKEY
+	WRITE "\6- Disfruta de tu estancia aquí.\n"
+	WRITE "\6- Cuando salgas, ya sabes lo que te espera.\n"
+	ANYKEY
+	WRITE "El hombre se marcha, sin mirarte siquiera.\n"
+	WRITE "Tú, mientras tanto, te acurrucas ... ¿qué será de ti?\n"
+	WRITE "Te tapas aún más con la sábana, deseando repentinamente desaparecer del mundo.\n"
+	NEWLINE
+	NEWLINE
+	CHARSET 9
+	WRITE "Fin."
+	NEWLINE
+	NEWLINE
+	CHARSET 0
+	TURNS
+	END
+	DONE
+
+; -----------------------------------------------------------
+REMAR _
+	ABSENT objRemos
+	WRITE "No tienes con qué ...\n"
+	DONE
+
+REMAR _
+	NOTZERO flgLlamadaHecha
+	ZERO flgBarcoViene
+	WRITE "Remas hacia el barco, casi histérico de alegría ..."
+	NEWLINE
+	ANYKEY
+	NEWLINE
+	ANYKEY
+	WRITE "Remas hasta el barco y te introduces en la sombra que proyecta en el agua ..."
+	NEWLINE
+	ANYKEY
+	WRITE "Desde tu posición, el barco de salvamento, parece un coloso ..."
+	NEWLINE
+	ANYKEY
+	WRITE "Te aproximas, y quedas debajo de la borda del barco, en una zona de sombra.\n"
+	WRITE "De repente, al dejar de notar el sol sobre tu piel, notas algo de frío ..."
+	NEWLINE
+	NEWLINE
+	ANYKEY
+	WRITE "De nuevo sientes desvalimiento, sientes ... miedo ..."
+	NEWLINE
+	ANYKEY
+	WRITE "Una escalerilla desciende desde la cubierta y unos marineros te recogen y te depositan en cubierta"
+	NEWLINE
+	ANYKEY
+	WRITE "Al posarte en la cubierta, notas una sensación de relajación, tranquilidad, descanso ... largo tiempo olvidada."
+	NEWLINE
+	ANYKEY
+	WRITE "Te desvaneces ..."
+	NEWLINE
+	ANYKEY
+	NEWLINE
+	ANYKEY
+	WRITE "Todo está oscuro. Sientes una sensación como de movimiento, como si emergieras de algo ... ¿un sueño? ... despiertas de un largo sueño ..."
+	NEWLINE
+	ANYKEY
+	WRITE "Sí, experimentas la clara sensación de estar despertando de un sueño.\nPuedes oir un eco insistente, en algún lugar de tu conciencia.\n"
+	ANYKEY
+	WRITE "Piensas con alivio que no era real, que todo aquello terrible que te pasó (y que ahora mismo no puedes recordar) no es sino una increíble creación de tu imaginación.\n"
+	ANYKEY
+	WRITE "Abres los ojos ..."
+	GOTO locHabHospital
+	DESC
+	DONE
+
+EXAMINAR BARCO
+	NOTZERO flgLlamadaHecha
+	ZERO flgBarcoViene
+	WRITE "Es un barco con bandas azules y amarillas ... ¡la tripulación te hace gestos desde la cubierta!. Parece que quieren que te aproximes."
+	NEWLINE
+	DONE
+
+EXAMINAR HOMBRE
+	NOTZERO flgVisitaMedico
+	WRITE "Un hombre oscuro, vestido con gabardina y traje, aunque éstos están un tanto pasados de moda. Su cara no invita a las amistades.\n"
+	DONE
+
+
+REMAR _
+	PRESENT objRemos
+	ZERO flgHasRemado
+	SET flgHasRemado
+	MESSAGE msgRemasDesesperas
+	DONE
+
+
+REMAR _
+	PRESENT objRemos
+	NOTZERO flgHasRemado
+	MESSAGE msgRemasPeroNo
+	DONE
+
+AYUDA _
+	WRITE "Las órdenes siguientes son básicas y pueden encontrarse "
+	WRITE "en casi cualquier aventura conversacional. El jugador "
+	WRITE "puede tratar siempre de hacer otras acciones.\n\n"
+	CHARSET 7
+	WRITE "Ayuda              -   Esta ayuda.\n"
+	WRITE "recuerda, piensa	  -   Instrucciones reflexivas\n"
+	WRITE "ex, examinar x     -   Da una descripción de x.\n"
+	WRITE "hablar con y       -   Permite comunicarse con y.\n"
+	WRITE "coge x, deja x     -   x pasa a ser o deja de ser llevado.\n"
+	WRITE "i, inven           -   Da una lista de los objetos llevados.\n"
+	WRITE "coge/saca x de y   -   Saca el objeto x del contenedor y.\n\n"
+	WRITE "fin                -   Terminar la aventura.\n\n"
+	CHARSET 0
+	WRITE "Manda tus comentarios a: baltasaq en yahoo de es\n\n"
+	DONE
+
+
+; -----------------------------------------------------------
+ATAR ALAMBRE
+	PREP a
+	NOUN2 MOVIL
+	PROCESS 5
+	DONE
+
+ATAR ALAMBRE
+	PREP en
+	NOUN2 MOVIL
+	PROCESS 5
+	DONE
+
+ATAR ALAMBRE
+	PREP con
+	NOUN2 MOVIL
+	PROCESS 5
+	DONE
+
+ATAR ALAMBRE
+	PREP con
+	NOUN2 PILA
+	PROCESS 5
+	DONE
+
+ATAR ALAMBRE
+	PREP a
+	NOUN2 PILA
+	PROCESS 5
+	DONE
+
+ATAR PILA
+	PREP con
+	NOUN2 ALAMBRE
+	PROCESS 5
+	DONE
+
+ATAR PILA
+	PREP en
+	NOUN2 ALAMBRE
+	PROCESS 5
+	DONE
+
+ATAR PILA
+	PREP a
+	NOUN2 ALAMBRE
+	PROCESS 5
+	DONE
+
+ATAR MOVIL
+	PREP con
+	NOUN2 ALAMBRE
+	PROCESS 5
+	DONE
+
+ATAR MOVIL
+	PREP a
+	NOUN2 ALAMBRE
+	PROCESS 5
+	DONE
+
+ENCIENDE MOVIL
+	PRESENT objTelefono
+	NOTZERO flgTelefonoDescargado
+	WRITE "El móvil está cargado y preparado para marcar.\n"
+	DONE
+
+ENCIENDE MOVIL
+	PRESENT objTelefono
+	ZERO flgTelefonoDescargado
+	WRITE "El móvil no tiene carga como para encender.\n"
+	DONE
+
+APAGA MOVIL
+	PRESENT objTelefono
+	NOTZERO flgTelefonoDescargado
+	WRITE "La carga es suficiente para llamar, pero no estar apagándolo y encendiéndolo.\n"
+	DONE
+
+APAGA MOVIL
+	PRESENT objTelefono
+	ZERO flgTelefonoDescargado
+	WRITE "¡Pero si ya está apagado! ... no tiene carga.\n"
+	DONE
+
+
+; -----------------------------------------------------------
+ATAR PILA
+	PREP a
+	NOUN2 MOVIL
+	PROCESS 4
+	DONE
+
+; -----------------------------------------------------------
+ATAR MOVIL
+	PREP a
+	NOUN2 PILA
+	PROCESS 4
+	DONE
+
+; -----------------------------------------------------------
+ATAR PILA
+	PREP con
+	NOUN2 MOVIL
+	PROCESS 4
+	DONE
+
+; -----------------------------------------------------------
+ATAR MOVIL
+	PREP con
+	NOUN2 PILA
+	PROCESS 4
+	DONE
+
+; -----------------------------------------------------------
+ARREGLA FUGA
+		PREP con
+		NOUN2 parche
+		PROCESS 3
+		DONE
+
+ARREGLA BOTE
+		PREP con
+		NOUN2 parche
+		PROCESS 3
+		DONE
+
+
+PON PARCHE
+		PREP en
+		NOUN2 bote
+		PROCESS 3
+		DONE
+
+PON PARCHE
+		PREP en
+		NOUN2 fuga
+		PROCESS 3
+		DONE
+
+PON PARCHE
+		PREP A
+		NOUN2 BOTE
+		PROCESS 3
+		DONE
+
+PON PARCHE
+		PREP A
+		NOUN2 FUGA
+		PROCESS 3
+		DONE
+
+; -----------------------------------------------------------
+ARREGLA BOTE
+		PROCESS 3
+		DONE
+
+PARCHEA BOTE
+		PROCESS 3
+		DONE
+
+PARCHEA FUGA
+		PROCESS 3
+		DONE
+
+ESCUCHA _
+		ZERO flgLanchaParcheada
+		NOTZERO flgLanchaDeshinchandose
+		NOTZERO flgContadorLanchaDeshincha
+		BEEP escapeAire.ogg 0
+		WRITE "Escuchas un siseo proveniente de la barca. Localizas sin problemas la fuga, que podrías parchear.\n"
+		DONE
+
+; -----------------------------------------------------------
+TIRAR _
+		PREP a
+		noun2 mar
+		whato
+		CARRIED @51
+		Write "Lo tiras al mar y se pierde en las profundidades.\n"
+		Anykey
+		Write "Mientras ves hundirse _, piensas si no te habrás desecho de algo esencial que te ayude a contactar con alguien.\n"
+		destroy @51
+		DONE
+
+;-----------------------------------------------
+DEBUG _		Write "La comida se acaba en "
+		PRINT flgAcabaComida
+		Write "\nLa lancha se deshincha en:"
+		PRINT flgContadorLanchaDeshincha
+		NEWLINE
+		DONE
+
+; -----------------------------------------------------------
+PENSAR _
+		MESSAGE msgPiensa
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA MAR
+		MESSAGE descMar
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA BARCA
+		PICTURE bote2.png
+		ABSENT objBolsillo
+		MESSAGE descBarca
+		CREATE objBolsillo
+		CREATE objTablasBalsa
+		WRITE "En la lona de la barca hay moldeado un bolsillo. Te llaman la atención las tablas que forman el fondo de la balsa.\n"
+		ANYKEY
+		PICTURE mar.png
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA BARCA
+		PICTURE bote2.png
+		MESSAGE descBarca
+		ANYKEY
+		PICTURE mar.png
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA ALAMBRE
+		PRESENT objAlambres
+		PICTURE alambre.png
+		MESSAGE descAlambre
+		ANYKEY
+		PICTURE mar.png
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA PILA
+		PRESENT objPila
+		WRITE "Pues sí, una pila.\n"
+		DONE
+
+; -----------------------------------------------------------
+COGE TODO
+		PREP de
+		WRITE "Mejor especifica un poco más ...\n"
+		DONE
+
+; -----------------------------------------------------------
+METE TODO
+		PREP en
+		WRITE "Mejor especifica un poco más ...\n"
+		DONE
+
+ 
+; -----------------------------------------------------------
+COGE BOLSILLO
+		PRESENT objBolsillo
+		WRITE "El bolsillo está modelado en la barca, no puedes cogerlo.\n"
+		DONE
+
+; -----------------------------------------------------------
+COGE TABLAS
+		PRESENT objTablasBalsa
+		WRITE "Las tablas del fondo no pueden separarse del bote.\n"
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA TABLAS
+		PRESENT objTablasBalsa
+		MESSAGE descTablas
+		DONE
+
+; -----------------------------------------------------------
+SACA  PILA
+		PREP DE
+		NOUN2 LINTERNA
+		LET flgVerbo _voc_ABRIR		; Convertir "sacar" en "abrir" 64
+		LET flgNombre _voc_LINTERNA	; Convertir "pila" en "linterna" 54
+
+ABRIR LINTERNA
+		PRESENT objLinterna
+		ZERO flgLinternaAbierta
+		SET flgLinternaAbierta
+		WRITE "Abres el compartimento de la pila de la linterna, y haces palanca con los dedos para sacar la pila de su interior ... ¡vaya! ... ha caído al fondo del bote.\n"
+		CREATE objPila
+		DONE
+
+ABRE LINTERNA
+		PRESENT objLinterna
+		Write "El compartimento de las pilas está vacío. Lo cierras de nuevo.\n"
+		DONE
+
+ABRIR BOLSA
+		PRESENT objBolsa
+		WRITE "La bolsa ya está abierta.\n"
+		DONE
+
+; -----------------------------------------------------------
+CIERRA LINTERNA
+		PRESENT objLinterna
+		NOTZERO flgLinternaAbierta
+		WRITE "No es necesario.\n"
+		DONE
+
+; -----------------------------------------------------------
+CIERRA LINTERNA
+		PRESENT objLinterna
+		ZERO flgLinternaAbierta
+		WRITE "No la has abierto.\n"
+		DONE
+
+
+; -----------------------------------------------------------
+LEVANTAR TABLAS
+		LET 33 _voc_ABRIR
+				
+
+; -----------------------------------------------------------
+ABRIR TABLAS
+		PRESENT objTablasBalsa
+		ZERO flgCompartimentoEncontrado
+		WRITE "Abres el compartimento y sacas su único contenido: una bolsa de lona.\n"
+		CREATE objBolsa
+		SET flgCompartimentoEncontrado
+		DONE
+
+ABRIR TABLAS
+		PRESENT objTablasBalsa
+		NOTZERO flgCompartimentoEncontrado
+		WRITE "Abres el compartimento y compruebas que ya no queda nada en su interior.\n"
+		DONE
+
+CIERRA TABLAS	PRESENT objTablasBalsa
+		WRITE "No es necesario, las tablas caen por su propio peso, después de levantarlas.\n"
+		DONE
+
+
+; -----------------------------------------------------------
+EXAMINA BOLSILLO
+		PRESENT objBolsillo
+		MESSAGE descBolsillo
+		Write "Dentro hay: "
+		LISTAT objBolsillo
+		DONE
+
+; -----------------------------------------------------------
+COGE _
+		PRESENT objBolsillo
+		PREP de
+		NOUN2 bolsillo
+		AUTOT objBolsillo
+		DONE
+
+; -----------------------------------------------------------
+METE _
+		PRESENT objBolsillo
+		PREP en
+		NOUN2 bolsillo
+		WHATO
+		PRESENT @51
+		AUTOP objBolsillo
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA BOLSA
+		PRESENT objBolsa
+		MESSAGE descBolsa
+		Write "Dentro hay: "
+		LISTAT objBolsa
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA PARCHE
+		PRESENT objParche
+		MESSAGE descParche
+		PICTURE parche.png
+		ANYKEY
+		PICTURE mar.png
+		DONE
+
+
+; -----------------------------------------------------------
+EXAMINA LINTERNA
+		PRESENT objLinterna
+		MESSAGE descLinterna
+		PICTURE linterna.png
+		ANYKEY
+		PICTURE mar.png
+		DONE
+
+EXAMINA PILA
+		ABSENT objPila
+		PRESENT objLinterna
+		WRITE "La pila estará en su sección, dentro de la linterna.\n"
+		DONE
+
+; -----------------------------------------------------------
+COGE _
+		PRESENT objBolsa
+		PREP de
+		NOUN2 bolsa
+		WHATO
+		AUTOT objBolsa
+		DONE
+
+; -----------------------------------------------------------
+METE _
+		PRESENT objBolsa
+		PREP en
+		NOUN2 bolsa
+		WHATO
+		PRESENT @51
+		autop objBolsa
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA TELEFONO
+		ZERO flgTelefonoDescargado
+		MESSAGE descMovil
+		MESSAGE msgTelefonoDescargado
+		DONE
+
+; -----------------------------------------------------------
+EXAMINA TELEFONO
+		NOTZERO flgTelefonoDescargado
+		MESSAGE descMovil
+		WRITE "El teléfono funciona perfectamente ahora. En su pantalla se lee 'Sin cobertura. Sólo llamadas de emergencia'\n"
+		DONE
+
+
+; ############## ACCIONES POR DEFECTO #################
+
+
+;-----------------------------------------------
+
+COGER TODO        
+ DOALL        HERE
+
+COGER        _        
+ AUTOG
+ DONE
+;-----------------------------------------------
+
+DEJAR        TODO
+ DOALL        CARRIED
+
+DEJAR        _        
+ AUTOD
+ DONE
+
+;-----------------------------------------------
+
+QUITAR        TODO        
+ DOALL        WORN
+ 
+QUITAR        _        
+ AUTOR
+ DONE
+
+;-----------------------------------------------
+
+PONER        TODO        
+ DOALL        CARRIED
+ 
+PONER        _        
+ AUTOW
+ DONE
+
+;-----------------------------------------------
+
+MIRAR       _        
+ DESC
+
+;-----------------------------------------------
+
+FIN        _        
+ QUIT
+ TURNS
+ END
+
+GRABAR        _        
+ SAVE
+
+CARGAR        _        
+ LOAD
+
+RAMSAVE        _        
+ RAMSAVE
+ DESC
+
+RAMLOAD        _        
+ RAMLOAD       255
+ ANYKEY
+ DESC
+                
+TRANSCRIPCION _
+ TRANSCRIPT 1
+ DONE
+ 
+;-----------------------------------------------
+
+TIRAR _                        ; No hay nombre en la frase
+ PREP DE
+ EQ 34 255
+ WRITE "No ves eso."
+ NEWLINE
+ DONE
+ 
+TIRAR _                        ; Hay nombre pero no es un objeto
+ PREP DE
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No ves mucho sentido a tirar de eso."
+ NEWLINE
+ DONE
+ 
+
+TIRAR _                        ; Es un objeto presente
+ PREP DE
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No parece que se consiga nada tirando de _."
+ NEWLINE
+ DONE
+
+TIRAR _                        ; Es un objeto ausente
+ PREP DE
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para tirar de _ tendría que estar aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+ 
+EMPUJAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+  DONE
+ 
+EMPUJAR _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "No creo que le guste demasiado."
+ NEWLINE
+ DONE
+ 
+EMPUJAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No ves mucho sentido a empujar eso."
+ NEWLINE
+ DONE
+
+EMPUJAR _                ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No parece que se consiga nada empujando _."
+ NEWLINE
+ DONE
+
+EMPUJAR _                ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para empujar _ tendría que estar aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+GIRAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves que dices."
+ NEWLINE
+ DONE
+ 
+GIRAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No ves mucho sentido a girar eso."
+ NEWLINE
+ DONE
+
+
+GIRAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a girar _."
+ NEWLINE
+ DONE
+
+GIRAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Girar _ requiere su presencia."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+LANZAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+LANZAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No, no ves sentido a lanzar eso."
+ NEWLINE
+ DONE
+
+LANZAR _                ; Es un objeto llevado
+ NOTEQ 51 255
+ CARRIED @51
+ WRITE "Lanzas _."
+ NEWLINE
+ PLACE @51 @38
+ DONE
+
+LANZAR _                ; Es un objeto ausente
+ NOTEQ 51 255
+ NOTCARR @51
+ WRITE "Me temo que no ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+ESCUCHAR _                        
+ EQ 34 255
+ WRITE "Prestas atención a ver si escuchas algo más pero no escuchas nada en especial."
+ NEWLINE
+ DONE
+ 
+;-----------------------------------------------
+
+COMER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+COMER _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "No creo que se deje. En cualquier caso no es muy apropiado."
+ NEWLINE
+ DONE
+
+ 
+COMER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No quieres comer eso."
+ NEWLINE
+ DONE
+
+
+COMER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a comerte _."
+ NEWLINE
+ DONE
+
+COMER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para comerme _ debería estar aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+BEBER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+BEBER _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "Estás perdiendo el rumbo."
+ NEWLINE
+ DONE
+ 
+ 
+BEBER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No quieres beber eso."
+ NEWLINE
+ DONE
+
+
+BEBER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a beberme _."
+ NEWLINE
+ DONE
+
+BEBER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para beberte _ debería estar aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+TOCAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+TOCAR _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "No se deja."
+ NEWLINE
+ DONE
+
+ 
+TOCAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a tocar eso."
+ NEWLINE
+ DONE
+
+
+TOCAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres tocar _."
+ NEWLINE
+ DONE
+
+TOCAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+OLER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+OLER _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "Es de mala educación."
+ NEWLINE
+ DONE
+
+ 
+OLER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a oler eso."
+ NEWLINE
+ DONE
+
+
+OLER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres oler _."
+ NEWLINE
+ DONE
+
+OLER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+AGITAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+AGITAR _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "No creo que le guste demasiado."
+ NEWLINE
+ DONE
+ 
+ 
+AGITAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a mover eso."
+ NEWLINE
+ DONE
+
+
+AGITAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres mover _."
+ NEWLINE
+ DONE
+
+AGITAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+ESPERAR _
+ SYSMESS 35
+ DONE
+ 
+;-----------------------------------------------
+
+SALTAR _
+ WRITE "Saltas, sin conseguir nada."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+REZAR _
+ WRITE "Rezas todo lo que sabes."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+CAVAR _
+ WRITE "No quieres cavar aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+PENSAR _
+ WRITE "Pensar siempre es bueno."
+ NEWLINE
+ DONE
+;-----------------------------------------------
+
+DORMIR _
+ WRITE "No tienes sueño."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+CANTAR _
+ WRITE "Cantas fatal."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+ATACAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+ATACAR _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "La violencia no es buena."
+ NEWLINE
+ DONE
+ 
+ 
+ATACAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "La violencia no es la solución."
+ NEWLINE
+ DONE
+
+
+ATACAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Atacar _ no solucionará nada."
+ NEWLINE
+ DONE
+
+ATACAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí, en cualquier caso la violencia no es la solución."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+
+
+EX _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No veo eso que dices."
+ NEWLINE
+ DONE
+ 
+EX _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "Es de mala educación."
+ NEWLINE
+ DONE
+
+ 
+EX _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le veo sentido a examinar eso."
+ NEWLINE
+ DONE
+
+
+EX _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Examinas _ pero no ves nada de especial."
+ NEWLINE
+ DONE
+
+EX _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No veo _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+FROTAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No veo eso que dices."
+ NEWLINE
+ DONE
+ 
+FROTAR _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "No se deja."
+ NEWLINE
+ DONE
+ 
+ 
+FROTAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a frotar eso."
+ NEWLINE
+ DONE
+
+
+FROTAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Frotas _. No hay efecto alguno."
+ NEWLINE
+ DONE
+
+FROTAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+QUEMAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+QUEMAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a quemar eso."
+ NEWLINE
+ DONE
+
+
+QUEMAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Quemar _ no es la solución."
+ NEWLINE
+ DONE
+
+QUEMAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+CORTAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+CORTAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a cortar eso."
+ NEWLINE
+ DONE
+
+
+CORTAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a cortar _."
+ NEWLINE
+ DONE
+
+CORTAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+ATAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+ATAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a atar eso."
+ NEWLINE
+ DONE
+
+
+ATAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres atar _."
+ NEWLINE
+ DONE
+
+ATAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+LLENAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+LLENAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a llenar eso."
+ NEWLINE
+ DONE
+
+
+LLENAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ ONOTZERO @51 1                        ; es un contenedor
+ WRITE "No quieres llenar _."
+ NEWLINE
+ DONE
+
+LLENAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ OZERO @51 1                        ; no es un contenedor
+ WRITE "No puedes llenar _."
+ NEWLINE
+ DONE
+
+
+LLENAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;------------------------------------------------------
+NADAR _
+ WRITE "¿Nadar?"
+ NEWLINE
+ DONE
+ 
+;-------------------------------------------------------
+TREPAR _
+ WRITE "No te apetece trepar."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+RETORCER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+RETORCER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a retorcer eso."
+ NEWLINE
+ DONE
+
+
+RETORCER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres retorcer _."
+ NEWLINE
+ DONE
+
+RETORCER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+BESAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+BESAR _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "No se deja."
+ NEWLINE
+ DONE
+
+ 
+BESAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No quieres besar."
+ NEWLINE
+ DONE
+
+
+BESAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres besar _."
+ NEWLINE
+ DONE
+
+BESAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+ENCENDER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+ENCENDER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a encender eso."
+ NEWLINE
+ DONE
+
+
+ENCENDER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres encender _."
+ NEWLINE
+ DONE
+
+ENCENDER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+APAGAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+APAGAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a apagar eso."
+ NEWLINE
+ DONE
+
+
+APAGAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres apagar _."
+ NEWLINE
+ DONE
+
+APAGAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+ABRIR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+ABRIR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a abrir eso."
+ NEWLINE
+ DONE
+
+
+ABRIR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No puedes abrir _."
+ NEWLINE
+ DONE
+
+ABRIR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+
+;-----------------------------------------------
+
+
+CERRAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+CERRAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a cerrar eso."
+ NEWLINE
+ DONE
+
+
+CERRAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No puedes cerrar _."
+ NEWLINE
+ DONE
+
+CERRAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;----------------------------------------------
+
+
+CHUPAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+CHUPAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a chupar eso."
+ NEWLINE
+ DONE
+
+
+CHUPAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres chupar _."
+ NEWLINE
+ DONE
+
+CHUPAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No veo _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+ROMPER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+ROMPER _
+ NOTEQ 34 255
+ LT 34 50			  ; hay nombre, y es propio
+ WRITE "La violencia no es buena."
+ NEWLINE
+ DONE
+ 
+ 
+ROMPER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "La violencia no es la solución."
+ NEWLINE
+ DONE
+
+
+ROMPER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Romper _ no solucionará nada."
+ NEWLINE
+ DONE
+
+ROMPER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí, en cualquier caso la romper eso no es la solución."
+ NEWLINE
+ DONE
+
+
+;------------------------------------------------------------
+
+SALIDAS _
+ EXITS @38 1000
+ NEWLINE
+ DONE
+
+;------------------------------------------------------------
+
+AYUDA _
+ WRITE "Prueba en los foros del CAAD, http://caad.es\n"
+ NEWLINE
+ WRITE "Escribe al autor en: baltasarq@yahoo.es, http://caad.es/baltasarq/\n"
+ DONE
+ 
+;------------------------------------------------------------
+
+SUPERGLUS _
+ CHARSET 9
+ MESSAGE msgVersionAventura
+ CHARSET 0
+ VERSION
+ NEWLINE
+ DONE 
+
+;------------------------------------------------------------
+
+;########## RUTINA DE 'NO PUEDES IR EN ESA DIRECCION' EXTENDIDA ####################
+ 
+_               _     LT 33 14
+                      MOVE 38
+                      DESC
+
+_               _     LT 33 14
+                      PLUS 33 1002
+                      WRITE "No puedes ir "
+                      MES @33
+                      WRITE ". "
+                      MINUS 33 1002
+                      EXITS @38 1000
+                      NEWLINE
+                      DONE
+ 
+ 
+ 
+;        -        -        -        -        -        -        -        -        -
+
+/PRO 1
+
+_ _		AT locInic
+		LET flgBarcoViene TurnosBarcoLLega
+		LET flgAcabaComida TurnosAcabaComida
+		LET flgContadorLanchaDeshincha TurnosLanchaDesincha
+		LET flgEmpiezaDeshincharse 5
+		CLEAR flgVisitaMedico
+		CLEAR flgLanchaDeshinchandose
+		CLEAR flgLanchaParcheada
+		CLEAR flgTelefonoDescargado
+		CLEAR flgCompartimentoEncontrado
+		CLEAR flgLinternaAbierta
+		CLEAR flgHasRemado
+		CLEAR flgLlamadaHecha
+		CLEAR flgBarcoRescateHaLLegado
+		MESSAGE msgIntro
+		ANYKEY
+		CLS
+		GOTO locInic2
+		DESC
+
+_ _		AT locInic2
+		CHARSET 6
+		MESSAGE msgVersionAventura
+		VERSION
+		NEWLINE
+		NEWLINE
+		WRITE "[Aquellos que juegan por primera vez deberían teclear 'ayuda']"
+		CHARSET 0
+		NEWLINE
+		Anykey
+		CLS
+		MESSAGE msgExplica
+		Anykey
+		MESSAGE msgExplica01
+		Anykey
+		MESSAGE msgExplica02
+		Anykey
+		MESSAGE msgExplica03
+		Anykey
+		MESSAGE msgExplica04
+		Anykey
+		MESSAGE msgExplica05
+		Anykey
+		MESSAGE msgExplica06
+		Anykey
+		goto locBarca
+		;goto locHabHospital
+		desc
+
+
+_ _        
+ 		NEWLINE
+		LISTOBJ                        ;List the objects
+
+
+;        -        -        -        -        -        -        -        -        -
+
+_ _		AT locHabHospital
+		ZERO flgVisitaMedico
+		SET flgVisitaMedico
+		WRITE "\6- Señor ... ¿Señor? ... ¿puede oirme?\0\n"
+		ANYKEY
+		WRITE "Tus ojos van acostumbrándose, poco a poco, a la claridad. Por un momento, estás absolutamente desorientado, inmerso en un mundo de blancura absoluta.\n"
+		ANYKEY
+		WRITE "- Sí ...\n"
+		ANYKEY
+		WRITE "\6¿Puede decirnos cómo se llama?\0\n"
+		ANYKEY
+		WRITE "- Yo soy ... Warren Buffett.\n"
+		ANYKEY
+		WRITE "El médico (ahora ves que es un médico), enarca ligeramente las cejas.\n"
+		WRITE "\6- Comprendo.\n"
+		ANYKEY
+		WRITE "- Trate de descansar, y no se levante.\0\n"
+		WRITE "- Gracias ... doctor ...\n"
+		WRITE "\6- De nada. No se preocupe. Sobre todo, recupérese.\0\n"
+		ANYKEY
+		WRITE "Caes en un sueño reparador, sabedor de que cualquier peligro que acechara ... ya ha pasado.\n"
+		ANYKEY
+		NEWLINE
+		ANYKEY
+		WRITE "Despiertas de nuevo ..."
+		NEWLINE
+		ANYKEY
+		DESC
+
+_ _		AT locHabHospital
+		NOTZERO flgVisitaMedico
+		WRITE "Puedes ver a un hombre sentado en un rincón."
+		NEWLINE
+		
+/PRO 2
+
+; La comida se acaba, la vida es así
+_ _			MINUS flgAcabaComida 1
+
+
+; Si la lancha no está parcheada y se pinchó, restar
+_ _			NOTZERO flgLanchaDeshinchandose
+			ZERO flgLanchaParcheada
+			MINUS flgContadorLanchaDeshincha 1
+
+; Esperar un poquito antes de empezar a deshinchar la lancha
+_ _ 			ZERO flgLanchaDeshinchandose
+			ZERO flgLanchaParcheada
+			MINUS flgEmpiezaDeshincharse 1
+
+; Si ya hemos terminado de esperar, pinchar la barca
+_ _			ZERO flgLanchaDeshinchandose
+			ZERO flgLanchaParcheada
+			ZERO flgEmpiezaDeshincharse
+			WRITE "Oyes un desesperante siseo ..."
+			NEWLINE
+			LET flgContadorLanchaDeshincha 20
+			SET flgLanchaDeshinchandose
+
+; Recordar que la barca se está deshinchando
+_ _			NOTZERO flgLanchaDeshinchandose
+			NOTZERO flgContadorLanchaDeshincha
+			ZERO flgLanchaParcheada
+			CHANCE 20
+			WRITE "Un siseo te advierte que la lancha se deshincha ..."
+			NEWLINE
+
+; Recordar que la barca se está deshinchando
+_ _			NOTZERO flgLanchaDeshinchandose
+			ZERO flgLanchaParcheada
+			LT flgContadorLanchaDeshincha 5
+			WRITE "La lancha se deshincha rápidamente, ya apenas se sustenta sobre el agua ..."
+			NEWLINE
+
+
+; Comprobar si se ha terminado la comida, terminar la aventura
+_ _			ZERO flgAcabaComida
+			NEWLINE
+			WRITE "La debilidad, después de tanto tiempo sin comer ni beber, se apodera de ti.\n"
+			WRITE "Te mueres de hambre.\n"
+			TURNS
+			END
+
+; El rescate está en camino
+_ _			AT locBarca
+			NOTZERO flgLlamadaHecha
+			NOTZERO flgBarcoViene
+			MINUS	flgBarcoViene 1
+
+; Ha llegado el rescate
+_ _			
+			AT locBarca
+			NOTZERO flgLlamadaHecha
+			ZERO flgBarcoViene
+			ZERO flgBarcoRescateHaLLegado
+			SET flgBarcoRescateHaLLegado
+			WRITE "Escuchas un ruido a tu espalda ... ¡un barco se aproxima!"
+			NEWLINE
+			ANYKEY
+			WRITE "¡No puedes creerlo! ... ¡es el barco de salvamento!"
+			NEWLINE
+			ANYKEY
+			WRITE "El barco de salvamento con bandas en azul y amarillo, se sitúa a unos metros de ti."
+			NEWLINE
+
+
+; Comprobar si se ha terminado de pinchar la barca, terminar la aventura
+_ _			ZERO flgContadorLanchaDeshincha
+			ZERO flgLanchaParcheada
+			NOTZERO flgLanchaDeshinchandose
+			NEWLINE
+			WRITE "Contemplas con pavor como el agua inunda el bote ...\n"
+			ANYKEY
+			WRITE "El bote se hunde, mientras tú, braceando y escupiendo agua, te quedas en la superficie ...\n"
+			ANYKEY
+			WRITE "Sabes que tus posibilidades de supervivencia son mínimas. Tus horas están contadas.\n"
+			TURNS
+			END
+
+; Repite la música (sonido del mar) en el bote
+_ _ 		AT locBarca
+		ISNOTSOUND
+		BEEP sonidoMar.ogg 0
+/pro 3
+
+_ _		ABSENT objParche
+		WRITE "Se deshinche o no la balsa, no puedes parchearla sólo con las manos.\n"
+		DONE
+		
+
+_ _
+		ZERO flgLanchaParcheada
+		NOTZERO flgLanchaDeshinchandose
+		NOTZERO flgContadorLanchaDeshincha
+		SET flgLanchaParcheada
+		DESTROY objParche
+		WRITE "Parcheas la balsa como puedes ... parece que ha funcionado.\n"
+		DONE
+
+_ _		NOTZERO flgLanchaParcheada
+		WRITE "La lancha está ya parcheada.\n"
+		DONE
+
+
+_ _
+		ZERO flgLanchaParcheada
+		ZERO flgLanchaDeshinchandose
+		WRITE "¿Para qué?, no parece que se esté deshinchando.\n"
+		DONE
+		
+/pro 4
+
+_ _ 	ABSENT objPila
+	WRITE "Pero ... no tienes ninguna pila ...\n"
+	DONE
+
+_ _ 	ABSENT objTelefono
+	WRITE "Pero ... no tienes el teléfono móvil ...\n"
+	DONE
+
+_ _ 	ABSENT objAlambres
+	WRITE "Pero ... no tienes con qué sujetarlo todo ...\n"
+	DONE
+
+_ _ 	NOTZERO flgTelefonoDescargado
+	WRITE "Todo eso ya no es necesario.\n"
+	DONE
+
+_ _	PRESENT objPila
+	PRESENT objAlambres
+	ZERO flgTelefonoDescargado
+	WRITE "Atas la pila al móvil, usando los alambres ... observas un rato como el móvil se carga hasta tener lo suficiente para hacer una llamada, y lo enciendes.\n"
+	SET flgTelefonoDescargado
+	DONE	
+/pro 5
+
+_ _ 	ABSENT objPila
+	WRITE "Pero ... no tienes ninguna pila ...\n"
+	DONE
+
+_ _ 	ABSENT objTelefono
+	WRITE "Pero ... no tienes el teléfono móvil ...\n"
+	DONE
+
+_ _ 	ABSENT objAlambres
+	WRITE "Pero ... no tienes con qué sujetarlo todo ...\n"
+	DONE
+
+_ _ 	NOTZERO flgTelefonoDescargado
+	WRITE "Todo eso ya no es necesario.\n"
+	DONE
+
+_ _ 	WRITE "El alambre servirá para enchufar cosas entre sí. Por favor, sólo especifica cuales, y ten a mano el alambre ..."
+	NEWLINE
+	DONE

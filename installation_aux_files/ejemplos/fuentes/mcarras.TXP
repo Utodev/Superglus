@@ -1,0 +1,2287 @@
+;#############################################################
+;############ SUPERGLUS - LIBRERIA DE INICIO 3.0 #############
+;############              25/08/2004            #############
+;#############################################################
+
+
+; NOTA : Estos fuentes han sido modificados para poder servir de ejemplo 
+;        en el paquete de Superglus. Se han quitado gráficos y sonidos
+;        para reducir el tamaño. En la web de caad estan disponibles
+;        los fuentes completos con graficos y sonidos.
+
+; ---------------- FLAGS ----------------------
+#define flg fAux1        100
+#define flg fAux2        101
+
+#define flg fPerroFeliz 200
+
+#define flg fTimer 201
+
+#define flg fSonidosActivados 202
+#define flg fGraficosActivados 203
+
+#define flg fPrepago 204           ; Controla si el prepago ha sido realizado en la gasolinera
+#define flg fBidonLleno 205        ; Controla si el bidon esta lleno
+
+; -------------- Procesos ------------------
+
+#define const pExaminar 4
+
+;----------- Efectos de sonido y musicas ------------
+;#define snd  moto.aif 0
+;#define snd  coche.aif 1
+;#define snd  perro.aif 2
+;#define snd  viento.aif 3
+;#define snd  silent.aif 5
+
+;#define snd ingame1.mod 20
+;#define snd ingame2.mod 21
+;#define snd ingame3.mod 22
+;#define snd final.mod 23
+;#define snd intro.mod 24
+
+
+;-------------- Localidades ----------------
+#define loc lMoto 1
+#define loc lClaro 2
+#define loc lCascada 3
+#define loc lCueva 4
+#define loc lCasa 5         
+#define loc lGasolinera 6
+;-------------- graficos-------------------
+#define const highres 1
+
+#ifdef highres
+;#define pic loc01.jpg 1
+;#define pic loc02.jpg 2
+;#define pic loc03.jpg 3
+;#define pic loc04.jpg 4
+;#define pic loc05.jpg 5
+;#define pic loc06.jpg 6
+;#define grf splashtitle.jpg 1
+;#define grf theend.jpg 2
+#else
+;#define pic loc01_lit.jpg 1
+;#define pic loc02_lit.jpg 2
+;#define pic loc03_lit.jpg 3
+;#define pic loc04_lit.jpg 4
+;#define pic loc05_lit.jpg 5
+;#define pic loc06_lit.jpg 6
+;#define grf splashtitle_lit.jpg 1
+;#define grf theend_lit.jpg 2
+#endif
+
+
+
+
+;-------------- objetos -------------------
+
+#define obj oLinterna 0
+#define obj oBidon 1
+#define obj oBillete 2
+#define obj oHueso 3
+
+/CTL
+;Posicion y tamaño del grafico
+
+$GRAPHIC_POSITION=up
+$GRAPHIC_PERCENT=50
+
+;Fichero CFG Winglulxe
+
+$WINDOWBORDERS=0
+$WINDOWFRAME=0
+$WINDOWWIDTH=1280
+$WINDOWHEIGHT=1024
+$WINDOWMASK=39
+
+; Tipos de letra del juego
+
+$PROPORTIONALFACE=Verdana
+$PROPORTIONALSIZE=12   
+
+$TYPEWRITERFACE=Courier New
+$TYPEWRITERSIZE=10     
+
+; Estilo 0 (texto que el jugador lee)
+$TYPEWRITER_0=Off
+$BOLD_0=Off
+$ITALIC_0=Off
+$FOREGROUND_0=ffffff
+$BACKGROUND_0=000000      
+
+; Estilo 1 (Creditos inicio)
+$TYPEWRITER_1=Off
+$BOLD_1=On
+$ITALIC_1=On
+$FOREGROUND_1=cc8933
+$BACKGROUND_1=000000
+
+
+          
+; Estilo 8 (texto que el jugador escribe)
+$TYPEWRITER_8=Off
+$BOLD_8=Off
+$ITALIC_8=Off
+$FOREGROUND_8=ffff00
+$BACKGROUND_8=000000
+/VOC
+
+;--Movimientos, verbos y nombres < 14--
+
+N             2        noun
+NORTE         2        noun
+S             3        noun
+SUR           3        noun
+E             4        noun
+ESTE          4        noun
+O             5        noun
+W             5        noun
+OESTE         5        noun
+NE            6        noun
+NORESTE       6        noun
+NW            7        noun
+NOROESTE      7        noun
+NO            7        noun
+SE            8        noun
+SURESTE       8        noun
+SUDESTE       8        noun
+SUROESTE      9        noun
+SW            9        noun
+SO            9        noun
+U             10       noun
+ARRIBA        10       noun
+ABAJO         11       noun
+D             11       noun
+SUBIR         10       verb
+BAJAR         11       verb
+ENTRAR        12       verb
+DENTRO        12       verb
+SALIR         13       verb
+ENTRA         12       verb
+SAL           13       verb
+FUERA         13       verb
+
+;--Nombres--    <20 indica que pueden ser usados como verbos
+;               <50 indica que son nombres propio, no seran
+;                   tenidos en cuenta por los pronombres.
+I             14       noun
+INVEN         14       noun
+TODO          20       noun
+LINTERNA      50       noun
+BIDON         51       noun
+HUESO         52       noun
+BILLETE       53       noun
+DOLAR         53       noun
+DOLARES       53       noun
+DOLLARS       53       noun
+DOLLAR        53       noun
+DINERO        53       noun
+CASCADA       54       noun
+CATARATA      54       noun
+GRAFICOS      55       noun
+SONIDO        56       noun
+PERRO         57       noun
+GASOLINERA    58       noun
+SURTIDORES    59       noun
+SURTIDOR      60       noun
+GASOLINA      61       noun
+SOPA          16       noun
+MOTO          62       noun
+BURRA         62       noun
+MOTOCICLETA   62       noun
+CAJA          63       noun
+TAQUILLA      63       noun
+TAQUILLERO    63       noun
+CAJERO        63       noun
+RANURA        64       noun
+DEPOSITO      65       noun
+CARRETERA     66       noun
+SENDERO       67       noun
+MATORRALES    68       noun
+MATORRAL      68       noun
+POSTE         69       noun
+POSTES        60       noun
+SEÑAL         70       noun
+TOCON         71       noun
+NEUMATICOS    72       noun
+NEUMATICO     72       noun
+RUEDAS        72       noun
+RUEDA         72       noun
+CABAÑA        73       noun
+CASA          73       noun
+COCHE         74       noun
+CARRO         74       noun
+VEHICULO      74       noun
+AUTO          74       noun
+AUTOMOVIL     74       noun
+            
+
+
+;--Verbos--
+COGER         20       verb
+COGE          20       verb
+TOMAR              20       verb
+TOMA          20       verb
+DEJAR         21       verb
+DEJA          21       verb
+PON           21       verb
+QUITAR        22       verb
+QUITA         22       verb
+M             24       verb
+MIRAR         24       verb
+MIRA          24       verb
+QUIT          25       verb
+FIN           25       verb
+SAVE          26       verb
+GRABAR        26       verb
+GRABA         26       verb
+LOAD          27       verb
+CARGAR        27       verb
+CARGA         27       verb
+RAMSAVE       28       verb
+RAMLOAD       29       verb
+EXAMINAR      30       verb
+EXAMINA       30       verb
+EX            30       verb
+DECIR         31       verb
+DI            31       verb
+HABLAR        31       verb
+HABLA         31       verb
+PREGUNTAR     31       verb
+PREGUNTA      31       verb
+TIRAR         32       verb
+TIRA          32       verb
+LANZAR        32       verb
+LANZA         32       verb
+EMPUJAR       33       verb
+EMPUJA        33       verb
+AYUDA              34       verb
+HELP              34       verb
+GIRAR         35       verb
+GIRA          35       verb
+ROTA          35       verb
+ROTAR         35       verb
+VOLTEAR       35       verb
+VOLTEA        35       verb
+ESCUCHAR      37       verb
+ESCUCHA       37       verb
+PROBAR        38       verb
+PRUEBA        38       verb
+COMER         38       verb
+COME          38       verb
+BEBER         39       verb
+BEBE          39       verb
+TOCAR         40       verb
+TOCA          40       verb
+SALIDAS       41       verb
+X             41       verb
+OLER          42       verb
+HUELE         42       verb
+ESPERAR       43       verb
+ESPERA        43       verb
+CANTAR        44       verb
+CANTA         44       verb
+SALTAR        45       verb
+SALTA         45       verb
+ATACAR        46       verb
+ATACA         46       verb
+MATAR         46       verb
+MATA          46       verb
+SOPLA         47       verb
+SOPLAR        47       verb
+FROTAR        48       verb
+RASPAR        48       verb
+FROTA         48       verb
+RASPA         48       verb
+AGITAR        49       verb
+AGITA         49       verb
+MOVER         49       verb
+MUEVE         49       verb
+QUEMAR        50       verb
+QUEMA         50       verb
+PRENDER       50       verb
+PRENDE        50       verb
+EXCAVAR       51       verb
+EXCAVA        51       verb
+CAVAR         51       verb
+CAVA          51       verb
+CORTAR        52       verb
+CORTA         53       verb
+ATAR          54       verb
+ATA           54       verb
+LLENAR        55       verb
+LLENA         55       verb
+RELLENAR      55       verb
+RELLENA       55       verb
+NADAR         56       verb
+NADA          56       verb
+TREPAR        57       verb
+TREPA         57       verb
+ESCALAR       57       verb
+ESCALA        57       verb
+RETORCER      58       verb
+RETUERCE      58       verb
+TORCER        58       verb
+TUERCE        58       verb
+REZAR         59       verb
+REZA          59       verb
+PENSAR        60       verb
+PIENSA        60       verb
+DORMIR        61       verb
+DUERME        61       verb
+BESAR         62       verb
+BESA          62       verb
+LAMER         63       verb
+LAME          63       verb
+CHUPAR        63       verb
+CHUPA         63       verb
+ABRIR         64       verb
+ABRE          64       verb
+CERRAR        65       verb
+CIERRA        65       verb
+ENCENDER      66       verb
+ENCIENDE      66       verb
+ARRANCA       66       verb
+ARRANCAR      66       verb
+APAGAR        67       verb
+APAGA         67       verb
+TRANSCRIPCION 68       verb
+TRANSCRIPT    68       verb
+ACTIVAR       69       verb
+DESACTIVAR    70       verb
+PONER         71       verb
+DAR           72       verb
+DALE          72       verb
+DA            72       verb
+ECHAR         73       verb
+ECHA          73       verb
+XYZZY         74       verb
+METER         75       verb
+METE          75       verb
+INTRODUCE     75       verb
+INTRODUCIR    75       verb
+REPOSTAR      76       verb
+REPOSTA       76       verb
+
+
+
+
+;--Adjetivos--
+PEQUEÑO       2        adjective
+PEQUEÑA       2        adjective
+GRANDE        3        adjective
+VIEJO         4        adjective
+VIEJA         4        adjective
+NUEVO         5        adjective
+NUEVA         5        adjective
+DURO          6        adjective
+DURA          6        adjective
+SUAVE         7        adjective
+LARGO         9        adjective
+LARGA         9        adjective
+
+;--Adverbios--
+RAPIDAMENT    2        adverb
+LENTAMENTE    3        adverb
+SILENCIOSA    4        adverb
+RUIDOSAMEN    5        adverb
+CUIDADOSAM    6        adverb
+TRANQUILAM    6        adverb
+
+;--Preposiciones--
+A             2        preposition
+AL            2        preposition
+DE            3        preposition
+DEL           3        preposition
+EN            4        preposition
+DESDE         5        preposition
+HACIA         6        preposition
+TRAS          7        preposition
+BAJO          8        preposition
+CON           9        preposition
+PARA          10       preposition
+POR           11       preposition
+EXCEPTO       12       preposition
+
+;--Pronombres--
+LO            2        pronoun
+LOS           2        pronoun
+LA            2        pronoun
+LAS           2        pronoun
+LE            2        pronoun
+LES           2        pronoun
+
+;--Conjunciones--
+Y             2        conjunction
+ENTONCES      2        conjunction
+
+;        -        -        -        -        -        -        -        -        -
+
+
+/STX
+/0
+No puedes ver nada, está muy oscuro.
+/1
+Puedes ver:¬
+/2
+
+/3
+
+/4
+
+/5
+
+/6
+¿Que dices tío?
+
+/7
+No puedes ir en esa dirección.
+
+/8
+¿Eh?.
+
+/9
+Llevas:¬
+/10
+ (puesto/a)
+/11
+nada de nada.
+
+/12
+¿Seguro?
+
+/13
+¿Juegas de nuevo?
+
+/14
+Adios...
+/15
+OK.
+
+/16
+...
+
+/17
+Has realizado¬
+/18
+ turno
+/19
+s
+/20
+.
+
+/21
+Tu puntuación es del¬
+/22
+%.
+
+/23
+No llevas puesto eso.
+
+/24
+No puedes.  Me temo que _ lo llevas puesto.
+
+/25
+Ya tienes _.
+
+/26
+¿Dónde esta eso?.
+
+/27
+No puedes llevar mas cosas.
+
+/28
+No tienes eso.
+
+/29
+Pero si ya llevas puesto _, estas en la parra chaval.
+
+/30
+S
+/31
+N
+/32
+Más...
+/33
+>¬
+/34        ;Vacio, no usado
+/35
+El tiempo pasa...
+
+/36
+Coges _.
+
+/37
+Te pones _.
+
+/38
+Te quitas _.
+
+/39
+Dejas _.
+
+/40
+No puedes ponerte _.
+
+/41
+No puedes quitarte _.
+
+/42
+No puedes quitarte _.  ¡Tienes demasiadas cosas en las manos!
+
+/43
+Me temo que _ pesa demasiado.
+
+/44
+Ahora _ esta en¬
+/45
+Ahora _ no está en¬
+/46
+,¬
+/47
+ y¬
+/48
+.
+
+/49
+No tienes _.
+
+/50
+No llevas puesto _ pedazo de mandril.
+
+/51
+.
+/52
+Eso no está en¬
+/53
+nada.
+
+/54
+Fichero no encontrado.
+
+/55
+Fichero corrupto.
+
+/56
+Error de E/S. Fichero no grabado.
+
+/57
+Directorio lleno.
+
+/58
+Disco lleno.
+
+/59
+Nombre de fichero no válido.
+
+/60
+Nombre del fichero:¬
+
+;        -        -        -        -        -        -        -        -        -
+/MTX
+
+/1000
+Salidas visibles:¬
+/1001
+No hay salidas visibles.
+
+/1002
+/1003
+/1004
+al norte
+/1005     
+al sur
+/1006
+al este
+/1007
+al oeste
+/1008
+al noreste
+/1009
+al noroeste
+/1010
+al sureste
+/1011
+al suroeste
+/1012
+arriba
+/1013
+abajo
+/1014
+dentro
+/1015
+fuera
+/OTX
+        
+/0
+una linterna
+/1
+un bidon
+/2
+un billete
+/3
+un hueso
+/LTX
+/0
+\1\n\n\nRev. 1 11/06/2005\n2005 (C) NM Soft\nLibrería de inicio 3.0\n\nPrograma: Uto\nGráficos: Kano\nMusica: Varios DP\n\n
+
+/1
+En mitad de la nada, en una carretera de poco transito rodeada de matorrales y algun pequeño bosque. Solo postes de
+teléfono acompañan el camino del viajero. Una desvencijada señal de límite de velocidad se encuentra cerca de ti.
+La carretera sigue al sur, mientras que al norte
+puedes ver a lo lejos la gasolinera que dejaste atrás en la carretera principal. Un sendero se interna en el paisaje al este.
+/2
+En este claro del bosque se encuentra una pequeña cabaña, probablemente de los agentes forestales. Un neumático viejo y el
+tocón de un arbol cortado son las unicas cosas que sobresalen de la monótona vegetación arbórea. Un sendero
+sigue hacia el sur.
+/3
+El sendero llega a una pequeña cascada formada por un rio que cae desde
+lo alto de un risco. El sendero sigue tras la cascada, pero se hace más y mas estrecho junto al precipicio.
+/4
+La oscura cueva no tiene apenas profundidad, y todo lo que se puede
+ver es roca mojada.
+/5
+El interior de la cabaña acumula trastos inservibles, probablemente recogidos por los forestales
+por el bosque. Una mesa volcada, un viejo colchón, desvencijadas estanterias, una silla rota... en fin, trastos viejos.
+El perro se entretiene con el hueso pero no te quita ojo.
+/6
+Estás en la gasolinera, junto a la carretera principal.                                  
+/CON
+/0
+/1
+
+S 0
+N lGasolinera
+E lClaro
+
+/2
+o lMoto 
+S lCascada
+ENTRAR lCasa
+
+/3              
+N lClaro
+S 0
+
+/4
+SALIR lCascada
+
+
+/5
+SALIR lClaro
+
+/6
+s lMoto         
+/OBJ
+;obj  loc          peso          nombre           adjetivo lo_atr                hi_atr
+;num  ini              
+/0    CARRIED        1       LINTERNA        _         00000000000000000000000000000000 00000000000000000000000000000000
+/1    lCasa          1       BIDON           _         01000000000000000000000000000000 00000000000000000000000000000000
+/2    CARRIED        1       BILLETE         _         00000000000000000000000000000000 00000000000000000000000000000000
+/3    lCueva         1       HUESO           _         00000000000000000000000000000000 00000000000000000000000000000000
+
+;                                                      ^Objeto da luz
+;                                                       ^Contenedor
+;                                                        ^Prenda
+                                               
+
+;        -        -        -        -        -        -        -        -        -
+/PRO 0
+
+
+; ############# ACCIONES MODIFICADAS POR EL PROGRAMADOR ##########
+
+EX _
+ AT &&lCasa
+ WRITE "Al perro no le gusta que andes husmeando por la cabaña. Dos fuertes ladridos te avisan de que poco puedes hacer aquí."
+ NEWLINE
+ PAUSE 1
+ ;BEEP &&perro.aif 0
+ PAUSE 5
+ ;BEEP &&perro.aif 0
+ DONE
+
+S _
+ AT &&lCascada
+ WRITE "Mejor no, el camino se estrecha demasiado y es demasiado peligroso."
+ NEWLINE
+ DONE
+
+EX PERRO
+ AT &&lClaro
+ ZERO &&fPerroFeliz
+ WRITE "Te asomas sigilosamente para poder ver al perro. Tiene cara de pocos amigos."
+ NEWLINE
+ DONE
+
+EX PERRO
+ AT &&lClaro
+ NOTZERO &&fPerroFeliz
+ WRITE "Te asomas sigilosamente para poder ver al perro. Parece que anda ocupado con el hueso."
+ NEWLINE
+ DONE
+
+EX RUEDAS
+ AT &&lGasolinera
+ WRITE "Carentes de utilidad."
+ NEWLINE
+ DONE
+
+EX COCHE
+ AT &&lGasolinera
+ WRITE "Parece que lleva bastante tiempo abandonado, no parece tener nada de interés."
+ NEWLINE
+ DONE
+
+_ COCHE
+ AT &&lGasolinera
+ WRITE "No parece tener nada de interés, paso del coche."
+ NEWLINE
+ DONE
+
+ARRANCAR MOTO
+ AT &&lMoto
+ WRITE "No tiene gasolina."
+ NEWLINE
+ DONE
+
+EX RUEDA
+ AT &&lClaro
+ WRITE "Esta llena de suciedad, bastante asquerosa."
+ NEWLINE
+ DONE
+
+COGER RUEDA
+ AT &&lClaro
+ WRITE "No pienso coger esa porqueria."
+ NEWLINE
+ DONE
+
+EX TOCON
+ AT &&lClaro
+ WRITE "Son los restos de un viejo arbol que ha sido talado, nada de mención especial."
+ NEWLINE
+ DONE
+
+EX CABAÑA
+ AT &&lClaro
+ WRITE "Algo se mueve en su interior."
+ NEWLINE
+ DONE
+
+
+EX BIDON
+ CARRIED &&oBidon
+ NOTZERO &&fBidonLleno
+ WRITE "Un bidón verde, lleno de gasolina."
+ NEWLINE
+ DONE
+
+EX BIDON
+ CARRIED &&oBidon
+ WRITE "Un bidón verde."
+ NEWLINE
+ DONE
+
+EX LINTERNA
+ CARRIED &&oLinterna
+ WRITE "Un solo texto sobre la linterna: Faraday Lantern. Vete a saber que significa."
+ NEWLINE
+ DONE
+
+EX HUESO
+ CARRIED &&oHueso
+ WRITE "Mejor no saber de que es."
+ NEWLINE
+ DONE
+
+EX BILLETE
+ CARRIED &&oBillete
+ WRITE "20 pavos."
+ NEWLINE
+ DONE
+
+EX MOTO
+ AT &&lMoto   
+ WRITE "¿A que mola mi burra?"
+ NEWLINE
+ DONE
+
+EX CARRETERA
+ AT &&lMoto
+ WRITE "Hogar, dulce hogar."
+ NEWLINE
+ DONE
+
+EX CARRETERA
+ AT &&lGasolinera
+ WRITE "Hogar, dulce hogar."
+ NEWLINE
+ DONE
+
+EX GASOLINERA
+ AT &&lMoto
+ WRITE "Mejor acercate."
+ NEWLINE
+ DONE
+
+EX SENDERO
+ AT &&lMoto
+ WRITE "Claro claro, primero examino el sendero, luego las piedrecitas, luego las moleculas que forman las piedras.. ¡anda ya! ¡¡Pues un sendero so mamarracho!!."
+ NEWLINE
+ DONE
+
+
+
+EX MATORRALES
+ AT &&lMoto
+ WRITE "Nada de especial en los matorrales."
+ NEWLINE
+ DONE
+
+EX POSTE
+ AT &&lMoto
+ WRITE "No ves nada de especial en los postes de teléfono."
+ NEWLINE
+ DONE
+
+EX SEÑAL
+ AT &&lMoto
+ WRITE "Limite de velocidad: 55 mph."
+ NEWLINE
+ DONE
+
+
+ECHAR GASOLINA
+ LET 33 &&_voc_LLENAR
+ LET 34 &&_voc_DEPOSITO
+ ; Pequeño truco que convierte una frase en otra, en este caso en LLENAR DEPOSITO
+
+LLENAR DEPOSITO
+ CARRIED &&oBidon
+ NOTZERO &&fBidonLleno
+ AT &&lMoto
+ WRITE "Echas la gasolina en el depósito. Montas, arrancas..."
+ NEWLINE
+ ANYKEY
+ CLS
+ #ifdef highres
+ ;PICTURE &&theend.jpg
+ #else
+ ;PICTURE &&theend_lit.jpg
+ #endif
+ ;BEEP &&final.mod 0
+ WRITE "Enhorabuena, has completado McArra's Quest Reloaded"
+ NEWLINE
+ END
+
+
+
+METER BILLETE
+ PREP EN
+ NOUN2 RANURA
+ CARRIED &&oBillete
+ AT &&lGasolinera
+ DESTROY &&oBillete
+ SET &&fPrepago
+ WRITE "Metes el billete en la ranura, una voz metálica te indica que ya puedes echar gasolina en el surtidor."
+ NEWLINE
+ DONE
+
+
+METER BILLETE
+ CARRIED &&oBillete
+ EQ 44 255 ; No hay segundo nombre, no pone donde
+ WRITE "¿Donde quieres meterlo?"
+ NEWLINE
+ DONE
+
+METER BILLETE
+ CARRIED &&oBillete
+ NOTEQ 44 255 ; Hay segundo nombre, no pone donde
+ WRITE "Paso."
+ NEWLINE
+ DONE
+
+
+EX CAJA
+ AT &&lGasolinera
+ WRITE "Se trata de una caja automática, no hay personas fisica. Tiene una ranura para billetes."
+ NEWLINE
+ DONE
+
+DECIR CAJERO
+ AT &&lGasolinera
+ WRITE "Hablas con el cajero automático, parece que el sol esta empezando a hacer mella en ti."
+ NEWLINE
+ NEWTEXT
+ DONE
+
+XYZZY        _
+ WRITE "Ummmm... paso de drogas de diseño."
+ NEWLINE
+ DONE
+
+EX GASOLINERA
+ AT &&lGasolinera
+ WRITE "Normal y corriente, la caja y un par de surtidores."
+ NEWLINE
+
+ DONE                                                         
+
+EX SURTIDORES
+ AT &&lGasolinera
+ WRITE "Uno esta ocupado por un coche abandonado, el otro está libre."
+ NEWLINE
+ DONE
+
+EX SURTIDOR
+ AT &&lGasolinera
+ WRITE "Nada de especial, una manguera y un contador. Hay un cartel que dice: PAGUE EN CAJA ANTES DE REPOSTAR"
+ NEWLINE
+ DONE
+
+ECHAR GASOLINA          
+ AT &&lGasolinera
+ PREP EN
+ NOUN2 BIDON
+ LET 33 &&_voc_LLENAR
+ LET 34 &&_voc_BIDON
+ ; Nota: este es un pequeño truco. Desde este momento la frase en lugar de ECHAR GASOLINA es LLENAR BIDON
+
+
+REPOSTAR _
+ AT &&lGasolinera
+ LET 33 &&_voc_LLENAR
+ LET 34 &&_voc_BIDON
+ ; idem
+
+LLENAR BIDON
+ CARRIED &&oBidon
+ AT &&lCascada
+ WRITE "Necesito sopa, no agua."
+ NEWLINE
+ DONE
+
+LLENAR BIDON
+ CARRIED &&oBidon
+ AT &&lGasolinera
+ NOTZERO &&fPrepago
+ CLEAR &&fPrepago
+ SET &&fBidonLleno
+ WRITE "Llenas el bidón de gasolina."
+ NEWLINE
+ DONE
+
+
+LLENAR BIDON
+ CARRIED &&oBidon
+ AT &&lGasolinera
+ ZERO &&fPrepago
+ WRITE "El surtidor es en prepago, debes pagar antes en caja."
+ NEWLINE
+ DONE
+
+
+LLENAR BIDON
+ NOTCARR &&oBidon
+ WRITE "No tienes donde echar la gasolina."
+ NEWLINE
+ DONE
+
+DEJAR BILLETE
+ CARRIED oBillete
+ CHARSET 10
+ WRITE "¡Ja! no pienso dejar el billete.\n"
+ CHARSET 0
+ DONE
+
+ENTRAR _             ; Controlamos la presencia del perro en base al valor del flag fPerroFeliz
+ AT &&lClaro
+ ZERO &&fPerroFeliz    ; No esta feliz
+ WRITE "Un perro aparece en el umbral amenazador.\n"
+ PAUSE 1
+ ;BEEP &&perro.aif 0
+ PAUSE 5
+ ;BEEP &&perro.aif 0
+ DONE                                                 ; Damos la frase por contestada para que no se ejecute el 'ENTRAR'
+
+EX PERRO
+ AT &&lCasa
+ WRITE "El perro te mira con cara de pocos amigos y te ladra. Mejor no acercarse."
+ NEWLINE
+ PAUSE 1
+ ;BEEP &&perro.aif 0
+ PAUSE 5
+ ;BEEP &&perro.aif 0
+ DONE
+
+EX CASCADA
+ AT &&lCascada
+ GETEXIT &&_voc_ENTRAR  &&fAux1        ; Cogemos la direccion a la que se va 'entrando'
+ EQ fAux1 255                        ; si es 255 es que no existe esa salida
+ SETEXIT &&_voc_ENTRAR &&lCueva        ; así que la creamos
+ WRITE "Parece que hay una cueva tras la cascada a la que puedes entrar.\n"
+ DONE
+
+EX CASCADA
+ AT &&lCascada
+ GETEXIT &&_voc_ENTRAR &&fAux1        ; Cogemos la direccion a la que se va 'entrando'
+ EQ fAux1 &&lCueva                    ; si ya existe no hacemos nada
+ WRITE "Sí, la cueva sigue ahí y puedes siguiendo entrar.\n"
+ DONE
+
+ENTRAR        _
+ AT &&lCascada
+ GETEXIT _voc_ENTRAR &&fAux1
+ NOTEQ &&fAux1 255
+ SET 0
+
+SALIR         _
+ AT &&lCueva
+ CLEAR 0
+
+
+S        _
+ AT &&lMoto
+ WRITE "Paso de ir andando hasta el concierto.\n"
+ DONE
+
+
+ENCENDER LINTERNA
+ NOTCARR &&oLinterna
+ WRITE "¿Que linterna?\n"
+ DONE
+
+ENCENDER LINTERNA
+ CARRIED &&oLinterna
+ ONOTZERO &&oLinterna 0
+ WRITE "Ya está encendida capullo.\n"
+ DONE
+
+ENCENDER LINTERNA
+ CARRIED &&oLinterna
+ OZERO &&oLinterna 0
+ OSET &&oLinterna 0
+ WRITE "Enciendes la linterna.\n"
+ NOTZERO 0
+ ANYKEY
+ DESC
+
+ENCENDER LINTERNA
+ CARRIED &&oLinterna
+ ONOTZERO &&oLinterna 0
+
+ENCENDER LINTERNA
+ CARRIED &&oLinterna
+ DONE                                          
+
+APAGAR LINTERNA
+ NOTCARR &&oLinterna
+ WRITE "¿Que linterna?"
+ DONE
+
+APAGAR LINTERNA
+ CARRIED &&oLinterna
+ OZERO &&oLinterna 0
+ WRITE "Ya está apagada melón.\n"
+ DONE
+
+APAGAR LINTERNA
+ CARRIED &&oLinterna               
+ ONOTZERO &&oLinterna 0
+ OCLEAR &&oLinterna 0
+ WRITE "Apagas la linterna.\n"
+ NOTZERO 0
+ ANYKEY
+ DESC
+
+APAGAR LINTERNA
+ CARRIED &&oLinterna
+ DONE
+
+TIRAR HUESO
+ PREP A
+ NOUN2 PERRO
+ LET 33 &&_voc_DAR ; truco: cambio el verbo TIRAR por el verbo DAR
+
+DAR HUESO
+ PREP A
+ NOUN2 PERRO
+ AT &&lClaro
+ CARRIED &&oHueso
+ WRITE "Lanzas el hueso al perro que lo recoge felizmente."
+ NEWLINE
+ DESTROY &&oHueso
+ SET &&fPerroFeliz
+ DONE
+
+DAR HUESO
+ PREP A
+ NOUN2 PERRO
+ NOTCARR &&oHueso
+ WRITE "¿Que hueso?"
+ NEWLINE
+ DONE
+
+DAR HUESO
+ PREP A
+ NOUN2 PERRO
+ NOTAt &&lClaro
+ WRITE "¿A que perro?"
+ NEWLINE
+ DONE
+
+DAR HUESO
+ PREP A
+ EQ 34 255          ; Estan diciendo que se lo demos a algun nombre del vocabulario
+ WRITE "No mola."
+ NEWLINE
+ DONE
+
+DAR HUESO
+ PREP A
+ NOTEQ 34 255          ; Estan diciendo que se lo demos a algo desconocido
+ WRITE "¿A quien?"
+ NEWLINE
+ DONE
+
+
+
+
+; ###################################################
+
+ACTIVAR SONIDO
+ ZERO &&fSonidosActivados
+ SET &&fSonidosActivados
+ SOUND 0
+ WRITE "Sonido activado.\n"
+ DONE
+
+ACTIVAR SONIDO
+ NOTZERO &&fSonidosActivados
+ WRITE "El sonido ya estaba activado.\n"
+ DONE
+
+DESACTIVAR SONIDO
+ NOTZERO &&fSonidosActivados
+ CLEAR &&fSonidosActivados
+ ;BEEP &&silent.aif 0
+ SOUND 1
+ WRITE "Sonido desactivado.\n"
+ DONE
+
+DESACTIVAR SONIDO
+ ZERO &&fSonidosActivados
+ WRITE "El sonido ya estába desactivado.\n"
+ DONE
+
+ACTIVAR GRAFICOS
+ ZERO &&fGraficosActivados
+ SET &&fGraficosActivados
+ GRAPHIC 0
+ WRITE "Gráficos activados.\n"
+ DONE
+
+ACTIVAR GRAFICOS
+ NOTZERO &&fGraficosActivados
+ WRITE "Los gráficos ya estaban activados.\n"
+ DONE                                 
+
+DESACTIVAR GRAFICOS
+ NOTZERO &&fGraficosActivados
+ CLEAR &&fGraficosActivados
+ GRAPHIC 1
+ WRITE "Graficos desactivados.\n"
+ DONE
+
+DESACTIVAR GRAFICOS
+ ZERO &&fGraficosActivados
+ WRITE "Los gráficos ya estaban desactivados.\n"  
+ DONE
+
+DESACTIVAR _
+ WRITE "DESACTIVAR GRAFICOS/SONIDO.\n"
+ DONE
+
+ACTIVAR _
+ WRITE "ACTIVAR GRAFICOS/SONIDO.\n" 
+ DONE
+
+; ############## ACCIONES POR DEFECTO #################
+
+I        _
+ OBJAT 254 &&fAux1
+ ZERO &&fAux1
+ WRITE "No llevas nada."
+ DONE
+
+I        _
+ WRITE "Llevas "
+ LISTAT 254
+ DONE
+
+
+;-----------------------------------------------
+
+COGER TODO
+ ISLIGHT  
+ OBJAT @38 &&fAux1
+ NOTZERO &&fAux1
+ DOALL        HERE
+
+COGER TODO
+  WRITE "No hay nada que coger."
+  NEWLINE
+  DONE
+
+COGER        _
+ AUTOG  
+ DONE
+;-----------------------------------------------
+
+DEJAR        TODO
+ OBJAT 254 &&fAux1
+ NOTZERO &&fAux1   
+ DOALL        CARRIED
+
+DEJAR TODO
+ WRITE "No llevas nada."
+ NEWLINE
+ DONE
+
+DEJAR        _
+ AUTOD
+ DONE
+
+;-----------------------------------------------
+
+QUITAR        TODO
+ DOALL        WORN
+
+QUITAR        _
+ AUTOR
+ DONE
+
+;-----------------------------------------------
+
+PONER        TODO
+ DOALL        CARRIED
+
+PONER        _
+ AUTOW
+ DONE
+
+;-----------------------------------------------
+
+MIRAR       _
+ DESC
+
+;-----------------------------------------------
+
+FIN        _
+ QUIT
+ TURNS
+ END
+
+GRABAR        _
+ SAVE
+
+CARGAR        _
+ LOAD
+
+RAMSAVE        _
+ RAMSAVE
+ DESC
+
+RAMLOAD        _
+ RAMLOAD        255
+ DESC
+
+TRANSCRIPCION _
+ TRANSCRIPT 1
+ DONE
+
+;-----------------------------------------------
+
+TIRAR _                        ; No hay nombre en la frase
+ PREP DE
+ EQ 34 255
+ WRITE "No ves eso."
+ NEWLINE
+ DONE
+
+TIRAR _                        ; Hay nombre pero no es un objeto
+ PREP DE
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No ves mucho sentido a tirar de eso."
+ NEWLINE
+ DONE
+
+
+TIRAR _                        ; Es un objeto presente
+ PREP DE
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No parece que se consiga nada tirando de _."
+ NEWLINE
+ DONE
+
+TIRAR _                        ; Es un objeto ausente
+ PREP DE
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para tirar de _ tendría que estar aquí, que estas 'empanao'."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+EMPUJAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+  DONE
+
+EMPUJAR _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "No creo que le guste demasiado."
+ NEWLINE
+ DONE
+
+EMPUJAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No ves mucho sentido a empujar eso."
+ NEWLINE
+ DONE
+
+EMPUJAR _                ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No parece que se consiga nada empujando _."
+ NEWLINE
+ DONE
+
+EMPUJAR _                ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para empujar _ tendría que estar aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+GIRAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves que dices."
+ NEWLINE
+ DONE
+
+GIRAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No ves mucho sentido a girar eso."
+ NEWLINE
+ DONE
+
+
+GIRAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a girar _."
+ NEWLINE
+ DONE
+
+GIRAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Girar _ requiere su presencia."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+LANZAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+LANZAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No, no ves sentido a lanzar eso."
+ NEWLINE
+ DONE
+
+LANZAR _                ; Es un objeto llevado
+ NOTEQ 51 255
+ CARRIED @51
+ WRITE "Lanzas _."
+ NEWLINE
+ PLACE @51 @38
+ DONE
+
+LANZAR _                ; Es un objeto ausente
+ NOTEQ 51 255
+ NOTCARR @51
+ WRITE "Me temo que no ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+ESCUCHAR _
+ EQ 34 255
+ WRITE "Prestas atención a ver si escuchas algo más pero no escuchas nada en especial."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+COMER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."   
+ NEWLINE
+ DONE
+
+COMER _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "No creo que se deje. En cualquier caso no es muy apropiado."
+ NEWLINE
+ DONE
+
+
+COMER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No quieres comer eso."
+ NEWLINE
+ DONE
+
+
+COMER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a comerte _."
+ NEWLINE
+ DONE
+
+COMER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para comerme _ debería estar aquí."
+ NEWLINE
+ DONE                 
+
+;-----------------------------------------------
+                             
+BEBER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+BEBER _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "Estás perdiendo el rumbo."
+ NEWLINE
+ DONE
+
+
+BEBER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No quieres beber eso."
+ NEWLINE
+ DONE
+
+
+BEBER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a beberme _."
+ NEWLINE
+ DONE
+
+BEBER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "Para beberte _ debería estar aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+TOCAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+TOCAR _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "No se deja."
+ NEWLINE
+ DONE
+
+
+TOCAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a tocar eso."
+ NEWLINE
+ DONE
+
+
+TOCAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres tocar _."
+ NEWLINE
+ DONE
+
+TOCAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+OLER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+OLER _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "Es de mala educación."
+ NEWLINE
+ DONE
+
+
+OLER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a oler eso."
+ NEWLINE
+ DONE
+
+
+OLER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres oler _."
+ NEWLINE
+ DONE
+
+OLER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+AGITAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+AGITAR _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "No creo que le guste demasiado."
+ NEWLINE
+ DONE
+
+
+AGITAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a mover eso."
+ NEWLINE
+ DONE
+
+
+AGITAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres mover _."
+ NEWLINE
+ DONE
+
+AGITAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+ESPERAR _
+ SYSMESS 35
+ DONE
+
+;-----------------------------------------------
+
+SALTAR _
+ WRITE "Saltas, sin conseguir nada."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+REZAR _
+ WRITE "¿Yo?."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+CAVAR _
+ WRITE "No quieres cavar aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+PENSAR _
+ WRITE "Pensar siempre es bueno."
+ NEWLINE
+ DONE
+;-----------------------------------------------
+
+DORMIR _
+ WRITE "No tienes sueño."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+CANTAR _
+ WRITE "Suputamadre, que cante dice el cachondo este."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+ATACAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+ATACAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "La violencia no es la solución, en este caso."
+ NEWLINE
+ DONE
+
+
+ATACAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Atacar _ no solucionará nada."
+ NEWLINE
+ DONE
+
+ATACAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí, en cualquier caso la violencia no es la solución, en este caso."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+
+
+EX _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "Nada de especial."
+ NEWLINE
+ DONE
+
+EX _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "Es de mala educación."
+ NEWLINE
+ DONE
+
+
+EX _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le veo sentido a examinar eso."
+ NEWLINE
+ DONE
+
+
+EX _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Miras y miras pero no ves nada de especial importancia en _."
+ NEWLINE
+ DONE
+
+EX _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No veo _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+FROTAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No veo eso que dices."
+ NEWLINE
+ DONE
+
+FROTAR _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "¡Anda ya!"
+ NEWLINE
+ DONE
+
+
+FROTAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a frotar eso."
+ NEWLINE
+ DONE
+
+
+FROTAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Frotas _. No hay efecto alguno."
+ NEWLINE
+ DONE
+
+FROTAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+QUEMAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+QUEMAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a quemar eso."
+ NEWLINE
+ DONE
+
+
+QUEMAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "Quemar _ no es la solución, aunque sería divertido."
+ NEWLINE
+ DONE
+
+QUEMAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+CORTAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+CORTAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a cortar eso."
+ NEWLINE
+ DONE
+
+
+CORTAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No ves sentido a cortar _."
+ NEWLINE
+ DONE
+
+CORTAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+ATAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+ATAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a atar eso."
+ NEWLINE
+ DONE
+
+
+ATAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres atar _."
+ NEWLINE
+ DONE
+
+ATAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+LLENAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+LLENAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a llenar eso."
+ NEWLINE
+ DONE
+
+
+LLENAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ ONOTZERO @51 1                        ; es un contenedor
+ WRITE "No quieres llenar _."
+ NEWLINE
+ DONE
+
+LLENAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ OZERO @51 1                        ; no es un contenedor
+ WRITE "No puedes llenar _."
+ NEWLINE
+ DONE
+
+
+LLENAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+;------------------------------------------------------
+NADAR _
+ WRITE "¿Nadar?"
+ NEWLINE
+ DONE
+
+;-------------------------------------------------------
+TREPAR _
+ WRITE "No te apetece trepar."
+ NEWLINE
+ DONE
+
+;-----------------------------------------------
+
+
+RETORCER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+RETORCER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a retorcer eso."
+ NEWLINE
+ DONE
+
+
+RETORCER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres retorcer _."
+ NEWLINE
+ DONE
+
+RETORCER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+BESAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+BESAR _
+ NOTEQ 34 255
+ LT 34 50                          ; hay nombre, y es propio
+ WRITE "Puaj."
+ NEWLINE
+ DONE
+
+
+BESAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No quieres besar."
+ NEWLINE
+ DONE
+
+
+BESAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres besar _."
+ NEWLINE
+ DONE
+
+BESAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+ENCENDER _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+ENCENDER _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a encender eso."
+ NEWLINE
+ DONE
+
+
+ENCENDER _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres encender _."
+ NEWLINE
+ DONE
+
+ENCENDER _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+APAGAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+APAGAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a apagar eso."
+ NEWLINE
+ DONE
+
+
+APAGAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres apagar _."
+ NEWLINE
+ DONE
+
+APAGAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;-----------------------------------------------
+
+
+ABRIR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+
+ABRIR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a abrir eso."
+ NEWLINE
+ DONE
+
+
+ABRIR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No puedes abrir _."
+ NEWLINE
+ DONE
+
+ABRIR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+
+;-----------------------------------------------
+
+
+CERRAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+CERRAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "No le ves sentido a cerrar eso."
+ NEWLINE
+ DONE
+
+
+CERRAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No puedes cerrar _."
+ NEWLINE
+ DONE
+
+CERRAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51
+ WRITE "No ves _ por aquí."
+ NEWLINE
+ DONE
+
+
+;----------------------------------------------
+
+
+CHUPAR _                        ; No hay nombre en la frase
+ EQ 34 255
+ WRITE "No ves eso que dices."
+ NEWLINE
+ DONE
+ 
+CHUPAR _                        ; Hay nombre pero no es un objeto
+ NOTEQ 34 255
+ EQ 51 255
+ WRITE "Nah."
+ NEWLINE
+ DONE
+
+
+CHUPAR _                        ; Es un objeto presente
+ NOTEQ 51 255
+ PRESENT @51
+ WRITE "No quieres chupar _."
+ NEWLINE
+ DONE
+
+CHUPAR _                        ; Es un objeto ausente
+ NOTEQ 51 255
+ ABSENT @51                
+ WRITE "No veo _ por aquí."
+ NEWLINE
+ DONE
+
+;------------------------------------------------------------
+
+SALIDAS _
+ EXITS @38 1000
+ DONE
+
+;------------------------------------------------------------
+
+AYUDA _
+ WRITE "Prueba en los foros del CAAD, http://caad.mine.nu."
+ NEWLINE
+ DONE
+
+
+
+;------------------------------------------------------------
+
+;########## RUTINA DE 'NO PUEDES IR EN ESA DIRECCION' EXTENDIDA ####################
+
+_               _     LT 33 14
+                      MOVE 38
+                      DESC
+
+_               _     LT 33 14
+                      PLUS 33 1002
+                      WRITE "No puedes ir "
+                      MES @33
+                      WRITE ". "
+                      MINUS 33 1002
+                      EXITS @38 1000
+                      DONE    
+
+
+
+;        -        -        -        -        -        -        -        -        -
+
+/PRO 1
+_        _
+ AT 0
+ SET &&fSonidosActivados
+ SET &&fGraficosActivados
+ WRITE "Loading..."
+ ##ifdef highres
+ ;PICTURE &&splashtitle.jpg
+ ##else
+ ;PICTURE &&splashtitle_lit.jpg
+ ##endif
+ CLS
+ CHARSET 1
+ VERSION
+ CHARSET 0
+ WRITE "@"
+ ;BEEP &&intro.mod 0
+ ANYKEY
+ ;BEEP &&viento.aif 0
+ LET 53 64 ; Lista los objetos en modo continuo, en lugar de uno debajo del otro
+ GOTO 1
+ DESC
+
+_        _        
+ NEWLINE
+ ISLIGHT
+ LISTOBJ                        ;List the objects
+
+
+;        -        -        -        -        -        -        -        -        -
+
+/PRO 2
+
+/PRO INTERRUPT 3 
+; PROCESO INTERRUPCION
+
+; Este proceso va a determinar que efecto de sonido y que musica de relleno va a sonar
+; Para ello detecta si hay alguna musica o efecto sonando, y si no es asi, y con cierta
+; condicion aleatoria, hace que suene uno u otro sonido
+
+_        _
+ ISNOTSOUND
+ CHANCE 1
+ CHANCE 2
+ ;BEEP &&ingame1.mod 0
+
+_        _
+ ISNOTSOUND
+ CHANCE 1
+ CHANCE 2
+ ;BEEP &&ingame2.mod 0
+
+_        _
+ ISNOTSOUND
+ CHANCE 1
+ CHANCE 3
+ ;BEEP &&ingame3.mod 0
+_        _
+ ISNOTSOUND
+ CHANCE 1
+ CHANCE 3
+ ;BEEP &&viento.aif 0
+
+
+_        _
+ ISNOTSOUND
+ AT lGasolinera
+ CHANCE 1
+ CHANCE 25
+ ;BEEP &&moto.aif 0
+
+_        _
+ ISNOTSOUND
+ AT lGasolinera
+ CHANCE 1
+ CHANCE 25
+ ;BEEP &&coche.aif 0                                    
