@@ -1,0 +1,10 @@
+;CND SYNONYM A 15 13 0 0
+
+:acc_synonym
+dc.b 0xc1 0x04 0x02 0x00 0x00
+jeq {4}.l 255.l :synonym_next1.l
+copy {4}.l (:flag034).l
+:synonym_next1
+jeq {0}.l 255.l 1
+copy {0}.l (:flag033).l
+return 1
