@@ -1175,7 +1175,7 @@ _    _
  EQ 33 255
  EQ 34 255
  LET 33 &&_voc_SALIR
- LET 46 255
+ LET 43 255
 
 ; ** Convertir MIRAR DENTRO en EXAMINAR DENTRO
 
