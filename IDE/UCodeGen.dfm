@@ -1226,6 +1226,7 @@ object fCodeGen: TfCodeGen
         Top = 480
         Width = 75
         Height = 25
+        Hint = 'Limpiar'
         Caption = 'Limpiar'
         TabOrder = 0
         OnClick = ButtonCleanClick
@@ -1338,6 +1339,7 @@ object fCodeGen: TfCodeGen
       Top = 2
       Width = 23
       Height = 22
+      Hint = 'Abrir puzzle'
       Glyph.Data = {
         36060000424D3606000000000000360000002800000020000000100000000100
         18000000000000060000120B0000120B00000000000000000000FF00FFFF00FF
@@ -1397,6 +1399,7 @@ object fCodeGen: TfCodeGen
       Top = 2
       Width = 23
       Height = 22
+      Hint = 'Guardar puzzle'
       Glyph.Data = {
         36060000424D3606000000000000360000002800000020000000100000000100
         18000000000000060000120B0000120B00000000000000000000FF00FFFF00FF
@@ -1456,6 +1459,7 @@ object fCodeGen: TfCodeGen
       Top = 2
       Width = 23
       Height = 22
+      Hint = 'Generar C'#243'digo'
       Glyph.Data = {
         36060000424D3606000000000000360000002800000020000000100000000100
         18000000000000060000120B0000120B00000000000000000000D8E9ECD8E9EC
