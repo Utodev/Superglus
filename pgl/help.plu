@@ -55,8 +55,8 @@ streamchar 10
 streamchar 10
 return 0
 
-:help_msga1: dc.b ¿CÓMO DOY ÓRDENES AL PERSONAJE?
-:help_msg0: dc.b  Utiliza órdenes en imperativo o infinitivo: ABRE PUERTA, COGER LLAVE, SUBIR, etc.
+:help_msga1 dc.b ¿CÓMO DOY ÓRDENES AL PERSONAJE?
+:help_msg0 dc.b  Utiliza órdenes en imperativo o infinitivo: ABRE PUERTA, COGER LLAVE, SUBIR, etc.
 :help_msg1 dc.b "¿CÓMO ME MUEVO POR EL JUEGO?"
 :help_msg2 dc.b "Por regla general, mediante los puntos cardinales como norte (abreviado 'N'), sur (S), este (E), oeste (O) o direcciones espaciales (arriba, abajo, bajar, subir, entrar, salir, etc.). Algunas aventuras permiten también cosas como "ir a pozo". Normalmente podrás saber en que dirección puedes ir por la descripción del sitio, aunque algunos juegos implementan el comando 'SALIDAS' que te dirá exactamente cuales hay."
 :help_msg3 dc.b "¿CÓMO PUEDO SABER QUE OBJETOS LLEVO?"
