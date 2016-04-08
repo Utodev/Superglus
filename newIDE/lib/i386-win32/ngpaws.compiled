@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="C:\lazarus\fpc\2.6.4\bin\i386-win32\fpc.exe" Date="1189850957"/>
+  <Params Value=" -MObjFPC -Scghi -CX -O3 -XX -WG -l -vewnhibq -FiC:\Users\csanchez\Copy\Github\ngPAWS\sources\newIDE\lib\i386-win32 -FuC:\Users\csanchez\Copy\Github\ngPAWS\sources\newIDE\graficos\icono -FuC:\lazarus\components\synedit\units\i386-win32\win32 -FuC:\lazarus\components\lazcontrols\lib\i386-win32\win32 -FuC:\lazarus\lcl\units\i386-win32\win32 -FuC:\lazarus\lcl\units\i386-win32 -FuC:\lazarus\components\lazutils\lib\i386-win32 -FuC:\lazarus\packager\units\i386-win32 -FuC:\Users\csanchez\Copy\Github\ngPAWS\sources\newIDE\ -FUC:\Users\csanchez\Copy\Github\ngPAWS\sources\newIDE\lib\i386-win32\ -FEC:\Users\csanchez\Copy\Github\ngPAWS\Release\ -dLCL -dLCLwin32 ngpaws.lpr"/>
+</CONFIG>
