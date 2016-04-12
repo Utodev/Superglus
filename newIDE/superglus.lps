@@ -20,7 +20,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UMain"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="1062"/>
         <CursorPos X="18" Y="1068"/>
         <UsageCount Value="204"/>
@@ -57,7 +56,10 @@
         <Filename Value="uconfig.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UConfig"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
+        <TopLine Value="85"/>
+        <CursorPos X="85" Y="110"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit4>

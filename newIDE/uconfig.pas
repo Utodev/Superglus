@@ -100,14 +100,14 @@ begin
   FCompilerPath := IniFile.ReadString('Paths','CompilerPath','spg.exe');
   FLinkerPath := IniFile.ReadString('Paths', 'LinkerPath','blc.exe');
   FAssemblerPath:= IniFile.ReadString('Paths', 'AssemblerPath','glulxa.exe');
-  FInterpreterPath:= IniFile.ReadString('Paths','InterpreterPath','git.exe');
+  FInterpreterPath:= IniFile.ReadString('Paths','InterpreterPath','glulxe.exe');
   FStartDatabasePath := IniFile.ReadString('Paths','StartDatabasePath','init.lib');
   {$ELSE}
   FPreprocessorPath := IniFile.ReadString('Paths','PreprocessorPath', FullPath('txtpaws'));
   FCompilerPath := IniFile.ReadString('Paths','CompilerPath', FullPath('spg'));
   FLinkerPath := IniFile.ReadString('Paths','LinkerPath', FullPath('blc'));
   FAssemblerPath:= IniFile.ReadString('Paths', 'AssemblerPath',FullPath('glulxa'));
-  FInterpreterPath := IniFile.ReadString('Paths','InterpreterPath', FullPath('git'));
+  FInterpreterPath := IniFile.ReadString('Paths','InterpreterPath', FullPath('glulxe'));
   FStartDatabasePath := IniFile.ReadString('Paths','StartDatabasePath',FullResourcesPath('INIT.LIB'));
   {$ENDIF}
 
