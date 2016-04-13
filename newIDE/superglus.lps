@@ -35,6 +35,7 @@
         <ComponentName Value="fOptions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="68"/>
         <CursorPos X="9" Y="81"/>
@@ -56,7 +57,6 @@
         <Filename Value="uconfig.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UConfig"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <TopLine Value="85"/>
         <CursorPos X="85" Y="110"/>
