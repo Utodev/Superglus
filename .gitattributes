@@ -21,4 +21,4 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 
-*plu linguist-language=assembler
+pgl/*.plu linguist-language=assembler
