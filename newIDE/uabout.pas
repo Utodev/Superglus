@@ -14,11 +14,11 @@ type
 
   TfAbout = class(TForm)
     Image: TImage;
-    Label1: TLabel;
-    Label2: TLabel;
-    LabelWebsite: TLabel;
-    LabelDetails: TLabel;
-    LabelGithubSite: TLabel;
+    Label1: TStaticText;
+    Label2: TStaticText;
+    LabelWebsite: TStaticText;
+    LabelDetails: TStaticText;
+    LabelGithubSite: TStaticText;
     procedure ImageClick(Sender: TObject);
     procedure LabelGithubSiteClick(Sender: TObject);
     procedure LabelWebsiteClick(Sender: TObject);
@@ -46,12 +46,12 @@ end;
 
 procedure TfAbout.LabelGithubSiteClick(Sender: TObject);
 begin
-  OpenURL(TLabel(Sender).Caption);
+  OpenURL(TStaticText(Sender).Caption);
 end;
 
 procedure TfAbout.LabelWebsiteClick(Sender: TObject);
 begin
-  OpenURL(TLabel(Sender).Caption);
+  OpenURL(TStaticText(Sender).Caption);
 end;
 
 end.

@@ -3060,7 +3060,7 @@ object fAbout: TfAbout
     }
     Stretch = True
   end
-  object Label1: TLabel
+  object Label1: TStaticText
     Left = 15
     Height = 15
     Top = 32
@@ -3068,7 +3068,7 @@ object fAbout: TfAbout
     Caption = 'Superglus Editor (C) 2016 Uto'
     ParentColor = False
   end
-  object LabelDetails: TLabel
+  object LabelDetails: TStaticText
     Left = 15
     Height = 15
     Top = 64
@@ -3076,7 +3076,7 @@ object fAbout: TfAbout
     Caption = 'Lazarus source code avaliable'
     ParentColor = False
   end
-  object Label2: TLabel
+  object Label2: TStaticText
     Left = 16
     Height = 15
     Top = 86
@@ -3084,7 +3084,7 @@ object fAbout: TfAbout
     Caption = 'at GitHub (GPL)'
     ParentColor = False
   end
-  object LabelWebsite: TLabel
+  object LabelWebsite: TStaticText
     Cursor = crHandPoint
     Left = 16
     Height = 15
@@ -3097,7 +3097,7 @@ object fAbout: TfAbout
     ParentFont = False
     OnClick = LabelWebsiteClick
   end
-  object LabelGithubSite: TLabel
+  object LabelGithubSite: TStaticText
     Cursor = crHandPoint
     Left = 15
     Height = 15
