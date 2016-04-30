@@ -1,3 +1,6 @@
+IDE/
+
+
 # Lazarus compiler-generated binaries (safe to delete)
 *.exe
 *.dll
@@ -24,17 +27,20 @@
 # These can be changed by user in Lazarus/project options.
 backup/
 *.bak
-lib/
+newIDE/lib/i386-darwin/
 
 # Application bundle for Mac OS
 *.app/
+
+
+
 
 #################
 ## Eclipse
 #################
 
-IDE/
-newIDE/lib/**
+
+
 *.pydevproject
 .project
 .metadata
