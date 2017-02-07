@@ -13,7 +13,7 @@
     </General>
     <i18n>
       <EnableI18N Value="True"/>
-      <OutDir Value="..\..\Release\languages"/>
+      <OutDir Value="languages"/>
     </i18n>
     <VersionInfo>
       <StringTable ProductVersion=""/>
@@ -64,7 +64,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\Release\superglus"/>
+            <Filename Value="superglus"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
