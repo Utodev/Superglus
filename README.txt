@@ -10,7 +10,7 @@ can be played in many devices.
 Though it can be used for oher languages, it's core library is set for spanish. Some
 simple adaptations would be needed to be used in english or other languages.
 
-Please find more information at www.superglus.com
+Please find more information at www.caad.es/superglus
 
 License
 =======
